@@ -4,33 +4,12 @@ const contactsSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: true,
-      validate: {
-        validator: function (v: string) {
-          return v.length > 0;
-        },
-        message: "First name is required",
-      },
     },
     lastName: {
       type: String,
-      required: true,
-      validate: {
-        validator: function (v: string) {
-          return v.length > 0;
-        },
-        message: "Last name is required",
-      },
     },
     jobTitle: {
       type: String,
-      required: true,
-      validate: {
-        validator: function (v: string) {
-          return v.length > 0;
-        },
-        message: "Job title is required",
-      },
     },
     fullName: {
       type: String,
@@ -106,35 +85,31 @@ const contactsSchema = new mongoose.Schema(
     lastUpdateDate: {
       type: Date,
     },
+    contactOwner: { type: String },
+    mobilePhone: { type: String },
+    emailOptOut: { type: Boolean, default: false },
+    tag: { type: String },
+    description: { type: String },
+    modifiedBy: { type: String },
+    createdTime: { type: Date },
+    modifiedTime: { type: Date },
+    lastActivityTime: { type: Date },
+    contactName: { type: String },
+    unsubscribedMode: { type: String },
+    unsubscribedTime: { type: Date },
+    mailingStreet: { type: String },
+    mailingCity: { type: String },
+    mailingState: { type: String },
+    mailingCountry: { type: String },
+    mailingZip: { type: String },
     companyName: {
       type: String,
-      required: true,
-      validate: {
-        validator: function (v: string) {
-          return v.length > 0;
-        },
-        message: "Company name is required",
-      },
     },
     employeeSize: {
       type: String,
-      required: true,
-      validate: {
-        validator: function (v: string) {
-          return v.length > 0;
-        },
-        message: "Employee size is required",
-      },
     },
     revenue: {
       type: String,
-      required: true,
-      validate: {
-        validator: function (v: string) {
-          return v.length > 0;
-        },
-        message: "Revenue is required",
-      },
     },
     amfNotes: {
       type: String,

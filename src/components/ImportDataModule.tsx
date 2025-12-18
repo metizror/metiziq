@@ -94,13 +94,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
   const [previewRowsPerPage, setPreviewRowsPerPage] = useState(25);
 
   const requiredFields = [
-    "firstName",
-    "lastName",
-    "jobTitle",
     "email",
-    "companyName",
-    "employeeSize",
-    "revenue",
   ];
 
   const availableFields = [
@@ -128,6 +122,23 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
     "companyLinkedIn",
     "technology",
     "lastUpdateDate",
+    "contactOwner",
+    "mobilePhone",
+    "emailOptOut",
+    "tag",
+    "description",
+    "modifiedBy",
+    "createdTime",
+    "modifiedTime",
+    "lastActivityTime",
+    "contactName",
+    "unsubscribedMode",
+    "unsubscribedTime",
+    "mailingStreet",
+    "mailingCity",
+    "mailingState",
+    "mailingCountry",
+    "mailingZip",
   ];
 
   const normalizeColumnName = (name: string): string => {
@@ -207,6 +218,45 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
       amfnotes: "amfNotes",
       lastupdatedate: "lastUpdateDate",
       lastupdate: "lastUpdateDate",
+      "contact owner": "contactOwner",
+      "contactowner": "contactOwner",
+      owner: "contactOwner",
+      mobile: "mobilePhone",
+      mobilephone: "mobilePhone",
+      cell: "mobilePhone",
+      "email opt out": "emailOptOut",
+      emailoptout: "emailOptOut",
+      optout: "emailOptOut",
+      tag: "tag",
+      tags: "tag",
+      description: "description",
+      desc: "description",
+      "created by": "createdBy",
+      createdby: "createdBy",
+      "modified by": "modifiedBy",
+      modifiedby: "modifiedBy",
+      "created time": "createdTime",
+      createdtime: "createdTime",
+      "modified time": "modifiedTime",
+      modifiedtime: "modifiedTime",
+      "last activity time": "lastActivityTime",
+      lastactivitytime: "lastActivityTime",
+      "contact name": "contactName",
+      contactname: "contactName",
+      "unsubscribed mode": "unsubscribedMode",
+      unsubscribedmode: "unsubscribedMode",
+      "unsubscribed time": "unsubscribedTime",
+      unsubscribedtime: "unsubscribedTime",
+      "mailing street": "mailingStreet",
+      mailingstreet: "mailingStreet",
+      "mailing city": "mailingCity",
+      mailingcity: "mailingCity",
+      "mailing state": "mailingState",
+      mailingstate: "mailingState",
+      "mailing country": "mailingCountry",
+      mailingcountry: "mailingCountry",
+      "mailing zip": "mailingZip",
+      mailingzip: "mailingZip",
     };
 
     if (columnToFieldMap[normalized]) {
@@ -361,13 +411,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
     }
 
     const mandatoryFields = [
-      "firstName",
-      "lastName",
-      "jobTitle",
       "email",
-      "companyName",
-      "employeeSize",
-      "revenue",
     ];
     const rowsWithMissingFields: number[] = [];
 
@@ -440,6 +484,23 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
             companyName: mappedData.companyName || "",
             employeeSize: cleanValue(mappedData.employeeSize || ""),
             revenue: cleanValue(mappedData.revenue || ""),
+            contactOwner: mappedData.contactOwner || "",
+            mobilePhone: mappedData.mobilePhone || "",
+            emailOptOut: mappedData.emailOptOut || "",
+            tag: mappedData.tag || "",
+            description: mappedData.description || "",
+            modifiedBy: mappedData.modifiedBy || "",
+            createdTime: mappedData.createdTime || "",
+            modifiedTime: mappedData.modifiedTime || "",
+            lastActivityTime: mappedData.lastActivityTime || "",
+            contactName: mappedData.contactName || "",
+            unsubscribedMode: mappedData.unsubscribedMode || "",
+            unsubscribedTime: mappedData.unsubscribedTime || "",
+            mailingStreet: mappedData.mailingStreet || "",
+            mailingCity: mappedData.mailingCity || "",
+            mailingState: mappedData.mailingState || "",
+            mailingCountry: mappedData.mailingCountry || "",
+            mailingZip: mappedData.mailingZip || "",
           };
         }
       );

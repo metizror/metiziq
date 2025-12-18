@@ -102,17 +102,10 @@ export async function POST(request: NextRequest) {
     // Validate each contact and check for duplicates
     for (const item of data) {
       // Check required fields
-      if (
-        !item.email ||
-        !item.firstName ||
-        !item.lastName ||
-        !item.jobTitle ||
-        !item.companyName
-      ) {
+      if (!item.email) {
         invalidContacts.push({
           email: item.email || "N/A",
-          reason:
-            "Missing required fields (email, firstName, lastName, jobTitle, or companyName)",
+          reason: "Missing required field: email",
         });
         continue;
       }
@@ -128,14 +121,14 @@ export async function POST(request: NextRequest) {
 
       // Prepare contact data according to model
       const contactData: any = {
-        firstName: item.firstName.trim(),
-        lastName: item.lastName.trim(),
+        firstName: item.firstName?.trim() || "",
+        lastName: item.lastName?.trim() || "",
         fullName:
           item.fullName ||
-          `${item.firstName.trim()} ${item.lastName.trim()}`.trim(),
-        jobTitle: item.jobTitle.trim(),
+          `${item.firstName?.trim() || ""} ${item.lastName?.trim() || ""}`.trim(),
+        jobTitle: item.jobTitle?.trim() || "",
         email: item.email.trim(),
-        companyName: item.companyName.trim(),
+        companyName: item.companyName?.trim() || "",
         employeeSize: item.employeeSize || "",
         revenue: item.revenue || "",
         uploaderId: admin?._id,
@@ -171,6 +164,25 @@ export async function POST(request: NextRequest) {
       if (item.lastUpdateDate)
         contactData.lastUpdateDate = new Date(item.lastUpdateDate);
       if (item.amfNotes) contactData.amfNotes = item.amfNotes;
+
+      // New fields from import
+      if (item.contactOwner) contactData.contactOwner = item.contactOwner;
+      if (item.mobilePhone) contactData.mobilePhone = item.mobilePhone;
+      if (item.emailOptOut) contactData.emailOptOut = item.emailOptOut === 'true' || item.emailOptOut === true;
+      if (item.tag) contactData.tag = item.tag;
+      if (item.description) contactData.description = item.description;
+      if (item.modifiedBy) contactData.modifiedBy = item.modifiedBy;
+      if (item.createdTime) contactData.createdTime = new Date(item.createdTime);
+      if (item.modifiedTime) contactData.modifiedTime = new Date(item.modifiedTime);
+      if (item.lastActivityTime) contactData.lastActivityTime = new Date(item.lastActivityTime);
+      if (item.contactName) contactData.contactName = item.contactName;
+      if (item.unsubscribedMode) contactData.unsubscribedMode = item.unsubscribedMode;
+      if (item.unsubscribedTime) contactData.unsubscribedTime = new Date(item.unsubscribedTime);
+      if (item.mailingStreet) contactData.mailingStreet = item.mailingStreet;
+      if (item.mailingCity) contactData.mailingCity = item.mailingCity;
+      if (item.mailingState) contactData.mailingState = item.mailingState;
+      if (item.mailingCountry) contactData.mailingCountry = item.mailingCountry;
+      if (item.mailingZip) contactData.mailingZip = item.mailingZip;
 
       validContacts.push(contactData);
     }
@@ -352,7 +364,7 @@ export async function POST(request: NextRequest) {
               if (
                 companyData[key] &&
                 companyData[key] !==
-                  existingCompany[key as keyof typeof existingCompany]
+                existingCompany[key as keyof typeof existingCompany]
               ) {
                 updateData[key] = companyData[key];
               }
@@ -423,8 +435,7 @@ export async function POST(request: NextRequest) {
             }
           });
           console.error(
-            `Batch ${i / BATCH_SIZE + 1} partially failed: ${
-              batchError.writeErrors.length
+            `Batch ${i / BATCH_SIZE + 1} partially failed: ${batchError.writeErrors.length
             } errors`
           );
         } else {

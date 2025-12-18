@@ -37,6 +37,23 @@ export interface Contact {
   companyName?: string;
   employeeSize?: string;
   revenue?: string;
+  contactOwner?: string;
+  mobilePhone?: string;
+  emailOptOut?: boolean;
+  tag?: string;
+  description?: string;
+  modifiedBy?: string;
+  createdTime?: string;
+  modifiedTime?: string;
+  lastActivityTime?: string;
+  contactName?: string;
+  unsubscribedMode?: string;
+  unsubscribedTime?: string;
+  mailingStreet?: string;
+  mailingCity?: string;
+  mailingState?: string;
+  mailingCountry?: string;
+  mailingZip?: string;
 }
 
 export interface Company {
