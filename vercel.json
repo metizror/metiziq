@@ -1,12 +1,3 @@
 {
-  "crons": [
-    {
-      "path": "/api/customers/downloads/send-expiry-reminders",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/customers/downloads/send-expired-notifications",
-      "schedule": "0 10 * * *"
-    }
-  ]
+  "crons": []
 }
