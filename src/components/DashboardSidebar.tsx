@@ -17,8 +17,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { UserObject } from "@/types/auth.types";
-import marketForceLogo from "../assets/cf01cb1f3c35e00a009f17e0c1fd4855e8cb9ad1.png";
 import Image from "next/image";
+const marketForceLogo = "https://www.metizsoft.com/wp-content/uploads/2023/09/Metiz-logo-1.svg";
 
 interface MenuItem {
   id: string;
@@ -65,15 +65,15 @@ export function DashboardSidebar({
       {/* Logo & User Info */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-center mb-4 px-2" style={{ minHeight: '60px', position: 'relative' }}>
-          <Image 
-            src={marketForceLogo} 
-            alt="Market Force" 
-            width={180} 
+          <Image
+            src={marketForceLogo}
+            alt="Market Force"
+            width={180}
             height={60}
             priority
-            style={{ 
-              width: 'auto', 
-              height: '60px', 
+            style={{
+              width: 'auto',
+              height: '60px',
               objectFit: 'contain',
               maxWidth: '180px'
             }}
@@ -107,22 +107,21 @@ export function DashboardSidebar({
             <Link key={item.id} href={item.path}>
               <Button
                 variant={isActive ? "default" : "ghost"}
-                className={`w-full justify-start h-10 relative ${
-                  isActive
-                    ? user.role === "superadmin"
-                      ? "bg-orange-500 hover:bg-orange-600"
-                      : "bg-orange-500 hover:bg-orange-600"
-                    : "hover:bg-gray-100"
-                }`}
+                className={`w-full justify-start h-10 relative ${isActive
+                  ? user.role === "superadmin"
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "bg-blue-600 hover:bg-blue-700"
+                  : "hover:bg-gray-100"
+                  }`}
               >
                 <Icon className="w-4 h-4 mr-3" />
                 {item.label}
                 {item.badge && item.badge > 0 && (
-                  <Badge className="ml-auto bg-orange-500 text-white text-xs h-5 min-w-5 px-1.5 flex items-center justify-center">
+                  <Badge className="ml-auto bg-blue-600 text-white text-xs h-5 min-w-5 px-1.5 flex items-center justify-center">
                     {item.badge}
                   </Badge>
                 )}
-               
+
               </Button>
             </Link>
           );

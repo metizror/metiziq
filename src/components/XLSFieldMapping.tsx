@@ -183,7 +183,7 @@ export function XLSFieldMapping({ onMappingComplete, onCancel }: XLSFieldMapping
               id="xls-upload"
             />
             <label htmlFor="xls-upload">
-              <Button asChild className="cursor-pointer" style={{ backgroundColor: '#EF8037' }}>
+              <Button asChild className="cursor-pointer" style={{ backgroundColor: '#2563EB' }}>
                 <span>
                   <FileSpreadsheet className="w-4 h-4 mr-2" />
                   Choose XLS File
@@ -343,7 +343,7 @@ export function XLSFieldMapping({ onMappingComplete, onCancel }: XLSFieldMapping
             <Button variant="outline" onClick={onCancel} className="flex-1 sm:flex-none">
               Cancel
             </Button>
-            <Button onClick={handleMapFields} style={{ backgroundColor: '#EF8037' }} className="flex-1 sm:flex-none">
+            <Button onClick={handleMapFields} style={{ backgroundColor: '#2563EB' }} className="flex-1 sm:flex-none">
               <CheckCircle className="w-4 h-4 mr-2" />
               Complete Mapping
             </Button>

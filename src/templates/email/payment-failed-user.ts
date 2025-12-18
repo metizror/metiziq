@@ -34,7 +34,7 @@ export function getPaymentFailedUserTemplate(data: PaymentFailedUserTemplateData
                       Please try again using a different payment method:
                     </p>
                     <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
-                      <a href="${paymentLink}" style="color: #EF8037; text-decoration: none; font-weight: 600; word-break: break-all;">${paymentLink}</a>
+                      <a href="${paymentLink}" style="color: #2563EB; text-decoration: none; font-weight: 600; word-break: break-all;">${paymentLink}</a>
                     </p>
                     <p style="margin: 20px 0 0 0; font-size: 16px; line-height: 1.6; color: #374151;">
                       If you need help, contact support.

@@ -108,7 +108,7 @@ export default function SendOtpStep() {
           <Button
             type="submit"
             className="w-full h-11"
-            style={{ backgroundColor: "#EF8037" }}
+            style={{ backgroundColor: "#2563EB" }}
             disabled={isLoading}
           >
             {isLoading ? (

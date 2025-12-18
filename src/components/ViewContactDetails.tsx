@@ -624,7 +624,7 @@ export function ViewContactDetails({
     toast.success('Contact exported successfully');
   };
 
-  const roleColor = user.role === 'superadmin' ? '#EF8037' : '#EB432F';
+  const roleColor = user.role === 'superadmin' ? '#2563EB' : '#EB432F';
 
   // Helper function to get initials from name
   const getInitials = (firstName: string, lastName: string) => {
@@ -1662,7 +1662,7 @@ export function ViewContactDetails({
             </Button>
             <Button
               onClick={handleUpdateContact}
-              style={{ backgroundColor: user.role === 'superadmin' ? '#EF8037' : '#EB432F' }}
+              style={{ backgroundColor: user.role === 'superadmin' ? '#2563EB' : '#EB432F' }}
               disabled={isUpdating}
             >
               {isUpdating ? 'Updating...' : 'Update'}

@@ -180,7 +180,7 @@ export function SupportContactForm({ isOpen, onClose, userEmail, userName }: Sup
             </Button>
             <Button 
               type="submit" 
-              style={{ backgroundColor: '#EF8037' }}
+              style={{ backgroundColor: '#2563EB' }}
               disabled={isSubmitting || formData.message.length < 20}
             >
               {isSubmitting ? (

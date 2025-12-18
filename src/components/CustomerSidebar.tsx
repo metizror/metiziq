@@ -30,7 +30,7 @@ export default function CustomerSidebar({ pathname, isCollapsed, setIsCollapsed,
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         {!isCollapsed && (
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center">
               <span className="text-white">C</span>
             </div>
             <span className="text-[#030000]">Customer Portal</span>
@@ -56,7 +56,7 @@ export default function CustomerSidebar({ pathname, isCollapsed, setIsCollapsed,
               href={item.path}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                 isActive
-                  ? 'bg-[#EF8037] text-white shadow-lg shadow-orange-200'
+                  ? 'bg-[#2563EB] text-white shadow-lg shadow-orange-200'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >

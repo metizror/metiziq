@@ -978,7 +978,7 @@ export default function EditCompanyPage() {
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-[#EF8037] hover:bg-[#EF8037]/90 text-white"
+                  className="bg-[#2563EB] hover:bg-[#2563EB]/90 text-white"
                   disabled={isUpdating}
                 >
                   <Save className="w-4 h-4 mr-2" />

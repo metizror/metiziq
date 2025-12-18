@@ -156,7 +156,7 @@ export default function CustomerDashboardHome({ userName, setActiveTab }: Custom
           <div className="flex items-center gap-3">
             <button
               onClick={() => setActiveTab('search-contacts')}
-              className="bg-[#EF8037] hover:bg-[#D66826] text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm shadow-orange-200"
+              className="bg-[#2563EB] hover:bg-[#D66826] text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm shadow-orange-200"
             >
               Search Contacts
             </button>
@@ -227,7 +227,7 @@ export default function CustomerDashboardHome({ userName, setActiveTab }: Custom
             <div className="relative">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex itemsCenter justify-center shadow-lg">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex itemsCenter justify-center shadow-lg">
                     <TrendingUp className="text-white" size={20} />
                   </div>
                   <h2 className="text-[#030000]">Recent Activity</h2>
@@ -265,10 +265,10 @@ export default function CustomerDashboardHome({ userName, setActiveTab }: Custom
                         }}
                       >
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-orange-100 group-hover:to-red-100 flex items-center justify-center flex-shrink-0 transition-all duration-300 shadow-sm group-hover:shadow-md">
-                          <Icon className="text-gray-600 group-hover:text-[#EF8037] transition-colors duration-300" size={20} />
+                          <Icon className="text-gray-600 group-hover:text-[#2563EB] transition-colors duration-300" size={20} />
                         </div>
                         <div className="flex-1">
-                          <p className="text-[#030000] mb-1 group-hover:text-[#EF8037] transition-colors duration-300 font-medium">
+                          <p className="text-[#030000] mb-1 group-hover:text-[#2563EB] transition-colors duration-300 font-medium">
                             {activity.action}
                           </p>
                           <p className="text-sm text-gray-600 mb-1">{activity.details}</p>
@@ -280,7 +280,7 @@ export default function CustomerDashboardHome({ userName, setActiveTab }: Custom
                           </div>
                         </div>
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <svg className="w-5 h-5 text-[#EF8037]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
                         </div>
@@ -352,14 +352,14 @@ export default function CustomerDashboardHome({ userName, setActiveTab }: Custom
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/10 to-orange-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                   <div className="relative flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center shadow-md group-hover:shadow-lg transition-all">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center shadow-md group-hover:shadow-lg transition-all">
                       <CreditCard className="text-white" size={20} />
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">Make Payment</p>
                       <p className="text-xs text-gray-600">Manage billing</p>
                     </div>
-                    <svg className="w-5 h-5 text-[#EF8037] group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-[#2563EB] group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -409,7 +409,6 @@ export default function CustomerDashboardHome({ userName, setActiveTab }: Custom
             }
           }
         `}</style>
-
       </div>
     </div>
   );

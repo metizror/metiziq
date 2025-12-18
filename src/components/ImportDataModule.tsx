@@ -393,8 +393,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
 
     if (rowsWithMissingFields.length > 0) {
       toast.error(
-        `Rows ${rowsWithMissingFields.slice(0, 5).join(", ")}${
-          rowsWithMissingFields.length > 5 ? "..." : ""
+        `Rows ${rowsWithMissingFields.slice(0, 5).join(", ")}${rowsWithMissingFields.length > 5 ? "..." : ""
         } are missing mandatory fields. Please ensure all rows have values for: ${mandatoryFields.join(
           ", "
         )}`
@@ -549,7 +548,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
             })
           )
             .unwrap()
-            .catch(() => {});
+            .catch(() => { });
         } catch (error) {
           console.error("Failed to create activity log:", error);
         }
@@ -600,8 +599,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
         );
         if (allErrors.length > 5) {
           toast.warning(
-            `... and ${
-              allErrors.length - 5
+            `... and ${allErrors.length - 5
             } more errors. Check console for details.`
           );
         }
@@ -630,9 +628,9 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
         const emailList =
           errorExistingEmails.length > 0
             ? errorExistingEmails.slice(0, 5).join(", ") +
-              (errorExistingEmails.length > 5
-                ? ` and ${errorExistingEmails.length - 5} more`
-                : "")
+            (errorExistingEmails.length > 5
+              ? ` and ${errorExistingEmails.length - 5} more`
+              : "")
             : "";
         const errorMsg =
           errorExistingEmails.length > 0
@@ -774,7 +772,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
               <Button
                 asChild
                 className="cursor-pointer"
-                style={{ backgroundColor: "#EF8037" }}
+                style={{ backgroundColor: "#2563EB" }}
               >
                 <span>
                   <FileSpreadsheet className="w-4 h-4 mr-2" />
@@ -800,7 +798,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
                 overflowY: "auto",
                 overflowX: "hidden",
                 scrollbarWidth: "thin",
-                scrollbarColor: "#EF8037 #f1f1f1",
+                scrollbarColor: "#2563EB #f1f1f1",
               }}
             >
               {excelHeaders.map((column: string, index: number) => {
@@ -811,7 +809,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
                 return (
                   <div
                     key={index}
-                    className="flex items-center space-x-4 bg-white p-3 rounded-md border border-gray-200 hover:border-orange-300 transition-colors"
+                    className="flex items-center space-x-4 bg-white p-3 rounded-md border border-gray-200 hover:border-blue-300 transition-colors"
                   >
                     <div className="w-32 flex-shrink-0">
                       <Badge variant="outline" className="font-medium">
@@ -875,7 +873,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
               </Button>
               <Button
                 onClick={handleMapping}
-                style={{ backgroundColor: "#EF8037" }}
+                style={{ backgroundColor: "#2563EB" }}
                 className="min-w-[150px] h-11 font-semibold shadow-md hover:opacity-90"
               >
                 Next: Preview
@@ -896,7 +894,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
               </h3>
               <p className="text-sm text-gray-600">
                 Review all rows of your data •{" "}
-                <span className="font-semibold text-orange-600">
+                <span className="font-semibold text-blue-600">
                   {importedRows.length}
                 </span>{" "}
                 {importedRows.length === 1 ? "row" : "rows"} total
@@ -911,7 +909,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
                 maxHeight: "500px",
                 overflow: "auto",
                 scrollbarWidth: "thin",
-                scrollbarColor: "#EF8037 #f1f1f1",
+                scrollbarColor: "#2563EB #f1f1f1",
               }}
             >
               <div className="overflow-x-auto">
@@ -978,7 +976,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
               </Button>
               <Button
                 onClick={handleImport}
-                style={{ backgroundColor: "#EF8037" }}
+                style={{ backgroundColor: "#2563EB" }}
                 disabled={isImporting || importedRows.length === 0}
                 className="min-w-[160px] h-11 font-semibold shadow-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -989,7 +987,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
                   </>
                 ) : (
                   <>
-                    <Upload className="w-4 h-4 mr-2" />
+                    <Upload className="w-4 h-4 mr-2 font-semibold" />
                     Import Data
                   </>
                 )}
@@ -1002,8 +1000,8 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
       case "importing":
         return (
           <div className="text-center py-8">
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Upload className="w-8 h-8 text-orange-600" />
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Upload className="w-8 h-8 text-blue-600" />
             </div>
             <h3 className="text-lg font-medium mb-2">Importing Data...</h3>
             <p className="text-gray-600 mb-6">
@@ -1087,7 +1085,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
                           >
                             <button
                               onClick={() => handleSort(field)}
-                              className="flex items-center hover:text-orange-600 transition-colors"
+                              className="flex items-center hover:text-blue-600 transition-colors"
                             >
                               {field.charAt(0).toUpperCase() + field.slice(1)}
                               {getSortIcon(field)}
@@ -1130,7 +1128,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
                                     <TableCell key={field}>
                                       <div className="flex items-center gap-3">
                                         <Avatar className="w-8 h-8">
-                                          <AvatarFallback className="bg-orange-100 text-orange-600 text-xs">
+                                          <AvatarFallback className="bg-blue-100 text-blue-600 text-xs">
                                             {getInitials(firstName, lastName)}
                                           </AvatarFallback>
                                         </Avatar>
@@ -1238,7 +1236,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
                               onClick={() => setCurrentPage(pageNum)}
                               style={
                                 currentPage === pageNum
-                                  ? { backgroundColor: "#EF8037" }
+                                  ? { backgroundColor: "#2563EB" }
                                   : {}
                               }
                             >
@@ -1273,7 +1271,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
               </Button>
               <Button
                 onClick={() => setCurrentStep("complete")}
-                style={{ backgroundColor: "#EF8037" }}
+                style={{ backgroundColor: "#2563EB" }}
               >
                 Done
               </Button>
@@ -1307,7 +1305,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
             </div>
             <Button
               onClick={resetImport}
-              style={{ backgroundColor: "#EF8037" }}
+              style={{ backgroundColor: "#2563EB" }}
             >
               Import Another File
             </Button>
@@ -1322,25 +1320,25 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
   return (
     <Card className="relative overflow-hidden border-0 bg-white shadow-xl">
       {/* Decorative Background Elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-orange-500/10 to-amber-500/10 rounded-full blur-3xl" />
-      <div className="absolute -bottom-32 -left-20 w-32 h-32 bg-gradient-to-tr from-orange-400/5 to-orange-600/5 rounded-full blur-2xl" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl" />
+      <div className="absolute -bottom-32 -left-20 w-32 h-32 bg-gradient-to-tr from-blue-400/5 to-blue-600/5 rounded-full blur-2xl" />
 
       {/* Top Gradient Border */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-orange-400 to-amber-500" />
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-blue-400 to-indigo-500" />
 
       <CardHeader className="relative pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {/* Icon Badge with Gradient */}
-            <div className="relative p-3 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg">
+            <div className="relative p-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
               <Upload className="w-6 h-6 text-white" strokeWidth={2.5} />
 
               {/* Icon Glow Effect */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 opacity-50 blur-lg" />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 opacity-50 blur-lg" />
             </div>
 
             <div>
-              <CardTitle className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+              <CardTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-semibold">
                 Import Data
               </CardTitle>
               <p className="text-sm text-gray-500 mt-1">
@@ -1351,9 +1349,9 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
           </div>
 
           {/* Decorative Badge */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50">
-            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 animate-pulse" />
-            <span className="text-xs font-medium text-orange-700">
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50">
+            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 animate-pulse" />
+            <span className="text-xs font-medium text-blue-700">
               Owner Only
             </span>
           </div>
@@ -1363,7 +1361,7 @@ export function ImportDataModule({ onImportComplete }: ImportDataModuleProps) {
       <CardContent className="relative">{renderStepContent()}</CardContent>
 
       {/* Bottom Subtle Gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
     </Card>
   );
 }

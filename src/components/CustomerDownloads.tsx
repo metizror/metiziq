@@ -204,7 +204,7 @@ export default function CustomerDownloads() {
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                 }}
-                className="pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent w-64"
+                className="pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent w-64"
               />
             </div>
           </div>
@@ -346,7 +346,7 @@ export default function CustomerDownloads() {
               <h2 className="text-[#030000]">Recent Downloads</h2>
               <button
                 onClick={() => window.location.hash = 'all-downloads'}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-[#EF8037] transition-colors flex items-center gap-2"
+                className="px-4 py-2 text-sm text-gray-600 hover:text-[#2563EB] transition-colors flex items-center gap-2"
               >
                 <span>View All</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -359,15 +359,15 @@ export default function CustomerDownloads() {
               {downloads.map((download: any) => (
                 <div
                   key={download.id}
-                  className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-[#EF8037]/30 transition-all relative overflow-hidden"
+                  className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-[#2563EB]/30 transition-all relative overflow-hidden"
                 >
                   {/* Decorative gradient */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#EF8037]/5 to-[#EB432F]/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#2563EB]/5 to-[#EB432F]/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
 
                   <div className="relative flex items-start gap-4">
                     {/* File Icon */}
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#EF8037]/20 to-[#EB432F]/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform relative">
-                      <FileText className="text-[#EF8037]" size={28} />
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#EB432F]/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform relative">
+                      <FileText className="text-[#2563EB]" size={28} />
                       <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
                         <CheckCircle className="text-white" size={14} />
                       </div>
@@ -377,7 +377,7 @@ export default function CustomerDownloads() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1 min-w-0 pr-4">
-                          <h3 className="text-[#030000] truncate group-hover:text-[#EF8037] transition-colors mb-1">
+                          <h3 className="text-[#030000] truncate group-hover:text-[#2563EB] transition-colors mb-1">
                             {download.fileName}
                           </h3>
                           <div className="flex items-center gap-3 text-sm text-gray-600">
@@ -414,7 +414,7 @@ export default function CustomerDownloads() {
                         <button
                           onClick={() => handleDownload(download)}
                           disabled={downloadingId === download.id}
-                          className="flex-1 group/btn px-4 py-2.5 bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:shadow-orange-200 transition-all flex items-center justify-center gap-2 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex-1 group/btn px-4 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:shadow-orange-200 transition-all flex items-center justify-center gap-2 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700"></div>
                           {downloadingId === download.id ? (

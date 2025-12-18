@@ -48,21 +48,21 @@ export default function DashboardLayout({
   // Convert Redux user to User type
   const dashboardUser: User | null = user
     ? {
-        id: user.id,
-        email: user.email,
-        name: user.name || `${user.firstName} ${user.lastName}`.trim() || user.email,
-        role: user.role || null,
-      }
+      id: user.id,
+      email: user.email,
+      name: user.name || `${user.firstName} ${user.lastName}`.trim() || user.email,
+      role: user.role || null,
+    }
     : null;
 
   // Convert User to UserObject for DashboardSidebar
   const sidebarUser: UserObject | null = dashboardUser
     ? {
-        _id: dashboardUser.id,
-        email: dashboardUser.email,
-        name: dashboardUser.name,
-        role: dashboardUser.role || "customer",
-      }
+      _id: dashboardUser.id,
+      email: dashboardUser.email,
+      name: dashboardUser.name,
+      role: dashboardUser.role || "customer",
+    }
     : null;
 
   // Handle logout - show confirmation dialog
@@ -104,7 +104,7 @@ export default function DashboardLayout({
           // Only update if the data is different to prevent unnecessary updates
           const apiName = response.admin.name || '';
           const apiEmail = response.admin.email || '';
-          
+
           if (user.name !== apiName || user.email !== apiEmail) {
             // Update Redux store with latest user data from API
             dispatch(updateUser({
@@ -131,7 +131,7 @@ export default function DashboardLayout({
         router.push("/");
         return;
       }
-      
+
       // Redirect customers to their customer dashboard
       if (role === "customer") {
         router.push("/customer/dashboard");
@@ -194,14 +194,14 @@ export default function DashboardLayout({
     { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', path: '/dashboard' },
     { id: 'contacts', label: 'Contacts', icon: 'Users', path: '/contacts' },
     { id: 'companies', label: 'Companies', icon: 'Building2', path: '/companies' },
-    { 
-      id: 'customers', 
-      label: 'Customers', 
-      icon: 'CheckCircle2', 
+    {
+      id: 'customers',
+      label: 'Customers',
+      icon: 'CheckCircle2',
       path: '/customers',
       ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
     },
-    ...(role === 'superadmin' ? [{ id: 'users', label: 'AMF Users', icon: 'UserCheck', path: '/users' }] : []),
+    // ...(role === 'superadmin' ? [{ id: 'users', label: 'AMF Users', icon: 'UserCheck', path: '/users' }] : []),
     ...(role === 'superadmin' ? [{ id: 'import', label: 'Import Data', icon: 'Upload', path: '/import', exclusive: true }] : []),
     { id: 'activity', label: 'Activity Logs', icon: 'Activity', path: '/activity' },
     { id: 'settings', label: 'Settings', icon: 'Settings', path: '/settings' }
@@ -222,11 +222,11 @@ export default function DashboardLayout({
 
   const activeView = getActiveView();
   const showFilterButton = activeView === 'contacts' || activeView === 'companies';
-  const pageTitle = pathname === '/dashboard' 
+  const pageTitle = pathname === '/dashboard'
     ? (role === 'superadmin' ? 'Owner Dashboard' : role === 'admin' ? 'Admin Dashboard' : 'Customer Dashboard')
-    : activeView === 'customers' 
-    ? 'Customers'
-    : activeView.charAt(0).toUpperCase() + activeView.slice(1).replace('-', ' ');
+    : activeView === 'customers'
+      ? 'Customers'
+      : activeView.charAt(0).toUpperCase() + activeView.slice(1).replace('-', ' ');
 
   return (
     <div className="flex h-screen bg-background">
@@ -237,7 +237,7 @@ export default function DashboardLayout({
         onLogout={handleLogout}
         pendingRequestsCount={pendingRequestsCount}
       />
-      
+
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Hide header on contact and company detail pages */}
         {!pathname.startsWith('/contacts/') && !pathname.startsWith('/companies/') && (
@@ -260,7 +260,7 @@ export default function DashboardLayout({
 
         <div className="flex-1 flex overflow-hidden">
           {/* Filter Panel is handled within the page component */}
-          
+
           {/* Remove padding on detail pages (any route with /[id] pattern like /contacts/123, /companies/456, etc.) */}
           {(() => {
             // Check if pathname has more than 2 segments (e.g., /contacts/123 or /companies/456)
@@ -274,28 +274,26 @@ export default function DashboardLayout({
             const isDetailPage = pathSegments.length >= 2 && !listOnlyPages.includes(pathSegments[0]);
             // Exclude detail pages and self-padded pages from default padding
             const shouldAddPadding = !isDetailPage && !selfPaddedPages.includes(pathSegments[0]);
-            
+
             return (
               <main className={`flex-1 overflow-hidden relative`}>
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                  <div className={`absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br rounded-full blur-3xl ${
-                    role === 'superadmin' 
-                      ? 'from-orange-200/30 via-orange-100/20 to-transparent' 
+                  <div className={`absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br rounded-full blur-3xl ${role === 'superadmin'
+                      ? 'from-orange-200/30 via-orange-100/20 to-transparent'
                       : 'from-orange-200/30 via-orange-100/20 to-transparent'
-                  }`}></div>
+                    }`}></div>
                   <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-200/20 via-purple-100/20 to-transparent rounded-full blur-3xl"></div>
                   <div className="absolute inset-0 opacity-[0.02]" style={{
                     backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0)`,
                     backgroundSize: '40px 40px'
                   }}></div>
-                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent to-transparent ${
-                    role === 'superadmin' ? 'via-orange-400/30' : 'via-orange-400/30'
-                  }`}></div>
+                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent to-transparent ${role === 'superadmin' ? 'via-orange-400/30' : 'via-orange-400/30'
+                    }`}></div>
                 </div>
 
                 <div className={`relative z-10 h-full min-h-0 overflow-y-auto ${shouldAddPadding ? 'dashboard-scroll-container' : ''}`} style={{
                   scrollbarWidth: 'thin',
-                  scrollbarColor: '#EF8037 #f1f1f1'
+                  scrollbarColor: '#2563EB #f1f1f1'
                 }}>
                   <PageTransition>
                     {children}

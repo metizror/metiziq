@@ -235,7 +235,7 @@ function OtpVerifyContent() {
                     router.push('/');
                   }}
                   className="w-full h-11"
-                  style={{ backgroundColor: '#EF8037' }}
+                  style={{ backgroundColor: '#2563EB' }}
                 >
                   Go to Login
                 </Button>
@@ -254,7 +254,7 @@ function OtpVerifyContent() {
           <CardContent className="pt-8 pb-8">
             {/* Logo */}
             <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ backgroundColor: '#EF8037' }}>
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ backgroundColor: '#2563EB' }}>
                 <Shield className="w-8 h-8 text-white" />
               </div>
             </div>
@@ -291,7 +291,7 @@ function OtpVerifyContent() {
               <Button
                 type="submit"
                 className="w-full h-11"
-                style={{ backgroundColor: '#EF8037' }}
+                style={{ backgroundColor: '#2563EB' }}
                 disabled={isVerifyingOtp || isResendingOtp || otp.length !== 6}
               >
                 {isVerifyingOtp ? (
@@ -341,7 +341,7 @@ export default function OtpVerifyPage() {
           <Card className="shadow-lg border-0">
             <CardContent className="pt-8 pb-8">
               <div className="text-center">
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#EF8037]" />
+                <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#2563EB]" />
                 <p className="mt-4 text-gray-600">Loading...</p>
               </div>
             </CardContent>

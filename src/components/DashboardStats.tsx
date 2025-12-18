@@ -28,9 +28,9 @@ export function DashboardStats({ contacts, companies, users, role, adminUsersCou
   const usersCount = adminUsersCount !== undefined ? adminUsersCount : users.length;
 
   console.log(usersCount, "usersCount");
-  
+
   // Format last import date or show "No imports yet"
-  const formattedLastImportDate = lastImportDate 
+  const formattedLastImportDate = lastImportDate
     ? new Date(lastImportDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
     : 'No imports yet';
 
@@ -66,9 +66,9 @@ export function DashboardStats({ contacts, companies, users, role, adminUsersCou
       title: 'Last Import Date',
       value: formattedLastImportDate,
       icon: Upload,
-      gradient: 'from-orange-500 to-amber-500',
-      glowColor: 'rgba(239, 128, 55, 0.3)',
-      iconBg: 'from-orange-100 to-amber-100',
+      gradient: 'from-blue-500 to-indigo-500',
+      glowColor: 'rgba(59, 130, 246, 0.3)',
+      iconBg: 'from-blue-100 to-indigo-100',
       label: 'Most recent data import'
     }
   ] : [
@@ -103,9 +103,9 @@ export function DashboardStats({ contacts, companies, users, role, adminUsersCou
       title: 'Last Updated',
       value: today,
       icon: Calendar,
-      gradient: 'from-orange-500 to-amber-500',
-      glowColor: 'rgba(239, 128, 55, 0.3)',
-      iconBg: 'from-orange-100 to-amber-100',
+      gradient: 'from-blue-500 to-indigo-500',
+      glowColor: 'rgba(59, 130, 246, 0.3)',
+      iconBg: 'from-blue-100 to-indigo-100',
       label: 'Last activity date'
     }
   ];
@@ -135,21 +135,21 @@ export function DashboardStats({ contacts, companies, users, role, adminUsersCou
       {statsCards.map((stat, index) => {
         const Icon = stat.icon;
         const isCardLoading = getLoadingState(index);
-        
+
         return (
-          <Card 
-            key={index} 
+          <Card
+            key={index}
             className="relative overflow-hidden border-0 bg-white shadow-lg hover:shadow-xl transition-all duration-300 group"
           >
             {/* Gradient Glow Effect */}
-            <div 
+            <div
               className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
               style={{ backgroundColor: stat.glowColor }}
             />
-            
+
             {/* Top Gradient Border */}
             <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
-            
+
             <CardContent className="relative p-6">
               {isCardLoading ? (
                 // Skeleton Loading State with shimmer animation
@@ -178,9 +178,9 @@ export function DashboardStats({ contacts, companies, users, role, adminUsersCou
                   <div className="flex items-start justify-between mb-4">
                     <div className={`relative p-3.5 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg transform group-hover:scale-110 transition-all duration-300`}>
                       <Icon className="w-7 h-7 text-white" strokeWidth={2.5} />
-                      
+
                       {/* Icon Glow Effect */}
-                      <div 
+                      <div
                         className={`absolute inset-0 rounded-xl bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-60 blur-lg transition-opacity duration-300`}
                       />
                     </div>

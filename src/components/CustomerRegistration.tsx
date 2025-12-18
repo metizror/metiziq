@@ -265,7 +265,7 @@ export function CustomerRegistration({ onRegistrationComplete, onBackToLogin, on
       <div className="w-full max-w-2xl">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ backgroundColor: '#EF8037' }}>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ backgroundColor: '#2563EB' }}>
             <User className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-semibold text-gray-900">Create Your Account</h1>
@@ -408,7 +408,7 @@ export function CustomerRegistration({ onRegistrationComplete, onBackToLogin, on
               <Button 
                 type="submit" 
                 className="w-full h-11"
-                style={{ backgroundColor: '#EF8037' }}
+                style={{ backgroundColor: '#2563EB' }}
                 disabled={pending}
               >
                 {pending ? (

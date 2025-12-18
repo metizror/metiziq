@@ -399,7 +399,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
               placeholder="Search by company name, industry, or location..."
               value={filters.search}
               onChange={(e: { target: { value: string } }) => setFilters({ ...filters, search: e.target.value })}
-              className="w-full pl-10 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
+              className="w-full pl-10 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
             />
           </div>
 
@@ -410,14 +410,14 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
               placeholder="Company Name"
               value={filters.company}
               onChange={(e: { target: { value: string } }) => setFilters({ ...filters, company: e.target.value })}
-              className="w-40 px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
+              className="w-40 px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
             />
           </div>
 
           {/* All Industries */}
           <div className="relative min-w-[150px]">
             <Select key={`industry-${resetKey}`} value={filters.industry || undefined} onValueChange={(value: string) => setFilters({ ...filters, industry: value })}>
-              <SelectTrigger className="w-full px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#EF8037] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
+              <SelectTrigger className="w-full px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#2563EB] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
                 <SelectValue placeholder="All Industries" />
               </SelectTrigger>
               <SelectContent>
@@ -431,7 +431,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
           {/* Country */}
           <div className="relative min-w-[150px]">
             <Select key={`country-${resetKey}`} value={filters.country || undefined} onValueChange={(value: string) => setFilters({ ...filters, country: value })}>
-              <SelectTrigger className="w-full px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#EF8037] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
+              <SelectTrigger className="w-full px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#2563EB] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
                 <SelectValue placeholder="Country" />
               </SelectTrigger>
               <SelectContent>
@@ -445,7 +445,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
           {/* Employee Size */}
           <div className="relative min-w-[140px]">
             <Select key={`employeeSize-${resetKey}`} value={filters.employeeSize || undefined} onValueChange={(value: string) => setFilters({ ...filters, employeeSize: value })}>
-              <SelectTrigger className="w-full px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#EF8037] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
+              <SelectTrigger className="w-full px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#2563EB] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
                 <SelectValue placeholder="Employee Size" />
               </SelectTrigger>
               <SelectContent>
@@ -459,7 +459,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
           {/* All Revenue */}
           <div className="relative min-w-[140px]">
             <Select key={`revenue-${resetKey}`} value={filters.revenue || undefined} onValueChange={(value: string) => setFilters({ ...filters, revenue: value })}>
-              <SelectTrigger className="w-full px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#EF8037] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
+              <SelectTrigger className="w-full px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#2563EB] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
                 <SelectValue placeholder="All Revenue" />
               </SelectTrigger>
               <SelectContent>
@@ -494,7 +494,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                   setFilters({ ...filters, limitFilter: '1' });
                 }
               }}
-              className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
+              className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
             />
           </div>
 
@@ -508,10 +508,10 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                 className="hidden"
                 id="exclude-emails-file-input-companies"
               />
-              <div className="flex items-center gap-2 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white hover:border-[#EF8037] hover:bg-orange-50 transition-all cursor-pointer shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white hover:border-[#2563EB] hover:bg-orange-50 transition-all cursor-pointer shadow-sm">
                 {excludeEmailsFileName || filters.excludeEmailsFile ? (
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <FileSpreadsheet className="text-[#EF8037] flex-shrink-0" size={18} />
+                    <FileSpreadsheet className="text-[#2563EB] flex-shrink-0" size={18} />
                     <span className="text-sm text-gray-700 truncate">
                       {excludeEmailsFileName || filters.excludeEmailsFile?.name || 'File selected'}
                     </span>
@@ -539,7 +539,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
           {/* Apply Filters Button */}
           <button
             onClick={handleApplyFilters}
-            className="px-6 py-3.5 h-[46px] bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 whitespace-nowrap font-medium"
+            className="px-6 py-3.5 h-[46px] bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 whitespace-nowrap font-medium"
           >
             <Filter size={18} />
             Apply Filters
@@ -549,7 +549,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
           <button
             onClick={resetFilters}
             type="button"
-            className="text-gray-600 hover:text-[#EF8037] transition-colors underline text-sm whitespace-nowrap"
+            className="text-gray-600 hover:text-[#2563EB] transition-colors underline text-sm whitespace-nowrap"
           >
             Reset Filters
           </button>
@@ -567,10 +567,10 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                 <div>
                   <p className="text-[#030000]">Search Results</p>
                   <p className="text-gray-600 text-sm">
-                    Showing <span className="text-[#EF8037]">{visibleCompanies.length}</span> of{' '}
+                    Showing <span className="text-[#2563EB]">{visibleCompanies.length}</span> of{' '}
                     <span className="text-[#030000]">{pagination?.totalCount || 0}</span> companies
                     {selectedCompanies.length > 0 && (
-                      <span className="ml-2 text-[#EF8037] font-medium">
+                      <span className="ml-2 text-[#2563EB] font-medium">
                         ({selectedCompanies.length} selected)
                       </span>
                     )}
@@ -603,7 +603,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
             <p className="text-gray-600 mb-4">Try adjusting your filters or search keyword.</p>
             <button
               onClick={resetFilters}
-              className="px-6 py-3 bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
+              className="px-6 py-3 bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
             >
               Reset Filters
             </button>
@@ -618,7 +618,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
               minHeight: '200px',
               overflowY: 'hidden',
               scrollbarWidth: 'thin',
-              scrollbarColor: '#EF8037 #f1f1f1'
+              scrollbarColor: '#2563EB #f1f1f1'
             }}
           >
             <table className="w-full" style={{ minWidth: '1440px', tableLayout: 'fixed' }}>
@@ -859,7 +859,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                             <Lock size={16} />
                           </button>
                           <button
-                            className="p-3 border-2 border-gray-200 rounded-xl hover:border-[#EF8037] hover:bg-orange-50 transition-all hover:scale-105 flex-shrink-0"
+                            className="p-3 border-2 border-gray-200 rounded-xl hover:border-[#2563EB] hover:bg-orange-50 transition-all hover:scale-105 flex-shrink-0"
                             title="View Details"
                           >
                             <Eye size={16} className="text-gray-600" />
@@ -924,7 +924,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                       }}
                     />
                   </div>
-                  <div className="w-14 h-14 rounded-xl bg-gradient-from-[#EF8037] to-[#EB432F] flex items-center justify-center text-white shadow-lg flex-shrink-0">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-from-[#2563EB] to-[#EB432F] flex items-center justify-center text-white shadow-lg flex-shrink-0">
                     <Building2 size={24} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -973,10 +973,10 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
         {/* Unlock & Download Banner - Sticky at Bottom */}
         {!ableToBuyCompanies && !error && (
           <div className="sticky bottom-0 z-50 mt-8">
-            <div className="bg-gradient-to-r from-[#FFF3EC] to-[#FFE8DC] border-2 border-[#EF8037] rounded-2xl p-6 shadow-2xl">
+            <div className="bg-gradient-to-r from-[#FFF3EC] to-[#FFE8DC] border-2 border-[#2563EB] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between gap-6 flex-wrap">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center shadow-lg flex-shrink-0">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center shadow-lg flex-shrink-0">
                     <Lock className="text-white" size={24} />
                   </div>
                   <div className="min-w-0">
@@ -992,7 +992,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                   }}
                   disabled={selectedCompanies.length !== 10 || !!appliedFilters.limitFilter}
                   className={`group px-8 py-4 rounded-xl transition-all flex items-center gap-3 shadow-lg whitespace-nowrap flex-shrink-0 font-medium ${selectedCompanies.length === 10 && !appliedFilters.limitFilter
-                      ? 'bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
+                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                     }`}
                 >
@@ -1009,10 +1009,10 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
         {/* Buy Companies Banner - When ableToBuyCompanies is true */}
         {ableToBuyCompanies && !error && (
           <div className="sticky bottom-0 z-50 mt-8">
-            <div className="bg-gradient-to-r from-[#FFF3EC] to-[#FFE8DC] border-2 border-[#EF8037] rounded-2xl p-6 shadow-2xl">
+            <div className="bg-gradient-to-r from-[#FFF3EC] to-[#FFE8DC] border-2 border-[#2563EB] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between gap-6 flex-wrap">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center shadow-lg flex-shrink-0">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center shadow-lg flex-shrink-0">
                     <Lock className="text-white" size={24} />
                   </div>
                   <div className="min-w-0">
@@ -1028,7 +1028,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                   }}
                   disabled={selectedCompanies.length === 0}
                   className={`group px-8 py-4 rounded-xl transition-all flex items-center gap-3 shadow-lg whitespace-nowrap flex-shrink-0 font-medium ${selectedCompanies.length > 0
-                      ? 'bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
+                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                     }`}
                 >
@@ -1048,7 +1048,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-[#030000] flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center">
                 <CreditCard className="text-white" size={24} />
               </div>
               Payment for Companies
@@ -1088,7 +1088,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                     <span className="text-gray-700">
                       {selectedCompanies.length} companies × ${PRICE_PER_CONTACT.toFixed(2)}
                     </span>
-                    <span className="text-[#EF8037] font-semibold">
+                    <span className="text-[#2563EB] font-semibold">
                       = ${totalCost.toFixed(2)}
                     </span>
                   </div>
@@ -1097,7 +1097,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                 {/* Total */}
                 <div className="flex items-center justify-between pt-3 border-t-2 border-gray-300">
                   <span className="text-lg font-bold text-[#030000]">Total Amount</span>
-                  <span className="text-2xl font-bold text-[#EF8037]">${totalCost.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-[#2563EB]">${totalCost.toFixed(2)}</span>
                 </div>
               </div>
             </div>

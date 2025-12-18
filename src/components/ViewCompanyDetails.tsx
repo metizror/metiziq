@@ -604,7 +604,7 @@ export function ViewCompanyDetails({
     }
   };
 
-  const roleColor = user.role === "superadmin" ? "#EF8037" : "#EB432F";
+  const roleColor = user.role === "superadmin" ? "#2563EB" : "#EB432F";
 
   // Format address - returns array of address lines
   const formatAddressLines = () => {
@@ -953,7 +953,7 @@ export function ViewCompanyDetails({
                 {/* Contact Count */}
                 <div
                   className="text-7xl font-bold"
-                  style={{ color: "#EF8037" }}
+                  style={{ color: "#2563EB" }}
                 >
                   {contactsCount}
                 </div>
@@ -961,7 +961,7 @@ export function ViewCompanyDetails({
                 {/* Company Name Text - Single line with company name in orange */}
                 <div className="text-sm text-gray-700 ">
                   Contacts Available for{" "}
-                  <span className="font-semibold" style={{ color: "#EF8037" }}>
+                  <span className="font-semibold" style={{ color: "#2563EB" }}>
                     {company.companyName}
                   </span>
                 </div>
@@ -977,7 +977,7 @@ export function ViewCompanyDetails({
                   <div className="px-4 py-1.5 bg-white rounded-full flex shadow-sm border border-orange-100 mb-3 flex items-center gap-2">
                     <Mail
                       className="w-4 h-4 flex-shrink-0"
-                      style={{ color: "#EF8037" }}
+                      style={{ color: "#2563EB" }}
                       strokeWidth={1.5}
                       fill="none"
                     />
@@ -988,7 +988,7 @@ export function ViewCompanyDetails({
                   <div className=" px-4 py-1.5 bg-white rounded-full shadow-sm border border-orange-100 mb-3 flex items-center gap-2">
                     <Phone
                       className="w-4 h-4 flex-shrink-0"
-                      style={{ color: "#EF8037" }}
+                      style={{ color: "#2563EB" }}
                       strokeWidth={1.5}
                       fill="none"
                     />

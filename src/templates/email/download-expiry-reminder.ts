@@ -42,7 +42,7 @@ export function getDownloadExpiryReminderTemplate(
                       If you haven't downloaded it yet, please do so soon:
                     </p>
                     <div style="margin: 30px 0; text-align: center;">
-                      <a href="${fullDownloadUrl}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(to right, #EF8037, #EB432F); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(239, 128, 55, 0.3);">
+                      <a href="${fullDownloadUrl}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(to right, #2563EB, #EB432F); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(239, 128, 55, 0.3);">
                         Download Now
                       </a>
                     </div>

@@ -427,7 +427,7 @@ export function ApprovalRequests({
                         variant={displayPage === pageNum ? "default" : "outline"}
                         size="sm"
                         onClick={() => handlePageNavigation(pageNum)}
-                        style={displayPage === pageNum ? { backgroundColor: '#EF8037' } : {}}
+                        style={displayPage === pageNum ? { backgroundColor: '#2563EB' } : {}}
                         disabled={isLoading}
                       >
                         {pageNum}

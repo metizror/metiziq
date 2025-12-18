@@ -44,7 +44,7 @@ export function getPaymentSuccessUserTemplate(data: PaymentSuccessUserTemplateDa
                       Your file is ready to download:
                     </p>
                     <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
-                      <a href="${fullDownloadUrl}" style="color: #EF8037; text-decoration: none; font-weight: 600; word-break: break-all;">Download Link: ${fullDownloadUrl}</a>
+                      <a href="${fullDownloadUrl}" style="color: #2563EB; text-decoration: none; font-weight: 600; word-break: break-all;">Download Link: ${fullDownloadUrl}</a>
                     </p>
                     <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #374151;">
                       The link will remain active for 7 days.

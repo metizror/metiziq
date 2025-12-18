@@ -40,7 +40,7 @@ export function getFileReadyUserTemplate(data: FileReadyUserTemplateData): strin
                       Download Link:
                     </p>
                     <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
-                      <a href="${fullDownloadUrl}" style="color: #EF8037; text-decoration: none; font-weight: 600; word-break: break-all;">${fullDownloadUrl}</a>
+                      <a href="${fullDownloadUrl}" style="color: #2563EB; text-decoration: none; font-weight: 600; word-break: break-all;">${fullDownloadUrl}</a>
                     </p>
                     <p style="margin: 20px 0 0 0; font-size: 16px; line-height: 1.6; color: #374151;">
                       Expires in 7 days.

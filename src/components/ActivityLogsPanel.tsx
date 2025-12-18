@@ -150,7 +150,7 @@ export const ActivityLogsPanel = React.memo(function ActivityLogsPanel({
   };
 
   const pageNumbers = getPageNumbers();
-  const themeColor = '#EF8037';
+  const themeColor = '#2563EB';
 
   // Full screen layout
   if (isFullScreen) {

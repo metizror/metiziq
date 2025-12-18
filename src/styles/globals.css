@@ -225,12 +225,12 @@ html {
 }
 
 .preview-table-scroll::-webkit-scrollbar-thumb {
-  background: #EF8037;
+  background: #2563EB;
   border-radius: 6px;
 }
 
 .preview-table-scroll::-webkit-scrollbar-thumb:hover {
-  background: #d96a2a;
+  background: #1D4ED8;
 }
 
 /* Custom scrollbar for mapping section */
@@ -245,12 +245,12 @@ html {
 }
 
 .mapping-scroll-container::-webkit-scrollbar-thumb {
-  background: #EF8037;
+  background: #2563EB;
   border-radius: 6px;
 }
 
 .mapping-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #d96a2a;
+  background: #1D4ED8;
 }
 
 /* Custom scrollbar for dashboard main section */
@@ -264,12 +264,12 @@ html {
 }
 
 .dashboard-scroll-container::-webkit-scrollbar-thumb {
-  background: #EF8037;
+  background: #2563EB;
   border-radius: 6px;
 }
 
 .dashboard-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #d96a2a;
+  background: #1D4ED8;
 }
 
 /* Custom styles for select dropdown in mapping section */
@@ -294,12 +294,12 @@ html {
 }
 
 .select-dropdown-scroll::-webkit-scrollbar-thumb {
-  background: #EF8037;
+  background: #2563EB;
   border-radius: 4px;
 }
 
 .select-dropdown-scroll::-webkit-scrollbar-thumb:hover {
-  background: #d96a2a;
+  background: #1D4ED8;
 }
 
 /* Custom scrollbar for customer contacts table */
@@ -314,10 +314,10 @@ html {
 }
 
 .customer-contacts-table-scroll::-webkit-scrollbar-thumb {
-  background: #EF8037;
+  background: #2563EB;
   border-radius: 6px;
 }
 
 .customer-contacts-table-scroll::-webkit-scrollbar-thumb:hover {
-  background: #d96a2a;
+  background: #1D4ED8;
 }

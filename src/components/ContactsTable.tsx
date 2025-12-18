@@ -1711,7 +1711,7 @@ export function ContactsTable({
             </AlertDialog>
             <Button 
               size="sm" 
-              className="bg-[#EF8037] hover:bg-[#EF8037]/90 text-white"
+              className="bg-[#2563EB] hover:bg-[#2563EB]/90 text-white"
               onClick={() => router.push('/contacts/new')}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -1724,7 +1724,7 @@ export function ContactsTable({
       <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden" style={{ flex: '1 1 0%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div className="overflow-y-auto overflow-x-auto flex-1" style={{ 
           scrollbarWidth: 'thin', 
-          scrollbarColor: '#EF8037 #f1f1f1',
+          scrollbarColor: '#2563EB #f1f1f1',
           minHeight: 0,
           maxHeight: '100%'
         }}>
@@ -1953,7 +1953,7 @@ export function ContactsTable({
                     variant={currentPage === pageNum ? "default" : "outline"}
                     size="sm"
                     onClick={() => handlePageNavigation(pageNum)}
-                    style={currentPage === pageNum ? { backgroundColor: '#EF8037' } : {}}
+                    style={currentPage === pageNum ? { backgroundColor: '#2563EB' } : {}}
                   >
                     {pageNum}
                   </Button>

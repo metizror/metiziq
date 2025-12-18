@@ -31,15 +31,15 @@ export default function CustomerPayment({ setActiveTab }: CustomerPaymentProps) 
       <div className="p-8 max-w-7xl mx-auto">
         {/* Pricing Model Hero */}
         <div className="mb-8 relative group">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#EF8037] to-[#EB432F] rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#2563EB] to-[#EB432F] rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
           <div className="relative bg-white rounded-3xl p-8 shadow-2xl overflow-hidden">
             {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#EF8037]/5 to-[#EB432F]/5 rounded-full blur-3xl"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#2563EB]/5 to-[#EB432F]/5 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-gradient-to-tr from-orange-100 to-red-100 rounded-full blur-2xl"></div>
             
             <div className="relative">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] shadow-xl mb-4">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] shadow-xl mb-4">
                   <DollarSign className="text-white" size={40} />
                 </div>
                 <h2 className="text-3xl font-semibold text-[#030000] mb-2">Pay-Per-Contact Pricing</h2>
@@ -136,14 +136,14 @@ export default function CustomerPayment({ setActiveTab }: CustomerPaymentProps) 
                   <div className="h-px bg-gray-200"></div>
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold text-[#030000]">Total:</span>
-                    <span className="text-2xl font-bold text-[#EF8037]">${totalCost.toFixed(2)}</span>
+                    <span className="text-2xl font-bold text-[#2563EB]">${totalCost.toFixed(2)}</span>
                   </div>
                 </div>
 
                 <Button
                   onClick={handlePayment}
                   className="w-full h-14 text-lg"
-                  style={{ backgroundColor: '#EF8037' }}
+                  style={{ backgroundColor: '#2563EB' }}
                   disabled={contactsToPurchase < 50}
                 >
                   <CreditCard className="w-5 h-5 mr-2" />
@@ -222,7 +222,7 @@ export default function CustomerPayment({ setActiveTab }: CustomerPaymentProps) 
             <Button
               onClick={() => setActiveTab('invoices')}
               variant="outline"
-              className="border-orange-200 text-[#EF8037] hover:bg-orange-50"
+              className="border-orange-200 text-[#2563EB] hover:bg-orange-50"
             >
               View All
               <ChevronRight size={16} className="ml-1" />
@@ -257,7 +257,7 @@ export default function CustomerPayment({ setActiveTab }: CustomerPaymentProps) 
                     </td>
                     <td className="px-8 py-4 text-right font-semibold text-[#030000]">{transaction.amount}</td>
                     <td className="px-8 py-4 text-right">
-                      <Button variant="ghost" size="sm" className="text-[#EF8037] hover:text-[#EB432F]">
+                      <Button variant="ghost" size="sm" className="text-[#2563EB] hover:text-[#EB432F]">
                         <FileText size={16} className="mr-1" />
                         Download
                       </Button>

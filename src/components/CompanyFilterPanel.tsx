@@ -467,7 +467,7 @@ export function CompanyFilterPanel({ filters, setFilters, onFilterChange, onClos
       </div>
 
       {/* Scrollable Filter Categories - Only this section scrolls */}
-      <div className="flex-1 overflow-y-auto min-h-0" style={{ scrollbarWidth: 'thin', scrollbarColor: '#EF8037 #f1f1f1' }}>
+      <div className="flex-1 overflow-y-auto min-h-0" style={{ scrollbarWidth: 'thin', scrollbarColor: '#2563EB #f1f1f1' }}>
         <div className="px-4 pt-4 pb-4 space-y-6">
           {/* Company Level Filters */}
           <Collapsible open={companyExpanded} onOpenChange={setCompanyExpanded}>
@@ -548,7 +548,7 @@ export function CompanyFilterPanel({ filters, setFilters, onFilterChange, onClos
           <div className="pt-4 border-t border-gray-200">
         <Button 
           className="w-full"
-          style={{ backgroundColor: hasFilterChanges ? '#EF8037' : '#9CA3AF' }}
+          style={{ backgroundColor: hasFilterChanges ? '#2563EB' : '#9CA3AF' }}
           onClick={handleApplyFilters}
           disabled={!hasFilterChanges}
         >

@@ -169,7 +169,7 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
           <CardTitle>Users ({filteredUsers.length})</CardTitle>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" style={{ backgroundColor: '#EF8037' }}>
+              <Button size="sm" style={{ backgroundColor: '#2563EB' }}>
                 <Plus className="w-4 h-4 mr-2" />
                 Add User
               </Button>
@@ -224,7 +224,7 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} disabled={isCreating}>
                   Cancel
                 </Button>
-                <Button onClick={handleAddUser} style={{ backgroundColor: '#EF8037' }} disabled={isCreating}>
+                <Button onClick={handleAddUser} style={{ backgroundColor: '#2563EB' }} disabled={isCreating}>
                   {isCreating ? 'Adding...' : 'Add User'}
                 </Button>
               </div>
@@ -406,7 +406,7 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
                             <Button variant="outline" onClick={() => setEditingUser(null)} disabled={isUpdating}>
                               Cancel
                             </Button>
-                            <Button onClick={handleUpdateUser} style={{ backgroundColor: '#EF8037' }} disabled={isUpdating}>
+                            <Button onClick={handleUpdateUser} style={{ backgroundColor: '#2563EB' }} disabled={isUpdating}>
                               {isUpdating ? 'Updating...' : 'Update User'}
                             </Button>
                           </div>

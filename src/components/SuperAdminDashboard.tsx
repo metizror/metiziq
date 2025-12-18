@@ -59,9 +59,9 @@ export function SuperAdminDashboard({
   const [lastImportDate, setLastImportDate] = useState(null as string | null);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true as boolean);
   const [isLoadingImportDate, setIsLoadingImportDate] = useState(true as boolean);
-  
+
   const dispatch = useAppDispatch();
-  
+
   // Fetch admin users count and last import date
   useEffect(() => {
     setIsLoadingUsers(true);
@@ -73,7 +73,7 @@ export function SuperAdminDashboard({
     }).catch(() => {
       setIsLoadingUsers(false);
     });
-    
+
     // Fetch last import date (most recent contact's createdAt)
     setIsLoadingImportDate(true);
     privateApiCall<{ contacts: Array<{ createdAt: string }> }>("/admin/contacts?page=1&limit=25&sortBy=createdAt&sortOrder=desc")
@@ -111,13 +111,13 @@ export function SuperAdminDashboard({
     { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
     { id: 'contacts', label: 'Contacts', icon: 'Users' },
     { id: 'companies', label: 'Companies', icon: 'Building2' },
-    { 
-      id: 'customers', 
-      label: 'Customers', 
-      icon: 'CheckCircle2', 
+    {
+      id: 'customers',
+      label: 'Customers',
+      icon: 'CheckCircle2',
       ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
     },
-    { id: 'users', label: 'AMF Users', icon: 'UserCheck' },
+
     { id: 'import', label: 'Import Data', icon: 'Upload', exclusive: true },
     { id: 'activity', label: 'Activity Logs', icon: 'Activity' },
     { id: 'settings', label: 'Settings', icon: 'Settings' }
@@ -172,7 +172,7 @@ export function SuperAdminDashboard({
   const handleExportContact = (contact: Contact) => {
     const csvHeader = 'First Name,Last Name,Job Title,Job Level,Job Role,Email,Phone,Direct Phone,Address 1,Address 2,City,State,Zip Code,Country,Website,Industry,Contact LinkedIn URL,aMF Notes,Last Update Date';
     const csvRow = `"${contact.firstName}","${contact.lastName}","${contact.jobTitle}","${contact.jobLevel}","${contact.jobRole}","${contact.email}","${contact.phone}","${contact.directPhone}","${contact.address1}","${contact.address2}","${contact.city}","${contact.state}","${contact.zipCode}","${contact.country}","${contact.website}","${contact.industry}","${contact.contactLinkedInUrl}","${contact.amfNotes}","${contact.lastUpdateDate}"`;
-    
+
     const csvContent = [csvHeader, csvRow].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -188,7 +188,7 @@ export function SuperAdminDashboard({
       case 'dashboard':
         return (
           <div className="space-y-6">
-            <DashboardStats 
+            <DashboardStats
               contacts={contacts}
               companies={companies}
               users={users}
@@ -203,7 +203,7 @@ export function SuperAdminDashboard({
               }}
             />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ImportDataModule 
+              <ImportDataModule
                 onImportComplete={(newContacts, newCompanies) => {
                   setContacts([...contacts, ...newContacts]);
                   setCompanies([...companies, ...newCompanies]);
@@ -268,7 +268,7 @@ export function SuperAdminDashboard({
         );
       case 'import':
         return (
-          <ImportDataModule 
+          <ImportDataModule
             onImportComplete={(newContacts, newCompanies) => {
               setContacts([...contacts, ...newContacts]);
               setCompanies([...companies, ...newCompanies]);
@@ -298,7 +298,7 @@ export function SuperAdminDashboard({
         onLogout={onLogout}
         pendingRequestsCount={pendingRequestsCount}
       />
-      
+
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         {activeView !== 'view-company' && activeView !== 'view-contact' && (
@@ -333,29 +333,29 @@ export function SuperAdminDashboard({
         <div className="flex-1 flex overflow-hidden">
           {/* Filter Panel */}
           {showFilters && (activeView === 'contacts' || activeView === 'companies') && (
-            <FilterPanel 
+            <FilterPanel
               filters={filters}
               setFilters={setFilters}
               onClose={() => setShowFilters(false)}
             />
           )}
-          
+
           {/* Main Content */}
           <main className={`flex-1 overflow-auto relative ${activeView === 'view-company' || activeView === 'view-contact' ? '' : 'p-6'}`}>
             {/* Decorative Background Elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               {/* Top Right Gradient Orb */}
               <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-orange-200/30 via-orange-100/20 to-transparent rounded-full blur-3xl"></div>
-              
+
               {/* Bottom Left Gradient Orb */}
               <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-200/20 via-purple-100/20 to-transparent rounded-full blur-3xl"></div>
-              
+
               {/* Subtle Grid Pattern */}
               <div className="absolute inset-0 opacity-[0.02]" style={{
                 backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0)`,
                 backgroundSize: '40px 40px'
               }}></div>
-              
+
               {/* Top Accent Line */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-orange-400/30 to-transparent"></div>
             </div>

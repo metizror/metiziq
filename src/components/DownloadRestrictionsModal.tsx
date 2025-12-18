@@ -265,7 +265,7 @@ export function DownloadRestrictionsModal({
           
           <Button 
             onClick={handleDownload}
-            style={{ backgroundColor: '#EF8037' }}
+            style={{ backgroundColor: '#2563EB' }}
             disabled={contactsToDownload < MIN_DOWNLOAD || effectiveDownload + dailyUsed > dailyLimit}
             className="min-w-[200px]"
           >

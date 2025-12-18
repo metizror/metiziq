@@ -51,7 +51,7 @@ function InputOTPSlot({
       data-slot="input-otp-slot"
       data-active={isActive}
       className={cn(
-        "data-[active=true]:border-[#EF8037] data-[active=true]:ring-[#EF8037]/30 data-[active=true]:ring-[2px] data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10",
+        "data-[active=true]:border-[#2563EB] data-[active=true]:ring-[#2563EB]/30 data-[active=true]:ring-[2px] data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10",
         className,
       )}
       {...props}
@@ -62,7 +62,7 @@ function InputOTPSlot({
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center z-20">
           {!char ? (
             <div 
-              className="bg-[#EF8037] rounded-full shadow-lg animate-caret-blink" 
+              className="bg-[#2563EB] rounded-full shadow-lg animate-caret-blink" 
               style={{ 
                 width: '3px', 
                 height: '32px',
@@ -72,7 +72,7 @@ function InputOTPSlot({
             />
           ) : (
             <div 
-              className="absolute right-1 top-1/2 -translate-y-1/2 bg-[#EF8037] rounded-full animate-caret-blink shadow-md" 
+              className="absolute right-1 top-1/2 -translate-y-1/2 bg-[#2563EB] rounded-full animate-caret-blink shadow-md" 
               style={{ 
                 width: '3px', 
                 height: '24px',

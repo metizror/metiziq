@@ -122,7 +122,7 @@ export function LoginPage({ onLogin, onCreateApprovalRequest }: LoginPageProps) 
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ backgroundColor: '#EF8037' }}>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ backgroundColor: '#2563EB' }}>
             <Users className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-semibold text-gray-900">Contact Management System</h1>
@@ -167,7 +167,7 @@ export function LoginPage({ onLogin, onCreateApprovalRequest }: LoginPageProps) 
               <Button 
                 type="submit" 
                 className="w-full h-11 flex items-center justify-center"
-                style={{ backgroundColor: '#EF8037' }}
+                style={{ backgroundColor: '#2563EB' }}
                 disabled={isLoading || !!error}
               >
                 {isLoading ? (

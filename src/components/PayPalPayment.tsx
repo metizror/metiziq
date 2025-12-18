@@ -310,7 +310,7 @@ export default function PayPalPayment({
     <div className="w-full">
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-8">
-          <Loader2 className="w-8 h-8 animate-spin text-[#EF8037] mb-4" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#2563EB] mb-4" />
           <p className="text-gray-600">Loading PayPal...</p>
         </div>
       )}

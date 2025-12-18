@@ -297,7 +297,7 @@ export default function CustomerSettings() {
                     key={section.id}
                     onClick={() => setActiveSection(section.id)}
                     className={`group w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all relative overflow-hidden ${isActive
-                      ? 'bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white shadow-lg'
+                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white shadow-lg'
                       : 'text-gray-700 hover:bg-gray-100'
                       }`}
                   >
@@ -335,7 +335,7 @@ export default function CustomerSettings() {
                     <form onSubmit={handleProfileUpdate}>
                       <div className="flex items-center gap-8 mb-8 pb-8 border-b border-gray-200">
                         <div className="relative group">
-                          <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center text-white text-3xl shadow-xl group-hover:scale-105 transition-transform">
+                          <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center text-white text-3xl shadow-xl group-hover:scale-105 transition-transform">
                             {getUserInitials()}
                           </div>
                           {/* <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-colors shadow-lg">
@@ -348,7 +348,7 @@ export default function CustomerSettings() {
                           {/* <div className="flex gap-3">
                             <button 
                               type="button"
-                              className="px-5 py-2.5 bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg transition-all flex items-center gap-2"
+                              className="px-5 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg transition-all flex items-center gap-2"
                             >
                               <Upload size={16} />
                               Upload Photo
@@ -370,7 +370,7 @@ export default function CustomerSettings() {
                             type="text"
                             value={profileData.firstName}
                             onChange={(e) => setProfileData({ ...profileData, firstName: (e.target as HTMLInputElement).value })}
-                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                           />
                         </div>
                         <div>
@@ -379,7 +379,7 @@ export default function CustomerSettings() {
                             type="text"
                             value={profileData.lastName}
                             onChange={(e) => setProfileData({ ...profileData, lastName: (e.target as HTMLInputElement).value })}
-                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                           />
                         </div>
                         <div className="col-span-2">
@@ -397,7 +397,7 @@ export default function CustomerSettings() {
                             type="text"
                             value={profileData.companyName}
                             onChange={(e) => setProfileData({ ...profileData, companyName: (e.target as HTMLInputElement).value })}
-                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+                            className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                           />
                         </div>
                       </div>
@@ -405,7 +405,7 @@ export default function CustomerSettings() {
                       <button
                         type="submit"
                         disabled={isUpdatingProfile}
-                        className="mt-6 px-8 py-4 bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:shadow-orange-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="mt-6 px-8 py-4 bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:shadow-orange-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                       >
                         {isUpdatingProfile ? (
                           <>
@@ -445,7 +445,7 @@ export default function CustomerSettings() {
                           <PasswordInput
                             value={passwordData.currentPassword}
                             onChange={(e: { target: { value: string } }) => handlePasswordInputChange('currentPassword', e.target.value)}
-                            className={`w-full px-4 py-3.5 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent ${passwordErrors.currentPassword ? 'border-red-500' : 'border-gray-200'
+                            className={`w-full px-4 py-3.5 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent ${passwordErrors.currentPassword ? 'border-red-500' : 'border-gray-200'
                               }`}
                           />
                           {passwordErrors.currentPassword && (
@@ -457,7 +457,7 @@ export default function CustomerSettings() {
                           <PasswordInput
                             value={passwordData.newPassword}
                             onChange={(e: any) => handlePasswordInputChange('newPassword', (e.target as HTMLInputElement).value)}
-                            className={`w-full px-4 py-3.5 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent ${passwordErrors.newPassword ? 'border-red-500' : 'border-gray-200'
+                            className={`w-full px-4 py-3.5 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent ${passwordErrors.newPassword ? 'border-red-500' : 'border-gray-200'
                               }`}
                           />
                           {passwordErrors.newPassword && (
@@ -474,7 +474,7 @@ export default function CustomerSettings() {
                           <PasswordInput
                             value={passwordData.confirmPassword}
                             onChange={(e: any) => handlePasswordInputChange('confirmPassword', (e.target as HTMLInputElement).value)}
-                            className={`w-full px-4 py-3.5 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent ${passwordErrors.confirmPassword ? 'border-red-500' : 'border-gray-200'
+                            className={`w-full px-4 py-3.5 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent ${passwordErrors.confirmPassword ? 'border-red-500' : 'border-gray-200'
                               }`}
                           />
                           {passwordErrors.confirmPassword && (
@@ -551,7 +551,7 @@ export default function CustomerSettings() {
 
                   <div className="relative">
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center">
                         <CreditCard className="text-white" size={20} />
                       </div>
                       <h2 className="text-[#030000]">Billing Address</h2>
@@ -564,7 +564,7 @@ export default function CustomerSettings() {
                           type="text"
                           value={billingAddress.streetAddress}
                           onChange={(e) => setBillingAddress({ ...billingAddress, streetAddress: e.target.value })}
-                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -573,7 +573,7 @@ export default function CustomerSettings() {
                           type="text"
                           value={billingAddress.city}
                           onChange={(e) => setBillingAddress({ ...billingAddress, city: e.target.value })}
-                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -582,7 +582,7 @@ export default function CustomerSettings() {
                           type="text"
                           value={billingAddress.state}
                           onChange={(e) => setBillingAddress({ ...billingAddress, state: e.target.value })}
-                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -591,7 +591,7 @@ export default function CustomerSettings() {
                           type="text"
                           value={billingAddress.zipCode}
                           onChange={(e) => setBillingAddress({ ...billingAddress, zipCode: e.target.value })}
-                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -600,7 +600,7 @@ export default function CustomerSettings() {
                           type="text"
                           value={billingAddress.country}
                           onChange={(e) => setBillingAddress({ ...billingAddress, country: e.target.value })}
-                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+                          className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -608,7 +608,7 @@ export default function CustomerSettings() {
                     <button
                       onClick={handleBillingUpdate}
                       disabled={isUpdatingBilling}
-                      className="mt-6 px-8 py-4 bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:shadow-orange-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="mt-6 px-8 py-4 bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:shadow-orange-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {isUpdatingBilling ? (
                         <>

@@ -328,7 +328,7 @@ export function ContactsListView({ contacts, companies, onViewContact }: Contact
                       {onViewContact && (
                         <Button
                           onClick={() => onViewContact(contact)}
-                          style={{ backgroundColor: '#EF8037' }}
+                          style={{ backgroundColor: '#2563EB' }}
                         >
                           View Full Details
                         </Button>

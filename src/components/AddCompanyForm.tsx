@@ -383,7 +383,7 @@ export function AddCompanyForm({ onSave, onCancel, currentUser }: AddCompanyForm
                 <Button type="button" variant="outline" onClick={onCancel}>
                   Cancel
                 </Button>
-                <Button type="submit" style={{ backgroundColor: '#EF8037' }}>
+                <Button type="submit" style={{ backgroundColor: '#2563EB' }}>
                   <Save className="w-4 h-4 mr-2" />
                   Save Company
                 </Button>

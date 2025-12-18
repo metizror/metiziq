@@ -119,7 +119,7 @@ export default function CustomerAllDownloads({ onBack }: CustomerAllDownloadsPro
               placeholder="Search files..."
               value={searchTerm}
               onChange={(e: { target: { value: string } }) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
             />
             {searchTerm && (
               <button
@@ -229,7 +229,7 @@ export default function CustomerAllDownloads({ onBack }: CustomerAllDownloadsPro
                       type="checkbox"
                       checked={selectedItems.length === filteredDownloads.length && filteredDownloads.length > 0}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 text-[#EF8037] rounded focus:ring-[#EF8037]"
+                      className="w-4 h-4 text-[#2563EB] rounded focus:ring-[#2563EB]"
                     />
                   </th>
                   <th className="text-left px-6 py-4 text-gray-700">File Name</th>
@@ -257,13 +257,13 @@ export default function CustomerAllDownloads({ onBack }: CustomerAllDownloadsPro
                         type="checkbox"
                         checked={selectedItems.includes(download.id)}
                         onChange={() => toggleSelectItem(download.id)}
-                        className="w-4 h-4 text-[#EF8037] rounded focus:ring-[#EF8037]"
+                        className="w-4 h-4 text-[#2563EB] rounded focus:ring-[#2563EB]"
                       />
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#EF8037]/10 to-[#EB432F]/10 flex items-center justify-center">
-                          <FileText className="text-[#EF8037]" size={18} />
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#2563EB]/10 to-[#EB432F]/10 flex items-center justify-center">
+                          <FileText className="text-[#2563EB]" size={18} />
                         </div>
                         <span className="text-[#030000]">{download.fileName}</span>
                       </div>
@@ -292,7 +292,7 @@ export default function CustomerAllDownloads({ onBack }: CustomerAllDownloadsPro
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <button className="p-2 bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-lg hover:shadow-lg transition-all">
+                        <button className="p-2 bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-lg hover:shadow-lg transition-all">
                           <Download size={16} />
                         </button>
                         <button className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-red-100 hover:text-red-600 transition-all">

@@ -213,12 +213,12 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
           {/* Decorative Elements */}
           <div className="absolute top-0 right-0 w-32 h-32 opacity-20" 
             style={{ 
-              background: `radial-gradient(circle, ${currentUser.role === 'superadmin' ? '#EF8037' : '#EF8037'} 0%, transparent 70%)`
+              background: `radial-gradient(circle, ${currentUser.role === 'superadmin' ? '#2563EB' : '#2563EB'} 0%, transparent 70%)`
             }}
           ></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 opacity-10"
             style={{ 
-              background: `radial-gradient(circle, ${currentUser.role === 'superadmin' ? '#EF8037' : '#EF8037'} 0%, transparent 70%)`
+              background: `radial-gradient(circle, ${currentUser.role === 'superadmin' ? '#2563EB' : '#2563EB'} 0%, transparent 70%)`
             }}
           ></div>
           
@@ -228,8 +228,8 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
               className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
               style={{ 
                 background: currentUser.role === 'superadmin' 
-                  ? 'linear-gradient(135deg, #EF8037 0%, #FF9F5A 100%)'
-                  : 'linear-gradient(135deg, #EF8037 0%, #FF9F5A 100%)'
+                  ? 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
+                  : 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
               }}
             >
               <Settings className="w-6 h-6 text-white" />
@@ -306,7 +306,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
                   className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-md relative overflow-hidden group"
                   style={{ 
                     background: currentUser.role === 'superadmin' 
-                      ? 'linear-gradient(135deg, #EF8037 0%, #FF9F5A 100%)'
+                      ? 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
                       : 'linear-gradient(135deg, #EB432F 0%, #FF5A47 100%)'
                   }}
                 >
@@ -349,7 +349,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
                   style={{ 
                     background: currentUser.role === 'superadmin' 
-                      ? 'linear-gradient(135deg, #EF8037 0%, #FF9F5A 100%)'
+                      ? 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
                       : 'linear-gradient(135deg, #EB432F 0%, #FF5A47 100%)'
                   }}
                 >
@@ -391,7 +391,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
                   className="shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ 
                     background: currentUser.role === 'superadmin' 
-                      ? 'linear-gradient(135deg, #EF8037 0%, #FF9F5A 100%)'
+                      ? 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
                       : 'linear-gradient(135deg, #EB432F 0%, #FF5A47 100%)'
                   }}
                 >

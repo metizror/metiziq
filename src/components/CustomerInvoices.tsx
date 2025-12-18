@@ -296,7 +296,7 @@ export default function CustomerInvoices() {
           </div>
           <button
             onClick={handleExportAll}
-            className="px-6 py-3 bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg transition-all flex items-center gap-2"
+            className="px-6 py-3 bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg transition-all flex items-center gap-2"
           >
             <Download size={18} />
             Export All
@@ -386,7 +386,7 @@ export default function CustomerInvoices() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-full blur-2xl"></div>
             <div className="relative">
               <div className="flex items-center justify-between mb-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                   <CheckCircle className="text-white" size={20} />
                 </div>
               </div>
@@ -424,13 +424,13 @@ export default function CustomerInvoices() {
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                 }}
-                className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
               />
             </div>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-5 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent bg-white"
+              className="px-5 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white"
             >
               <option value="all">All Status</option>
               <option value="completed">Paid</option>
@@ -507,23 +507,23 @@ export default function CustomerInvoices() {
             {filteredInvoices.map((invoice: any) => (
               <div
                 key={invoice._id}
-                className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-[#EF8037]/30 transition-all relative overflow-hidden"
+                className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-[#2563EB]/30 transition-all relative overflow-hidden"
               >
                 {/* Decorative gradient */}
-                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-[#EF8037]/5 to-[#EB432F]/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-500"></div>
+                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-[#2563EB]/5 to-[#EB432F]/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-500"></div>
 
                 <div className="relative flex items-center justify-between">
                   {/* Left Section - Invoice Info */}
                   <div className="flex items-center gap-6 flex-1">
                     {/* Icon */}
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#EF8037]/20 to-[#EB432F]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <FileText className="text-[#EF8037]" size={24} />
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#EB432F]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <FileText className="text-[#2563EB]" size={24} />
                     </div>
 
                     {/* Invoice Details */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-[#030000] group-hover:text-[#EF8037] transition-colors">
+                        <h3 className="text-[#030000] group-hover:text-[#2563EB] transition-colors">
                           {invoice.invoiceNumber}
                         </h3>
                         <span
@@ -572,7 +572,7 @@ export default function CustomerInvoices() {
                     <button
                       onClick={() => handleDownloadPDF(invoice)}
                       disabled={downloadingId === invoice._id}
-                      className="group/btn px-6 py-3 bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:shadow-orange-200 transition-all flex items-center gap-2 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="group/btn px-6 py-3 bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:shadow-orange-200 transition-all flex items-center gap-2 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700"></div>
                       {downloadingId === invoice._id ? (
@@ -634,7 +634,7 @@ export default function CustomerInvoices() {
                 )}
               </div>
 
-              <button className="w-full py-3.5 border-2 border-gray-200 text-[#030000] rounded-xl hover:border-[#EF8037] hover:bg-orange-50 transition-all flex items-center justify-center gap-2 group">
+              <button className="w-full py-3.5 border-2 border-gray-200 text-[#030000] rounded-xl hover:border-[#2563EB] hover:bg-orange-50 transition-all flex items-center justify-center gap-2 group">
                 <span>Update Billing Info</span>
                 <ChevronRight
                   size={16}
@@ -688,7 +688,7 @@ export default function CustomerInvoices() {
                 </div>
               )}
 
-              <button className="w-full py-3.5 border-2 border-gray-200 text-[#030000] rounded-xl hover:border-[#EF8037] hover:bg-orange-50 transition-all flex items-center justify-center gap-2 group">
+              <button className="w-full py-3.5 border-2 border-gray-200 text-[#030000] rounded-xl hover:border-[#2563EB] hover:bg-orange-50 transition-all flex items-center justify-center gap-2 group">
                 <span>Update Payment Method</span>
                 <ChevronRight
                   size={16}

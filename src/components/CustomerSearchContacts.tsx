@@ -538,7 +538,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
               placeholder="Search by name, company"
               value={filters.search}
               onChange={(e: { target: { value: string } }) => setFilters({ ...filters, search: e.target.value })}
-              className="w-full pl-10 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
+              className="w-full pl-10 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
             />
           </div>
 
@@ -549,14 +549,14 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
               placeholder="Company Name"
               value={filters.companyName}
               onChange={(e: { target: { value: string } }) => setFilters({ ...filters, companyName: e.target.value })}
-              className="w-40 px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
+              className="w-40 px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
             />
           </div>
 
           {/* Country */}
           <div className="relative min-w-[150px]">
             <Select key={`country-${resetKey}`} value={filters.country || undefined} onValueChange={(value: string) => setFilters({ ...filters, country: value })}>
-              <SelectTrigger className="w-40 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#EF8037] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
+              <SelectTrigger className="w-40 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#2563EB] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
                 <SelectValue placeholder="All Countries" />
               </SelectTrigger>
               <SelectContent>
@@ -570,7 +570,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
           {/* Industry */}
           <div className="relative min-w-[150px]">
             <Select key={`industry-${resetKey}`} value={filters.industry || undefined} onValueChange={(value: string) => setFilters({ ...filters, industry: value })}>
-              <SelectTrigger className="w-40 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#EF8037] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
+              <SelectTrigger className="w-40 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#2563EB] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
                 <SelectValue placeholder="All Industries" />
               </SelectTrigger>
               <SelectContent>
@@ -584,7 +584,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
           {/* Revenue */}
           <div className="relative min-w-[150px]">
             <Select key={`revenue-${resetKey}`} value={filters.revenue || undefined} onValueChange={(value: string) => setFilters({ ...filters, revenue: value })}>
-              <SelectTrigger className="w-40 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#EF8037] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
+              <SelectTrigger className="w-40 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#2563EB] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
                 <SelectValue placeholder="All Revenue" />
               </SelectTrigger>
               <SelectContent>
@@ -598,7 +598,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
           {/* Employee Size */}
           <div className="relative min-w-[140px]">
             <Select key={`employeeSize-${resetKey}`} value={filters.employeeSize || undefined} onValueChange={(value: string) => setFilters({ ...filters, employeeSize: value })}>
-              <SelectTrigger className="w-40 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#EF8037] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
+              <SelectTrigger className="w-40 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-[#2563EB] focus:border-transparent data-[size=default]:h-[46px] shadow-sm">
                 <SelectValue placeholder="Employee Size" />
               </SelectTrigger>
               <SelectContent>
@@ -633,7 +633,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                   setFilters({ ...filters, limitFilter: '1' });
                 }
               }}
-              className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
+              className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white text-gray-900 placeholder-gray-400 h-[46px] shadow-sm"
             />
           </div>
 
@@ -647,10 +647,10 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                 className="hidden"
                 id="exclude-emails-file-input"
               />
-              <div className="flex items-center gap-2 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white hover:border-[#EF8037] hover:bg-orange-50 transition-all cursor-pointer shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-3.5 h-[46px] border-2 border-gray-200 rounded-xl bg-white hover:border-[#2563EB] hover:bg-orange-50 transition-all cursor-pointer shadow-sm">
                 {excludeEmailsFileName || filters.excludeEmailsFile ? (
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <FileSpreadsheet className="text-[#EF8037] flex-shrink-0" size={18} />
+                    <FileSpreadsheet className="text-[#2563EB] flex-shrink-0" size={18} />
                     <span className="text-sm text-gray-700 truncate">
                       {excludeEmailsFileName || filters.excludeEmailsFile?.name || 'File selected'}
                     </span>
@@ -678,7 +678,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
           {/* Apply Filters Button */}
           <button
             onClick={handleApplyFilters}
-            className="px-6 py-3.5 h-[46px] bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 whitespace-nowrap font-medium"
+            className="px-6 py-3.5 h-[46px] bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 whitespace-nowrap font-medium"
           >
             <Filter size={18} />
             Apply Filters
@@ -688,7 +688,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
           <button
             onClick={resetFilters}
             type="button"
-            className="text-gray-600 hover:text-[#EF8037] transition-colors underline text-sm whitespace-nowrap"
+            className="text-gray-600 hover:text-[#2563EB] transition-colors underline text-sm whitespace-nowrap"
           >
             Reset Filters
           </button>
@@ -708,9 +708,9 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                 <div>
                   <p className="text-[#030000]">Search Results</p>
                   <p className="text-gray-600 text-sm">
-                    Showing <span className="text-[#EF8037]">{visibleContacts.length}</span> of <span className="text-[#030000]">{pagination?.totalCount || 0}</span> contacts
+                    Showing <span className="text-[#2563EB]">{visibleContacts.length}</span> of <span className="text-[#030000]">{pagination?.totalCount || 0}</span> contacts
                     {selectedContacts.length > 0 && (
-                      <span className="ml-2 text-[#EF8037] font-medium">
+                      <span className="ml-2 text-[#2563EB] font-medium">
                         ({selectedContacts.length} selected)
                       </span>
                     )}
@@ -729,7 +729,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                         setSortDirection(1);
                       }
                     }}
-                    className="px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#EF8037] focus:border-transparent appearance-none bg-white shadow-sm pr-10"
+                    className="px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent appearance-none bg-white shadow-sm pr-10"
                   >
                     <option value="">Default Sort...</option>
                     <option value="company">Sort by Company {sortBy === 'company' ? (sortDirection === 1 ? '↑' : '↓') : ''}</option>
@@ -763,7 +763,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
             <p className="text-gray-600 mb-4">Try fewer filters or contact us for a custom dataset.</p>
             <button
               onClick={resetFilters}
-              className="px-6 py-3 bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
+              className="px-6 py-3 bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all"
             >
               Reset Filters
             </button>
@@ -777,7 +777,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
             style={{
               maxWidth: '100%',
               scrollbarWidth: 'thin',
-              scrollbarColor: '#EF8037 #f1f1f1'
+              scrollbarColor: '#2563EB #f1f1f1'
             }}
           >
             <table className="w-full" style={{ minWidth: '1200px' }}>
@@ -943,13 +943,13 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                       {/* Company Column */}
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center text-white shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all flex-shrink-0">
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center text-white shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all flex-shrink-0">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                           </div>
                           <div>
-                            <p className="text-[#030000] group-hover:text-[#EF8037] transition-colors">{contact.company || 'Unknown'}</p>
+                            <p className="text-[#030000] group-hover:text-[#2563EB] transition-colors">{contact.company || 'Unknown'}</p>
                           </div>
                         </div>
                       </td>
@@ -970,7 +970,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                           <button
                             onClick={() => handleDownload(contact.id)}
                             className={`p-3 rounded-xl transition-all ${ableToBuyContacts
-                                ? 'bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white hover:shadow-lg hover:scale-105'
+                                ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-lg hover:scale-105'
                                 : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                               }`}
                             disabled={!ableToBuyContacts}
@@ -979,7 +979,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                              <Lock size={16} />
                           </button>
                           <button
-                            className="p-3 border-2 border-gray-200 rounded-xl hover:border-[#EF8037] hover:bg-orange-50 transition-all hover:scale-105"
+                            className="p-3 border-2 border-gray-200 rounded-xl hover:border-[#2563EB] hover:bg-orange-50 transition-all hover:scale-105"
                             title="View Details"
                           >
                             <Eye size={16} className="text-gray-600" />
@@ -1060,7 +1060,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                       }}
                     />
                   </div>
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center text-white shadow-lg flex-shrink-0">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center text-white shadow-lg flex-shrink-0">
                     <Lock size={20} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -1137,7 +1137,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                   <button
                     onClick={() => handleDownload(contact.id)}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl transition-all ${ableToBuyContacts
-                        ? 'bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white hover:shadow-lg'
+                        ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-lg'
                         : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                       }`}
                     disabled={!ableToBuyContacts}
@@ -1145,7 +1145,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                     <Lock size={16} />
                     <span className="text-sm">Locked</span>
                   </button>
-                  <button className="px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-[#EF8037] hover:bg-orange-50 transition-all">
+                  <button className="px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-[#2563EB] hover:bg-orange-50 transition-all">
                     <Eye size={18} className="text-gray-600" />
                   </button>
                 </div>
@@ -1158,10 +1158,10 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
         {/* Unlock & Download Banner - Sticky at Bottom */}
         {!ableToBuyContacts && !error && (
           <div className="sticky bottom-0 z-50 mt-8">
-            <div className="bg-gradient-to-r from-[#FFF3EC] to-[#FFE8DC] border-2 border-[#EF8037] rounded-2xl p-6 shadow-2xl">
+            <div className="bg-gradient-to-r from-[#FFF3EC] to-[#FFE8DC] border-2 border-[#2563EB] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between gap-6 flex-wrap">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center shadow-lg flex-shrink-0">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center shadow-lg flex-shrink-0">
                     <Lock className="text-white" size={24} />
                   </div>
                   <div className="min-w-0">
@@ -1177,7 +1177,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                   }}
                   disabled={selectedContacts.length !== 10 || !!appliedFilters.limitFilter}
                   className={`group px-8 py-4 rounded-xl transition-all flex items-center gap-3 shadow-lg whitespace-nowrap flex-shrink-0 font-medium ${selectedContacts.length === 10 && !appliedFilters.limitFilter
-                      ? 'bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
+                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                     }`}
                 >
@@ -1194,10 +1194,10 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
         {/* Buy Contacts Banner - When ableToBuyContacts is true */}
         {ableToBuyContacts && !error && (
           <div className="sticky bottom-0 z-50 mt-8">
-            <div className="bg-gradient-to-r from-[#FFF3EC] to-[#FFE8DC] border-2 border-[#EF8037] rounded-2xl p-6 shadow-2xl">
+            <div className="bg-gradient-to-r from-[#FFF3EC] to-[#FFE8DC] border-2 border-[#2563EB] rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between gap-6 flex-wrap">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center shadow-lg flex-shrink-0">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center shadow-lg flex-shrink-0">
                     <Lock className="text-white" size={24} />
                   </div>
                   <div className="min-w-0">
@@ -1213,7 +1213,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                   }}
                   disabled={selectedContacts.length === 0}
                   className={`group px-8 py-4 rounded-xl transition-all flex items-center gap-3 shadow-lg whitespace-nowrap flex-shrink-0 font-medium ${selectedContacts.length > 0
-                      ? 'bg-gradient-to-r from-[#EF8037] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
+                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                     }`}
                 >
@@ -1233,7 +1233,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-[#030000] flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#EF8037] to-[#EB432F] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#EB432F] flex items-center justify-center">
                 <CreditCard className="text-white" size={24} />
               </div>
               Payment for Contacts
@@ -1273,7 +1273,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                     <span className="text-gray-700">
                       {selectedContacts.length} contacts × ${PRICE_PER_CONTACT.toFixed(2)}
                     </span>
-                    <span className="text-[#EF8037] font-semibold">
+                    <span className="text-[#2563EB] font-semibold">
                       = ${totalCost.toFixed(2)}
                     </span>
                   </div>
@@ -1282,7 +1282,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                 {/* Total */}
                 <div className="flex items-center justify-between pt-3 border-t-2 border-gray-300">
                   <span className="text-lg font-bold text-[#030000]">Total Amount</span>
-                  <span className="text-2xl font-bold text-[#EF8037]">${totalCost.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-[#2563EB]">${totalCost.toFixed(2)}</span>
                 </div>
               </div>
             </div>
