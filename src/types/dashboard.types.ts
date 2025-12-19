@@ -54,6 +54,9 @@ export interface Contact {
   mailingState?: string;
   mailingCountry?: string;
   mailingZip?: string;
+  isEmailVerified?: boolean;
+  linkedInData?: any;
+  syncDate?: string;
 }
 
 export interface Company {

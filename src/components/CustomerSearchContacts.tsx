@@ -27,7 +27,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
   const [headerHeight, setHeaderHeight] = useState(104);
   const hasMountedRef = useRef(false);
   const fetchInProgressRef = useRef(false);
-  
+
   // Check if user can buy contacts
   const ableToBuyContacts = user?.ableToBuyContacts === true;
 
@@ -365,16 +365,16 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
   const handleApplyFilters = async () => {
     // Convert file to base64 if a new file was selected
     let excludeEmailsFileBase64: string | null = appliedFilters.excludeEmailsFile;
-    
+
     if (filters.excludeEmailsFile && filters.excludeEmailsFile !== appliedFilters.excludeEmailsFile) {
       // New file selected, convert to base64
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
         const base64 = result.includes(',') ? result.split(',')[1] : result;
-        setAppliedFilters({ 
-          ...filters, 
-          excludeEmailsFile: base64 
+        setAppliedFilters({
+          ...filters,
+          excludeEmailsFile: base64
         });
         setCurrentPage(1);
         setSelectedContacts([]);
@@ -383,9 +383,9 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
       return; // Will trigger useEffect when appliedFilters updates
     } else {
       // No new file, just apply existing filters
-      setAppliedFilters({ 
-        ...filters, 
-        excludeEmailsFile: excludeEmailsFileBase64 
+      setAppliedFilters({
+        ...filters,
+        excludeEmailsFile: excludeEmailsFileBase64
       });
       setCurrentPage(1);
       setSelectedContacts([]);
@@ -970,13 +970,13 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                           <button
                             onClick={() => handleDownload(contact.id)}
                             className={`p-3 rounded-xl transition-all ${ableToBuyContacts
-                                ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-lg hover:scale-105'
-                                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                              ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-lg hover:scale-105'
+                              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                               }`}
                             disabled={!ableToBuyContacts}
                             title={ableToBuyContacts ? 'Download' : 'Locked'}
                           >
-                             <Lock size={16} />
+                            <Lock size={16} />
                           </button>
                           <button
                             className="p-3 border-2 border-gray-200 rounded-xl hover:border-[#2563EB] hover:bg-orange-50 transition-all hover:scale-105"
@@ -1137,8 +1137,8 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                   <button
                     onClick={() => handleDownload(contact.id)}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl transition-all ${ableToBuyContacts
-                        ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-lg'
-                        : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-lg'
+                      : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                       }`}
                     disabled={!ableToBuyContacts}
                   >
@@ -1177,8 +1177,8 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                   }}
                   disabled={selectedContacts.length !== 10 || !!appliedFilters.limitFilter}
                   className={`group px-8 py-4 rounded-xl transition-all flex items-center gap-3 shadow-lg whitespace-nowrap flex-shrink-0 font-medium ${selectedContacts.length === 10 && !appliedFilters.limitFilter
-                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
+                    ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                     }`}
                 >
                   <span>Unlock & Download Contacts</span>
@@ -1190,7 +1190,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
             </div>
           </div>
         )}
-        
+
         {/* Buy Contacts Banner - When ableToBuyContacts is true */}
         {ableToBuyContacts && !error && (
           <div className="sticky bottom-0 z-50 mt-8">
@@ -1213,8 +1213,8 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
                   }}
                   disabled={selectedContacts.length === 0}
                   className={`group px-8 py-4 rounded-xl transition-all flex items-center gap-3 shadow-lg whitespace-nowrap flex-shrink-0 font-medium ${selectedContacts.length > 0
-                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
+                    ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                     }`}
                 >
                   <span>Buy Contacts</span>

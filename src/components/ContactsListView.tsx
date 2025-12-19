@@ -4,24 +4,26 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
-import { 
-  ChevronDown, 
-  ChevronUp, 
-  Search, 
-  User, 
-  Briefcase, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Building2, 
-  Globe, 
-  Linkedin, 
-  DollarSign, 
+import {
+  ChevronDown,
+  ChevronUp,
+  Search,
+  User,
+  Briefcase,
+  Mail,
+  Phone,
+  MapPin,
+  Building2,
+  Globe,
+  Linkedin,
+  DollarSign,
   Users,
   BarChart,
   Cpu
 } from 'lucide-react';
 import type { Contact, Company } from '@/types/dashboard.types';
+import blueLogo from "../assets/Twitter_Verified_Badge.svg.png"
+import grayLogo from "../assets/Twitter_Verified_Badge_Gray.svg.png"
 
 interface ContactsListViewProps {
   contacts: Contact[];
@@ -32,10 +34,10 @@ interface ContactsListViewProps {
 // Helper function to format revenue with $ sign
 const formatRevenue = (revenue: string | undefined | null): string => {
   if (!revenue || revenue === '-') return '-';
-  
+
   // If already has $ sign, return as is
   if (revenue.includes('$')) return revenue;
-  
+
   // Map revenue values to formatted strings
   const revenueMap: { [key: string]: string } = {
     'Lessthan1M': 'Less than $1M',
@@ -48,24 +50,24 @@ const formatRevenue = (revenue: string | undefined | null): string => {
     '500Mto1B': '$500M-$1B',
     'Morethan1B': 'More than $1B',
   };
-  
+
   // Check if it's a known format
   if (revenueMap[revenue]) {
     return revenueMap[revenue];
   }
-  
+
   // If it's in format like "1Mto5M" or "1M-5M", add $ signs
   const rangeMatch = revenue.match(/^(\d+(?:\.\d+)?[MB]?)to(\d+(?:\.\d+)?[MB]?)$/i) || revenue.match(/^(\d+(?:\.\d+)?[MB]?)-(\d+(?:\.\d+)?[MB]?)$/i);
   if (rangeMatch) {
     return `$${rangeMatch[1]}-$${rangeMatch[2]}`;
   }
-  
+
   // If it starts with a number and M/B, add $ sign
   const singleMatch = revenue.match(/^(\d+(?:\.\d+)?)([MB])$/i);
   if (singleMatch) {
     return `$${singleMatch[1]}${singleMatch[2]}`;
   }
-  
+
   // Default: return as is
   return revenue;
 };
@@ -94,17 +96,17 @@ export function ContactsListView({ contacts, companies, onViewContact }: Contact
     );
   });
 
-  const InfoField = ({ 
-    icon: Icon, 
-    label, 
-    value 
-  }: { 
-    icon: any; 
-    label: string; 
+  const InfoField = ({
+    icon: Icon,
+    label,
+    value
+  }: {
+    icon: any;
+    label: string;
     value: string | undefined;
   }) => {
     if (!value) return null;
-    
+
     return (
       <div className="flex items-start gap-3">
         <div className="mt-0.5">
@@ -166,7 +168,7 @@ export function ContactsListView({ contacts, companies, onViewContact }: Contact
                       <p className="text-sm text-gray-600">{contact.jobTitle || 'No Title'}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     {contact.jobLevel && (
                       <Badge variant="secondary">{contact.jobLevel}</Badge>
@@ -213,7 +215,7 @@ export function ContactsListView({ contacts, companies, onViewContact }: Contact
                           <InfoField
                             icon={Briefcase}
                             label="Job Title"
-                            value={contact.jobTitle}
+                            value={contact.linkedInData?.positions?.positionHistory[0]?.title}
                           />
                           <InfoField
                             icon={BarChart}
@@ -233,7 +235,7 @@ export function ContactsListView({ contacts, companies, onViewContact }: Contact
                           <InfoField
                             icon={Phone}
                             label="Phone#"
-                            value={contact.phone}
+                            value={contact.mobilePhone}
                           />
                           <InfoField
                             icon={Phone}
@@ -291,7 +293,7 @@ export function ContactsListView({ contacts, companies, onViewContact }: Contact
                             <InfoField
                               icon={MapPin}
                               label="Address/Location"
-                              value={`${company.address1}${company.address2 ? ', ' + company.address2 : ''}${company.city ? ', ' + company.city : ''}${company.state ? ', ' + company.state : ''}`}
+                              value={`${contact.linkedInData?.positions?.positionHistory[0]?.locationName}`}
                             />
                             <InfoField
                               icon={Phone}
