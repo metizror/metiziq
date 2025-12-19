@@ -1,0 +1,71 @@
+  const handleSyncLinkedIn = async () => {
+    if (selectedContacts.length === 0) {
+      toast.error('Please select contacts to sync LinkedIn data');
+      return;
+    }
+
+    setIsSyncingLinkedIn(true);
+
+    try {
+      // Get emails from selected contacts
+      const selectedContactsData = contacts.filter(c => {
+        const cId = c.id || (c as any)._id;
+        return selectedContacts.includes(cId);
+      });
+
+      const emails = selectedContactsData.map(c => c.email).filter(Boolean);
+
+      if (emails.length === 0) {
+        toast.error('No valid emails found in selected contacts');
+        setIsSyncingLinkedIn(false);
+        return;
+      }
+
+      // Call the sync API
+      const response = await privateApiCall<{
+        message: string;
+        results: Array<{ email: string; success: boolean; contact: any }>;
+        errors: Array<{ email: string; error: string }>;
+        summary: {
+          total: number;
+          successful: number;
+          failed: number;
+        };
+      }>('/admin/contacts/sync-linkedin', {
+        method: 'POST',
+        body: JSON.stringify({ emails }),
+      });
+
+      // Show results
+      if (response.summary.successful > 0) {
+        toast.success(`Successfully synced ${response.summary.successful} of ${response.summary.total} contacts`);
+      }
+
+      if (response.errors.length > 0) {
+        // Show first few errors
+        const errorMessages = response.errors.slice(0, 3).map(e => `${e.email}: ${e.error}`).join('\n');
+        toast.error(`Failed to sync ${response.errors.length} contacts:\n${errorMessages}`);
+      }
+
+      // Refresh the contacts list to show updated data
+      const fetchParams: GetContactsParams = {
+        ...filters,
+        page: pagination?.currentPage || 1,
+        search: searchQuery || undefined,
+      };
+      const cleanedFilters = Object.fromEntries(
+        Object.entries(fetchParams).filter(([_, value]) => {
+          if (typeof value === 'number') return true;
+          return value !== '' && value !== null && value !== undefined;
+        })
+      ) as GetContactsParams;
+      await dispatch(getContacts(cleanedFilters));
+
+      // Clear selection
+      setSelectedContacts([]);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to sync LinkedIn data');
+    } finally {
+      setIsSyncingLinkedIn(false);
+    }
+  };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Avatar, AvatarFallback } from './ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
   ArrowLeft,
   Edit,
@@ -53,6 +53,9 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updateContact, deleteContacts } from '@/store/slices/contacts.slice';
 import { useRouter } from 'next/navigation';
 import { privateApiCall } from '@/lib/api';
+import blueLogo from "../assets/Twitter_Verified_Badge.svg.png"
+import grayLogo from "../assets/Twitter_Verified_Badge_Gray.svg.png"
+
 
 interface ViewContactDetailsProps {
   contact: Contact;
@@ -69,19 +72,19 @@ interface ViewContactDetailsProps {
 // Helper function to format LinkedIn URL with protocol
 const formatLinkedInUrl = (url: string | undefined | null): string => {
   if (!url || !url.trim()) return '';
-  
+
   const trimmedUrl = url.trim();
-  
+
   // If URL already has a protocol, return as is
   if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
     return trimmedUrl;
   }
-  
+
   // If URL starts with www. or linkedin.com, prepend https://
   if (trimmedUrl.startsWith('www.') || trimmedUrl.startsWith('linkedin.com')) {
     return `https://${trimmedUrl}`;
   }
-  
+
   // For any other case, prepend https://
   return `https://${trimmedUrl}`;
 };
@@ -99,10 +102,10 @@ const formatWebsiteUrl = (url: string | undefined | null): string => {
 // Helper function to format revenue with $ sign
 const formatRevenue = (revenue: string | undefined | null): string => {
   if (!revenue || revenue === '-') return '-';
-  
+
   // If already has $ sign, return as is
   if (revenue.includes('$')) return revenue;
-  
+
   // Map revenue values to formatted strings
   const revenueMap: { [key: string]: string } = {
     'Less-than-1M': 'Less than $1M',
@@ -115,24 +118,24 @@ const formatRevenue = (revenue: string | undefined | null): string => {
     '500M-1B': '$500M-$1B',
     'More-than-1B': 'More than $1B',
   };
-  
+
   // Check if it's a known format
   if (revenueMap[revenue]) {
     return revenueMap[revenue];
   }
-  
+
   // If it's in format like "1Mto5M" or "1M-5M", add $ signs
   const rangeMatch = revenue.match(/^(\d+(?:\.\d+)?[MB]?)to(\d+(?:\.\d+)?[MB]?)$/i) || revenue.match(/^(\d+(?:\.\d+)?[MB]?)-(\d+(?:\.\d+)?[MB]?)$/i);
   if (rangeMatch) {
     return `$${rangeMatch[1]}-$${rangeMatch[2]}`;
   }
-  
+
   // If it starts with a number and M/B, add $ sign
   const singleMatch = revenue.match(/^(\d+(?:\.\d+)?)([MB])$/i);
   if (singleMatch) {
     return `$${singleMatch[1]}${singleMatch[2]}`;
   }
-  
+
   // Default: return as is
   return revenue;
 };
@@ -154,11 +157,10 @@ export function ViewContactDetails({
   const { companies: reduxCompanies } = useAppSelector((state) => state.companies);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const resolvedCompanyName = company?.companyName || companyName || contact.companyName || '-';
-  
+  const resolvedCompanyName = contact.linkedInData?.positions?.positionHistory[0]?.companyName || '-';
   // Try to find company ID from multiple sources
   let resolvedCompanyId = company?.id || (company as any)?._id || contact.companyId;
-  
+
   // If company ID is not found, try to find it from Redux companies store by company name
   if (!resolvedCompanyId && resolvedCompanyName && resolvedCompanyName !== '-') {
     const foundCompany = reduxCompanies.find((c: Company) => {
@@ -176,11 +178,11 @@ export function ViewContactDetails({
       router.push(`/companies/${resolvedCompanyId}`);
       return;
     }
-    
+
     if (!resolvedCompanyName || resolvedCompanyName === '-') {
       return;
     }
-    
+
     try {
       // First check Redux store one more time
       let foundCompany = reduxCompanies.find((c: Company) => {
@@ -188,7 +190,7 @@ export function ViewContactDetails({
         const searchName = resolvedCompanyName.toLowerCase().trim();
         return cName === searchName;
       });
-      
+
       if (foundCompany) {
         const companyId = foundCompany.id || (foundCompany as any)?._id;
         if (companyId) {
@@ -196,27 +198,27 @@ export function ViewContactDetails({
           return;
         }
       }
-      
+
       // If not found in Redux, fetch from API
       toast.loading('Finding company...', { id: 'company-search' });
-      
+
       let page = 1;
       const limit = 100;
       let companyFound = false;
-      
+
       while (!companyFound && page <= 10) { // Limit to 10 pages for safety
         try {
           const response = await privateApiCall<{ companies: any[], pagination: any }>(
             `/admin/companies?page=${page}&limit=${limit}&companyName=${encodeURIComponent(resolvedCompanyName)}`
           );
-          
+
           // Find exact match (case-insensitive)
           const exactMatch = response.companies.find((c: any) => {
             const cName = c.companyName?.toLowerCase().trim();
             const searchName = resolvedCompanyName.toLowerCase().trim();
             return cName === searchName;
           });
-          
+
           if (exactMatch) {
             const companyId = exactMatch._id?.toString() || exactMatch.id?.toString();
             if (companyId) {
@@ -226,21 +228,21 @@ export function ViewContactDetails({
               return;
             }
           }
-          
+
           // If no more pages, stop searching
           if (page >= response.pagination.totalPages) {
             break;
           }
-          
+
           page++;
         } catch (error) {
           console.error('Error fetching companies:', error);
           break;
         }
       }
-      
+
       toast.dismiss('company-search');
-      
+
       if (!companyFound) {
         toast.error('Company not found. Please try navigating from the Companies page.');
       }
@@ -250,7 +252,7 @@ export function ViewContactDetails({
       toast.error('Failed to find company. Please try navigating from the Companies page.');
     }
   };
-  
+
   // Industry and Sub-Industry mapping (same as ContactsTable)
   const industrySubIndustryMap: Record<string, string[]> = {
     "Agriculture, Forestry and Fishing": [
@@ -603,13 +605,13 @@ export function ViewContactDetails({
     try {
       // Dispatch deleteContacts action
       await dispatch(deleteContacts({ ids: [contact.id] })).unwrap();
-      
+
       // Close dialog
       setShowDeleteDialog(false);
-      
+
       // Show success message
       toast.success('Contact deleted successfully');
-      
+
       // Navigate back to contacts list
       onBack();
     } catch (error: any) {
@@ -636,17 +638,17 @@ export function ViewContactDetails({
     if (!value) return '';
     const trimmed = value.trim();
     if (!trimmed) return '';
-    
+
     // Valid Revenue options - exact values as they appear in SelectItem (new format with "to")
     const validRevenues = [
       'Lessthan1M', '1Mto5M', '5Mto10M', '10Mto50M', '50Mto100M',
       '100Mto250M', '250Mto500M', '500Mto1B', 'Morethan1B'
     ];
-    
+
     // First check for exact match (case-sensitive) - new format
     const exactMatch = validRevenues.find(rev => rev === trimmed);
     if (exactMatch) return exactMatch;
-    
+
     // Handle old format - convert to new format
     const oldToNewMap: { [key: string]: string } = {
       'Less-than-1M': 'Lessthan1M',
@@ -659,20 +661,20 @@ export function ViewContactDetails({
       '500M-1B': '500Mto1B',
       'More-than-1B': 'Morethan1B',
     };
-    
+
     if (oldToNewMap[trimmed]) return oldToNewMap[trimmed];
-    
+
     // Handle special cases - remove $ signs and convert to new format
     if (trimmed === 'Less than $1M' || trimmed.toLowerCase() === 'less than $1m' || trimmed === 'Less-than-$1M') return 'Lessthan1M';
     if (trimmed === 'More than $1B' || trimmed.toLowerCase() === 'more than $1b' || trimmed === 'More-than-$1B') return 'Morethan1B';
-    
+
     // Remove $ signs and replace " to " or "-" with "to"
     let normalized = trimmed.replace(/\$/g, '').replace(/\s+to\s+/gi, 'to').replace(/-/g, 'to');
-    
+
     // Check if normalized value matches any valid option
     const normalizedMatch = validRevenues.find(rev => rev === normalized);
     if (normalizedMatch) return normalizedMatch;
-    
+
     return '';
   };
 
@@ -680,17 +682,17 @@ export function ViewContactDetails({
     if (!value) return '';
     const trimmed = value.trim();
     if (!trimmed) return '';
-    
+
     // Valid Employee Size options - exact values as they appear in SelectItem (new format with "to")
     const validSizes = [
       '1to25', '26to50', '51to100', '101to250', '251to500',
       '501to1000', '1001to2500', '2501to5000', '5001to10000', 'over10001'
     ];
-    
+
     // First check for exact match (case-sensitive) - new format
     const exactMatch = validSizes.find(size => size === trimmed);
     if (exactMatch) return exactMatch;
-    
+
     // Handle old format - convert to new format
     const oldToNewMap: { [key: string]: string } = {
       '1-25': '1to25',
@@ -704,19 +706,19 @@ export function ViewContactDetails({
       '5001-10000': '5001to10000',
       'over-10001': 'over10001',
     };
-    
+
     if (oldToNewMap[trimmed]) return oldToNewMap[trimmed];
-    
+
     // Handle special case
     if (trimmed === 'over 10,001' || trimmed.toLowerCase() === 'over 10,001') return 'over10001';
-    
+
     // Remove spaces and replace " to " or "-" with "to"
     let normalized = trimmed.replace(/\s+to\s+/gi, 'to').replace(/-/g, 'to').replace(/\s+/g, '');
-    
+
     // Check if normalized value matches any valid option
     const normalizedMatch = validSizes.find(size => size === normalized);
     if (normalizedMatch) return normalizedMatch;
-    
+
     return '';
   };
 
@@ -725,8 +727,8 @@ export function ViewContactDetails({
     const trimmed = value.trim();
     if (!trimmed) return '';
     const validLevels = [
-      'Analyst', 'Below Manager', 'C-Level', 'Developer', 'Director', 
-      'Engineer', 'General Manager', 'Manager', 'Managing Director', 
+      'Analyst', 'Below Manager', 'C-Level', 'Developer', 'Director',
+      'Engineer', 'General Manager', 'Manager', 'Managing Director',
       'Vice President', 'Architect'
     ];
     const matched = validLevels.find(level => level.toLowerCase() === trimmed.toLowerCase());
@@ -740,12 +742,12 @@ export function ViewContactDetails({
     const trimmed = value.trim();
     if (!trimmed) return '';
     const validRoles = [
-      'Administration', 'Business Development', 'Client Management', 
-      'Customer Experience', 'Customer Success', 'Data & Analytics', 
-      'Demand Generation', 'Engineering', 'Finance', 'Growth', 
-      'Human Resources', 'Information Technology', 'Legal', 'Manufacturing', 
-      'Marketing', 'Operations', 'Others', 
-      'Procurement / Sourcing / Supply Chain', 'Product', 'Quality', 
+      'Administration', 'Business Development', 'Client Management',
+      'Customer Experience', 'Customer Success', 'Data & Analytics',
+      'Demand Generation', 'Engineering', 'Finance', 'Growth',
+      'Human Resources', 'Information Technology', 'Legal', 'Manufacturing',
+      'Marketing', 'Operations', 'Others',
+      'Procurement / Sourcing / Supply Chain', 'Product', 'Quality',
       'Risk & Compliance', 'Sales', 'Sales & Marketing', 'Strategy', 'Underwriting'
     ];
     const exactMatch = validRoles.find(role => role === trimmed);
@@ -759,12 +761,12 @@ export function ViewContactDetails({
     if (!value) return '';
     const trimmed = value.trim();
     if (!trimmed) return '';
-    const matched = industries.find(industry => 
-      industry.value.toLowerCase() === trimmed.toLowerCase() || 
+    const matched = industries.find(industry =>
+      industry.value.toLowerCase() === trimmed.toLowerCase() ||
       industry.label.toLowerCase() === trimmed.toLowerCase()
     );
     if (matched) return matched.value;
-    const exactMatch = industries.find(industry => 
+    const exactMatch = industries.find(industry =>
       industry.value === trimmed || industry.label === trimmed
     );
     return exactMatch ? exactMatch.value : '';
@@ -820,10 +822,10 @@ export function ViewContactDetails({
       };
 
       await dispatch(updateContact(payload)).unwrap();
-      
+
       setIsEditDialogOpen(false);
       toast.success('Contact updated successfully');
-      
+
       // Call callback to refresh contact data
       if (onContactUpdated) {
         onContactUpdated();
@@ -842,7 +844,7 @@ export function ViewContactDetails({
           <Input
             id="edit-firstName"
             value={editForm.firstName}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, firstName: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, firstName: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -850,7 +852,7 @@ export function ViewContactDetails({
           <Input
             id="edit-lastName"
             value={editForm.lastName}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, lastName: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, lastName: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -858,14 +860,14 @@ export function ViewContactDetails({
           <Input
             id="edit-jobTitle"
             value={editForm.jobTitle}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, jobTitle: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, jobTitle: e.target.value })}
           />
         </div>
         <div className="space-y-2">
           <Label>Job Level</Label>
-          <Select 
-            value={editForm.jobLevel || ''} 
-            onValueChange={(value: string) => setEditForm({...editForm, jobLevel: value})}
+          <Select
+            value={editForm.jobLevel || ''}
+            onValueChange={(value: string) => setEditForm({ ...editForm, jobLevel: value })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select level" />
@@ -887,9 +889,9 @@ export function ViewContactDetails({
         </div>
         <div className="space-y-2">
           <Label>Job Role</Label>
-          <Select 
-            value={editForm.jobRole || ''} 
-            onValueChange={(value: string) => setEditForm({...editForm, jobRole: value})}
+          <Select
+            value={editForm.jobRole || ''}
+            onValueChange={(value: string) => setEditForm({ ...editForm, jobRole: value })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select role" />
@@ -929,7 +931,7 @@ export function ViewContactDetails({
             id="edit-email"
             type="email"
             value={editForm.email}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, email: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, email: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -937,7 +939,7 @@ export function ViewContactDetails({
           <Input
             id="edit-phone"
             value={editForm.phone}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, phone: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, phone: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -945,7 +947,7 @@ export function ViewContactDetails({
           <Input
             id="edit-directPhone"
             value={editForm.directPhone}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, directPhone: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, directPhone: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -953,7 +955,7 @@ export function ViewContactDetails({
           <Input
             id="edit-address1"
             value={editForm.address1}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, address1: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, address1: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -961,7 +963,7 @@ export function ViewContactDetails({
           <Input
             id="edit-address2"
             value={editForm.address2}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, address2: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, address2: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -969,7 +971,7 @@ export function ViewContactDetails({
           <Input
             id="edit-city"
             value={editForm.city}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, city: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, city: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -977,7 +979,7 @@ export function ViewContactDetails({
           <Input
             id="edit-state"
             value={editForm.state}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, state: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, state: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -985,7 +987,7 @@ export function ViewContactDetails({
           <Input
             id="edit-zipCode"
             value={editForm.zipCode}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, zipCode: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, zipCode: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -993,7 +995,7 @@ export function ViewContactDetails({
           <Input
             id="edit-country"
             value={editForm.country}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, country: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, country: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -1001,16 +1003,16 @@ export function ViewContactDetails({
           <Input
             id="edit-website"
             value={editForm.website}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, website: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, website: e.target.value })}
             placeholder="https://example.com"
           />
         </div>
         <div className="space-y-2">
           <Label>Industry</Label>
-          <Select 
-            value={editForm.industry || ''} 
+          <Select
+            value={editForm.industry || ''}
             onValueChange={(value: string) => {
-              setEditForm({...editForm, industry: value, subIndustry: ''});
+              setEditForm({ ...editForm, industry: value, subIndustry: '' });
             }}
           >
             <SelectTrigger>
@@ -1030,13 +1032,13 @@ export function ViewContactDetails({
             {editForm.industry === 'Other' ? (
               <Input
                 value={editForm.subIndustry || ''}
-                onChange={(e: { target: { value: string } }) => setEditForm({...editForm, subIndustry: e.target.value})}
+                onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, subIndustry: e.target.value })}
                 placeholder="Enter sub-industry"
               />
             ) : industrySubIndustryMap[editForm.industry] ? (
-              <Select 
-                value={editForm.subIndustry || ''} 
-                onValueChange={(value: string) => setEditForm({...editForm, subIndustry: value})}
+              <Select
+                value={editForm.subIndustry || ''}
+                onValueChange={(value: string) => setEditForm({ ...editForm, subIndustry: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select sub-industry" />
@@ -1055,7 +1057,7 @@ export function ViewContactDetails({
           <Input
             id="edit-contactLinkedInUrl"
             value={editForm.contactLinkedInUrl}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, contactLinkedInUrl: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, contactLinkedInUrl: e.target.value })}
             placeholder="https://linkedin.com/in/username"
           />
         </div>
@@ -1065,31 +1067,31 @@ export function ViewContactDetails({
             id="edit-lastUpdateDate"
             type="date"
             value={editForm.lastUpdateDate}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, lastUpdateDate: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, lastUpdateDate: e.target.value })}
           />
         </div>
-        
+
         <div className="md:col-span-2">
           <div className="border-t border-gray-200 pt-4 mb-4">
             <h3 className="font-medium text-gray-900 mb-4">Company Information</h3>
           </div>
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="edit-companyName">Company Name *</Label>
           <Input
             id="edit-companyName"
             value={editForm.companyName}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, companyName: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, companyName: e.target.value })}
             placeholder="Enter company name"
             required
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor="edit-employeeSize">Employee Size *</Label>
-          <Select 
-            value={editForm.employeeSize || ''} 
-            onValueChange={(value: string) => setEditForm({...editForm, employeeSize: value})}
+          <Select
+            value={editForm.employeeSize || ''}
+            onValueChange={(value: string) => setEditForm({ ...editForm, employeeSize: value })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select employee size" />
@@ -1110,9 +1112,9 @@ export function ViewContactDetails({
         </div>
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="edit-revenue">Revenue *</Label>
-          <Select 
-            value={editForm.revenue || ''} 
-            onValueChange={(value: string) => setEditForm({...editForm, revenue: value})}
+          <Select
+            value={editForm.revenue || ''}
+            onValueChange={(value: string) => setEditForm({ ...editForm, revenue: value })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select revenue" />
@@ -1130,13 +1132,13 @@ export function ViewContactDetails({
             </SelectContent>
           </Select>
         </div>
-        
+
         <div className="md:col-span-2 space-y-2">
           <Label htmlFor="edit-amfNotes">aMF Notes</Label>
           <Textarea
             id="edit-amfNotes"
             value={editForm.amfNotes}
-            onChange={(e: { target: { value: string } }) => setEditForm({...editForm, amfNotes: e.target.value})}
+            onChange={(e: { target: { value: string } }) => setEditForm({ ...editForm, amfNotes: e.target.value })}
             rows={3}
             placeholder="Additional notes about the contact..."
           />
@@ -1149,7 +1151,7 @@ export function ViewContactDetails({
     <div className="flex-1 flex flex-col bg-gray-50 min-h-full">
       {/* Thin dark brown top bar */}
       {/* <div className="h-1" style={{ backgroundColor: '#8B4513' }}></div>   */}
-      
+
       {/* Header with Actions */}
       <div className="bg-white border-b border-gray-200 px-8 py-6">
         <div className="flex items-center justify-between">
@@ -1206,8 +1208,8 @@ export function ViewContactDetails({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-                  <AlertDialogAction 
-                    onClick={handleDelete} 
+                  <AlertDialogAction
+                    onClick={handleDelete}
                     className="bg-red-600 hover:bg-red-700"
                     disabled={isDeleting}
                   >
@@ -1224,80 +1226,105 @@ export function ViewContactDetails({
       <div className="flex-1 overflow-auto p-8">
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Profile Header Card */}
-          <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
-            <div className="flex items-start gap-6">
-              {/* Avatar */}
-              <Avatar className="h-24 w-24 border-4 border-gray-100 shadow-lg">
-                <AvatarFallback className="bg-gradient-to-br from-orange-400 to-pink-400 text-white text-2xl font-semibold">
-                  {getInitials(contact.firstName, contact.lastName)}
-                </AvatarFallback>
-              </Avatar>
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            {/* Profile Banner */}
+            {/* <div
+              className="h-32 w-full bg-gray-100 bg-cover bg-center bg-repeat"
+              style={{
+                backgroundImage: (contact as any).linkedInData?.backgroundUrl
+                  ? `url(${(contact as any).linkedInData.backgroundUrl})`
+                  : 'linear-gradient(to right, #f3f4f6, #e5e7eb)'
+              }}
+            /> */}
+            <img src={(contact as any).linkedInData?.backgroundUrl} alt="image" className="w-full h-[180px] object-cover" style={{ objectFit: 'fill', width: '100%', height: '180px', objectPosition: 'center' }} />
 
-              {/* Name and Basic Info */}
-              <div className="flex-1">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                      {contact.firstName} {contact.lastName}
-                    </h2>
-                    <p className="text-lg text-gray-700 mb-3">{contact.jobTitle || '-'}</p>
-                    <div className="flex items-center gap-2">
-                      {contact.jobLevel && (
-                        <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-0 rounded-full px-3 py-1">
-                          {contact.jobLevel}
-                        </Badge>
-                      )}
-                      {contact.jobRole && (
-                        <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-0 rounded-full px-3 py-1">
-                          {contact.jobRole}
-                        </Badge>
-                      )}
+            <div className="px-8 pb-8">
+              <div className="flex items-start gap-6">
+                {/* Avatar */}
+                <Avatar className="h-24 w-24 border-4 border-white shadow-lg -mt-12 bg-white relative z-10">
+                  {(contact as any).linkedInData?.photoUrl && (
+                    <AvatarImage src={(contact as any).linkedInData.photoUrl} alt={`${contact.firstName} ${contact.lastName}`} />
+                  )}
+                  <AvatarFallback className="bg-gradient-to-br from-orange-400 to-pink-400 text-white text-2xl font-semibold">
+                    {getInitials(contact.firstName, contact.lastName)}
+                  </AvatarFallback>
+                </Avatar>
+
+                {/* Name and Basic Info */}
+                <div className="flex-1 pt-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                        {contact.firstName} {contact.lastName}
+                        {contact.email && (
+                          <img
+                            src={contact.isEmailVerified
+                              ? blueLogo.src
+                              : grayLogo.src}
+                            alt={contact.isEmailVerified ? "Verified" : "Unverified"}
+                            className="w-6 h-6"
+                          />
+                        )}
+                      </h2>
+                      <p className="text-lg text-gray-700 mb-3">{contact.linkedInData?.headline || '-'}</p>
+                      <div className="flex items-center gap-2">
+                        {contact.jobLevel && (
+                          <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-0 rounded-full px-3 py-1">
+                            {contact.jobLevel}
+                          </Badge>
+                        )}
+                        {contact.jobRole && (
+                          <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-0 rounded-full px-3 py-1">
+                            {contact.jobRole}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <div className="text-sm text-gray-600 mb-1">Verified On</div>
+                      <div className="font-semibold text-gray-900">{contact?.syncDate ? new Date(contact.syncDate).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' }) : 'Pending'}</div>
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <div className="text-sm text-gray-600 mb-1">Added By</div>
-                    <div className="font-semibold text-gray-900">{(contact as any).createdBy || contact.addedBy || 'Unknown'}</div>
-                  </div>
-                </div>
-
-                {/* Quick Contact Info */}
-                <div className="grid grid-cols-3 gap-4 mt-6">
-                  {contact.email && (
-                    <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <Mail className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs text-blue-700 mb-1 font-medium">Email</div>
-                        <div className="text-sm text-gray-900 truncate font-medium">{contact.email}</div>
-                      </div>
-                    </div>
-                  )}
-                  {contact.phone && (
-                    <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg border border-green-200">
-                      <div className="p-2 bg-green-100 rounded-lg">
-                        <Phone className="w-5 h-5 text-green-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs text-green-700 mb-1 font-medium">Phone</div>
-                        <div className="text-sm text-gray-900 font-medium">{contact.phone}</div>
-                      </div>
-                    </div>
-                  )}
-                  {(contact.city || contact.state) && (
-                    <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                      <div className="p-2 bg-purple-100 rounded-lg">
-                        <MapPin className="w-5 h-5 text-purple-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs text-purple-700 mb-1 font-medium">Location</div>
-                        <div className="text-sm text-gray-900 font-medium">
-                          {contact.city || ''}{contact.city && contact.state ? ', ' : ''}{contact.state || ''}
+                  {/* Quick Contact Info */}
+                  <div className="grid grid-cols-3 gap-4 mt-6">
+                    {contact.email && (
+                      <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                          <Mail className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs text-blue-700 mb-1 font-medium">Email</div>
+                          <div className="text-sm text-gray-900 truncate font-medium">{contact.email}</div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                    {contact.phone && (
+                      <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div className="p-2 bg-green-100 rounded-lg">
+                          <Phone className="w-5 h-5 text-green-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs text-green-700 mb-1 font-medium">Phone</div>
+                          <div className="text-sm text-gray-900 font-medium">{contact.phone}</div>
+                        </div>
+                      </div>
+                    )}
+                    {(contact.city || contact.state) && (
+                      <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <div className="p-2 bg-purple-100 rounded-lg">
+                          <MapPin className="w-5 h-5 text-purple-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs text-purple-700 mb-1 font-medium">Location</div>
+                          <div className="text-sm text-gray-900 font-medium">
+                            {contact.city || ''}{contact.city && contact.state ? ', ' : ''}{contact.state || ''}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1328,7 +1355,7 @@ export function ViewContactDetails({
                     <div className="text-sm font-medium text-gray-900">{contact.firstName} {contact.lastName}</div>
                   </div>
                 </div>
-                
+
                 {/* Job Title */}
                 <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                   <div className="mt-0.5">
@@ -1336,10 +1363,10 @@ export function ViewContactDetails({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-gray-500 mb-0.5">Job Title</div>
-                    <div className="text-sm font-medium text-gray-900">{contact.jobTitle || '-'}</div>
+                    <div className="text-sm font-medium text-gray-900">{contact.linkedInData?.positions?.positionHistory[0]?.title || '-'}</div>
                   </div>
                 </div>
-                
+
                 {/* Job Level */}
                 <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                   <div className="mt-0.5">
@@ -1350,7 +1377,7 @@ export function ViewContactDetails({
                     <div className="text-sm font-medium text-gray-900">{contact.jobLevel || '-'}</div>
                   </div>
                 </div>
-                
+
                 {/* Role/Department */}
                 <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                   <div className="mt-0.5">
@@ -1361,7 +1388,7 @@ export function ViewContactDetails({
                     <div className="text-sm font-medium text-gray-900">{contact.jobRole || '-'}</div>
                   </div>
                 </div>
-                
+
                 {/* Email ID */}
                 <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                   <div className="mt-0.5">
@@ -1378,7 +1405,7 @@ export function ViewContactDetails({
                     )}
                   </div>
                 </div>
-                
+
                 {/* Phone# */}
                 <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                   <div className="mt-0.5">
@@ -1386,10 +1413,10 @@ export function ViewContactDetails({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-gray-500 mb-0.5">Phone#</div>
-                    <div className="text-sm font-medium text-gray-900">{contact.phone || '-'}</div>
+                    <div className="text-sm font-medium text-gray-900">{contact.mobilePhone || '-'}</div>
                   </div>
                 </div>
-                
+
                 {/* Direct / Mobile# */}
                 {contact.directPhone && (
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
@@ -1402,7 +1429,7 @@ export function ViewContactDetails({
                     </div>
                   </div>
                 )}
-                
+
                 {/* Contact LinkedIn */}
                 <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                   <div className="mt-0.5">
@@ -1410,7 +1437,7 @@ export function ViewContactDetails({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-gray-500 mb-0.5">Contact_LinkedIn</div>
-                    {((contact as any).contactLinkedIn || contact.contactLinkedInUrl) ? (
+                    {((contact as any).linkedInData || contact.contactLinkedInUrl) ? (
                       <div className="text-sm font-medium text-blue-600">
                         <a href={formatLinkedInUrl((contact as any).contactLinkedIn || contact.contactLinkedInUrl || '')} target="_blank" rel="noopener noreferrer" className="hover:underline break-all">
                           {(contact as any).contactLinkedIn || contact.contactLinkedInUrl}
@@ -1469,7 +1496,7 @@ export function ViewContactDetails({
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Website */}
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                     <div className="mt-0.5">
@@ -1477,21 +1504,21 @@ export function ViewContactDetails({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-gray-500 mb-0.5">Website</div>
-                    {company?.website || contact.website ? (
-                      <a
-                        href={formatWebsiteUrl(company?.website || contact.website)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-medium text-blue-600 hover:underline break-all"
-                      >
-                        {company?.website || contact.website}
-                      </a>
-                    ) : (
-                      <div className="text-sm font-medium text-gray-400">-</div>
-                    )}
+                      {company?.website || contact.website ? (
+                        <a
+                          href={formatWebsiteUrl(company?.website || contact.website)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-medium text-blue-600 hover:underline break-all"
+                        >
+                          {company?.website || contact.website}
+                        </a>
+                      ) : (
+                        <div className="text-sm font-medium text-gray-400">-</div>
+                      )}
                     </div>
                   </div>
-                  
+
                   {/* Industry */}
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                     <div className="mt-0.5">
@@ -1502,7 +1529,7 @@ export function ViewContactDetails({
                       <div className="text-sm font-medium text-gray-900">{company?.industry || contact.industry || '-'}</div>
                     </div>
                   </div>
-                  
+
                   {/* Employee Size */}
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                     <div className="mt-0.5">
@@ -1513,7 +1540,7 @@ export function ViewContactDetails({
                       <div className="text-sm font-medium text-gray-900">{company?.employeeSize || contact.employeeSize || '-'}</div>
                     </div>
                   </div>
-                  
+
                   {/* Revenue */}
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                     <div className="mt-0.5">
@@ -1524,7 +1551,7 @@ export function ViewContactDetails({
                       <div className="text-sm font-medium text-gray-900">{formatRevenue(company?.revenue || contact.revenue)}</div>
                     </div>
                   </div>
-                  
+
                   {/* Address/Location */}
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                     <div className="mt-0.5">
@@ -1533,16 +1560,11 @@ export function ViewContactDetails({
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-gray-500 mb-0.5">Address/Location</div>
                       <div className="text-sm font-medium text-gray-900">
-                        {(() => {
-                          const addr = company 
-                            ? `${company.address1 || ''}${company.address2 ? ', ' + company.address2 : ''}${company.city ? ', ' + company.city : ''}${company.state ? ', ' + company.state : ''}`
-                            : `${contact.address1 || ''}${contact.address2 ? ', ' + contact.address2 : ''}${contact.city ? ', ' + contact.city : ''}${contact.state ? ', ' + contact.state : ''}`;
-                          return addr.trim() || '-';
-                        })()}
+                        {contact.linkedInData?.positions?.positionHistory[0]?.locationName || '-'}
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Phone# */}
                   <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                     <div className="mt-0.5">
@@ -1553,9 +1575,9 @@ export function ViewContactDetails({
                       <div className="text-sm font-medium text-gray-900">{company?.phone || contact.phone || '-'}</div>
                     </div>
                   </div>
-                  
+
                   {/* Company LinkedIn */}
-                  {((company as any)?.companyLinkedInUrl || (contact as any).contactLinkedIn || contact.contactLinkedInUrl) && (
+                  {/* {((company as any)?.companyLinkedInUrl || (contact as any).contactLinkedIn || contact.contactLinkedInUrl) && (
                     <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                       <div className="mt-0.5">
                         <Linkedin className="w-4 h-4 text-gray-500" />
@@ -1569,7 +1591,7 @@ export function ViewContactDetails({
                         </div>
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
@@ -1609,10 +1631,10 @@ export function ViewContactDetails({
                     if (!date) return '-';
                     try {
                       const dateObj = typeof date === 'string' ? new Date(date) : date;
-                      return dateObj.toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: '2-digit', 
-                        day: '2-digit' 
+                      return dateObj.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
                       });
                     } catch {
                       return date;
@@ -1628,10 +1650,10 @@ export function ViewContactDetails({
                     if (!date) return '-';
                     try {
                       const dateObj = typeof date === 'string' ? new Date(date) : date;
-                      return dateObj.toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: '2-digit', 
-                        day: '2-digit' 
+                      return dateObj.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
                       });
                     } catch {
                       return date;

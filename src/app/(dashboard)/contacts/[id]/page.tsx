@@ -14,7 +14,7 @@ export default function ContactDetailPage() {
   const router = useRouter();
   const params = useParams();
   const contactId = params?.id as string;
-  
+
   const { user } = useAppSelector((state) => state.auth);
   const { contacts: reduxContacts } = useAppSelector((state) => state.contacts);
   const dispatch = useAppDispatch();
@@ -41,55 +41,55 @@ export default function ContactDetailPage() {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         // First, check if contact is already in Redux store
         let contactData: any = reduxContacts.find((c: Contact) => {
           const cId = (c as any)._id?.toString() || c.id?.toString();
           return cId === contactId;
         });
-        
+
         // If not found in Redux, fetch from API with pagination
         if (!contactData) {
           let found = false;
           let page = 1;
           const limit = 100; // API max limit
-          
+
           while (!found && page <= 100) { // Safety limit of 100 pages
             const response = await privateApiCall<{ contacts: any[], pagination: any }>(`/admin/contacts?page=${page}&limit=${limit}`);
-            
+
             // Find the contact by ID (handle both _id and id formats)
             contactData = response.contacts.find((c: any) => {
               const cId = c._id?.toString() || c.id?.toString();
               return cId === contactId;
             });
-            
+
             if (contactData) {
               found = true;
               break;
             }
-            
+
             // If no more pages, stop searching
             if (page >= response.pagination.totalPages) {
               break;
             }
-            
+
             page++;
           }
         }
-        
+
         if (!contactData) {
           setError('Contact not found');
           toast.error('Contact not found');
           setIsLoading(false);
           return;
         }
-        
+
         // Map the API response to Contact type
         // Handle contactLinkedIn field from database (contactLinkedIn) and legacy fields (LinkedInUrl, contactLinkedInUrl)
-        const linkedInValue = (contactData as any).contactLinkedIn || 
-                              (contactData as any).LinkedInUrl || 
-                              contactData.contactLinkedInUrl || '';
-        
+        const linkedInValue = (contactData as any).contactLinkedIn ||
+          (contactData as any).LinkedInUrl ||
+          contactData.contactLinkedInUrl || '';
+
         const mappedContact: Contact = {
           id: contactData._id?.toString() || contactData.id,
           firstName: contactData.firstName || '',
@@ -99,6 +99,7 @@ export default function ContactDetailPage() {
           jobRole: contactData.jobRole || '',
           email: contactData.email || '',
           phone: contactData.phone || '',
+          mobilePhone: contactData.mobilePhone || '',
           directPhone: contactData.directPhone || '',
           address1: contactData.address1 || '',
           address2: contactData.address2 || '',
@@ -108,7 +109,7 @@ export default function ContactDetailPage() {
           country: contactData.country || '',
           website: contactData.website || '',
           industry: contactData.industry || '',
-          contactLinkedInUrl: linkedInValue,
+          contactLinkedInUrl: contactData.linkedInData?.linkedInUrl || linkedInValue,
           amfNotes: contactData.amfNotes || '',
           lastUpdateDate: contactData.lastUpdateDate || (contactData as any).updatedAt || '',
           addedBy: contactData.addedBy || undefined,
@@ -120,6 +121,9 @@ export default function ContactDetailPage() {
           employeeSize: contactData.employeeSize || '',
           revenue: contactData.revenue || '',
           companyId: contactData.companyId || (contactData as any)?._companyId || (contactData as any)?.company?._id?.toString() || (contactData as any)?.company?.id || undefined,
+          isEmailVerified: contactData.isEmailVerified,
+          linkedInData: contactData.linkedInData || null,
+          syncDate: contactData.syncDate || '',
         };
 
         setContact(mappedContact);
@@ -147,29 +151,29 @@ export default function ContactDetailPage() {
   const handleContactUpdated = async () => {
     // Refresh contact data after update
     if (!contactId) return;
-    
+
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Fetch updated contact from API
       let contactData: any = null;
       let page = 1;
       const limit = 100;
-      
+
       while (!contactData && page <= 100) {
         const response = await privateApiCall<{ contacts: any[], pagination: any }>(`/admin/contacts?page=${page}&limit=${limit}`);
-        
+
         contactData = response.contacts.find((c: any) => {
           const cId = c._id?.toString() || c.id?.toString();
           return cId === contactId;
         });
-        
+
         if (contactData) break;
         if (page >= response.pagination.totalPages) break;
         page++;
       }
-      
+
       if (contactData) {
         const mappedContact: Contact = {
           id: contactData._id?.toString() || contactData.id,
@@ -180,6 +184,7 @@ export default function ContactDetailPage() {
           jobRole: contactData.jobRole || '',
           email: contactData.email || '',
           phone: contactData.phone || '',
+          mobilePhone: contactData.mobilePhone || '',
           directPhone: contactData.directPhone || '',
           address1: contactData.address1 || '',
           address2: contactData.address2 || '',
@@ -197,10 +202,13 @@ export default function ContactDetailPage() {
           createdBy: contactData.createdBy || contactData.addedBy || undefined,
           addedDate: contactData.addedDate || (contactData as any).createdAt || '',
           updatedDate: contactData.updatedDate || (contactData as any).updatedAt || '',
-          companyName: contactData.companyName || '',
+          companyName: contactData.companyName || '', 
           employeeSize: contactData.employeeSize || '',
           revenue: contactData.revenue || '',
           companyId: contactData.companyId || (contactData as any)?._companyId || (contactData as any)?.company?._id?.toString() || (contactData as any)?.company?.id || undefined,
+          isEmailVerified: contactData.isEmailVerified,
+          linkedInData: contactData.linkedInData || null,
+          syncDate: contactData.syncDate || '',
         };
         setContact(mappedContact);
       }
@@ -229,12 +237,12 @@ export default function ContactDetailPage() {
         },
         body: JSON.stringify({ ids: [contactId] }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to delete contact');
       }
-      
+
       toast.success('Contact deleted successfully');
       router.push('/contacts');
     } catch (err: any) {
@@ -286,7 +294,7 @@ export default function ContactDetailPage() {
       escapeCSV(contact.lastUpdateDate || ''),
       escapeCSV(contact.updatedDate || contactData.updatedAt || '')
     ].join(',');
-    
+
     const csvContent = [csvHeader, csvRow].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);

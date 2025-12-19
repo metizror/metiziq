@@ -124,6 +124,17 @@ const contactsSchema = new mongoose.Schema(
       default: null,
       required: [true, "Uploader ID is required"],
     },
+    linkedInData: {
+      type: mongoose.Schema.Types.Mixed
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false
+    },
+    syncDate: {
+      type: Date,
+      default: null
+    }
   },
   {
     timestamps: true,

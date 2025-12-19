@@ -12,7 +12,7 @@ import { Textarea } from './ui/textarea';
 import { Checkbox } from './ui/checkbox';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from './ui/dropdown-menu';
-import { Avatar, AvatarFallback } from './ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Skeleton } from './ui/skeleton';
 import { Plus, Edit, Trash2, Download, Search, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ArrowUpDown, MoreVertical, LayoutList, Table2, Filter } from 'lucide-react';
 import { Contact, User, Company } from '@/types/dashboard.types';
@@ -21,7 +21,7 @@ import { ContactsListView } from './ContactsListView';
 import { CountrySelect } from './CountrySelect';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { createContact, updateContact, deleteContacts, getContacts, type GetContactsParams } from '@/store/slices/contacts.slice';
-import { privateApiCall } from '@/lib/api';
+import { privateApiCall, privateApiPost } from '@/lib/api';
 
 interface ContactsTableProps {
   contacts: Contact[];
@@ -51,11 +51,11 @@ interface ContactsTableProps {
 type SortField = keyof Contact;
 type SortDirection = 'asc' | 'desc';
 
-export function ContactsTable({ 
-  contacts, 
-  user, 
-  companies = [], 
-  filters = {}, 
+export function ContactsTable({
+  contacts,
+  user,
+  companies = [],
+  filters = {},
   searchQuery = '',
   pagination = null,
   isLoading = false,
@@ -81,6 +81,7 @@ export function ContactsTable({
   const [viewMode, setViewMode] = useState('table' as 'table' | 'list');
   const [showExportAllDialog, setShowExportAllDialog] = useState(false);
   const [isExportingAll, setIsExportingAll] = useState(false);
+  const [isSyncingLinkedIn, setIsSyncingLinkedIn] = useState(false);
 
   // Industry and Sub-Industry mapping
   const industrySubIndustryMap: Record<string, string[]> = {
@@ -403,13 +404,13 @@ export function ContactsTable({
     })),
     { label: 'Other', value: 'Other' }
   ];
-  
+
   // Use pagination from API or default values
   const currentPage = pagination?.currentPage || 1;
   const rowsPerPage = pagination?.limit || 25;
   const totalPages = pagination?.totalPages || 1;
   const totalCount = pagination?.totalCount || 0;
-  
+
   const [newContact, setNewContact] = useState({
     firstName: '',
     lastName: '',
@@ -518,8 +519,8 @@ export function ContactsTable({
 
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) return <ArrowUpDown className="w-4 h-4 ml-1" />;
-    return sortDirection === 'asc' ? 
-      <ChevronUp className="w-4 h-4 ml-1" /> : 
+    return sortDirection === 'asc' ?
+      <ChevronUp className="w-4 h-4 ml-1" /> :
       <ChevronDown className="w-4 h-4 ml-1" />;
   };
 
@@ -566,25 +567,25 @@ export function ContactsTable({
       // Dispatch createContact action - if it succeeds, unwrap() will return the result
       // If it fails, it will throw an error and be caught in the catch block
       await dispatch(createContact(payload)).unwrap();
-      
+
       // If we reach here, the API call was successful
       // Contact is already added optimistically to Redux state
       // Close dialog first
       setIsAddDialogOpen(false);
-      
+
       // Reset form
       resetForm();
-      
+
       // Show success message
       toast.success('Contact added successfully');
-      
+
       // Notify parent to update page to 1 (so new contact is visible)
       if (onPageChange) {
         onPageChange(1);
       }
-      
+
       // No need to refetch - contact is already in Redux state optimistically
-      
+
     } catch (error: any) {
       // Error occurred - show error message
       // Don't close dialog so user can fix and retry
@@ -637,17 +638,17 @@ export function ContactsTable({
     if (!value) return '';
     const trimmed = value.trim();
     if (!trimmed) return '';
-    
+
     // Valid Revenue options - exact values as they appear in SelectItem (new format with "to")
     const validRevenues = [
       'Lessthan1M', '1Mto5M', '5Mto10M', '10Mto50M', '50Mto100M',
       '100Mto250M', '250Mto500M', '500Mto1B', 'Morethan1B'
     ];
-    
+
     // First check for exact match (case-sensitive) - new format
     const exactMatch = validRevenues.find(rev => rev === trimmed);
     if (exactMatch) return exactMatch;
-    
+
     // Handle old format - convert to new format
     const oldToNewMap: { [key: string]: string } = {
       'Less-than-1M': 'Lessthan1M',
@@ -660,20 +661,20 @@ export function ContactsTable({
       '500M-1B': '500Mto1B',
       'More-than-1B': 'Morethan1B',
     };
-    
+
     if (oldToNewMap[trimmed]) return oldToNewMap[trimmed];
-    
+
     // Handle special cases - remove $ signs and convert to new format
     if (trimmed === 'Less than $1M' || trimmed.toLowerCase() === 'less than $1m' || trimmed === 'Less-than-$1M') return 'Lessthan1M';
     if (trimmed === 'More than $1B' || trimmed.toLowerCase() === 'more than $1b' || trimmed === 'More-than-$1B') return 'Morethan1B';
-    
+
     // Remove $ signs and replace " to " or "-" with "to"
     let normalized = trimmed.replace(/\$/g, '').replace(/\s+to\s+/gi, 'to').replace(/-/g, 'to');
-    
+
     // Check if normalized value matches any valid option
     const normalizedMatch = validRevenues.find(rev => rev === normalized);
     if (normalizedMatch) return normalizedMatch;
-    
+
     return '';
   };
 
@@ -683,17 +684,17 @@ export function ContactsTable({
     if (!value) return '';
     const trimmed = value.trim();
     if (!trimmed) return '';
-    
+
     // Valid Employee Size options - exact values as they appear in SelectItem (new format with "to")
     const validSizes = [
       '1to25', '26to50', '51to100', '101to250', '251to500',
       '501to1000', '1001to2500', '2501to5000', '5001to10000', 'over10001'
     ];
-    
+
     // First check for exact match (case-sensitive) - new format
     const exactMatch = validSizes.find(size => size === trimmed);
     if (exactMatch) return exactMatch;
-    
+
     // Handle old format - convert to new format
     const oldToNewMap: { [key: string]: string } = {
       '1-25': '1to25',
@@ -707,19 +708,19 @@ export function ContactsTable({
       '5001-10000': '5001to10000',
       'over-10001': 'over10001',
     };
-    
+
     if (oldToNewMap[trimmed]) return oldToNewMap[trimmed];
-    
+
     // Handle special case
     if (trimmed === 'over 10,001' || trimmed.toLowerCase() === 'over 10,001') return 'over10001';
-    
+
     // Remove spaces and replace " to " or "-" with "to"
     let normalized = trimmed.replace(/\s+to\s+/gi, 'to').replace(/-/g, 'to').replace(/\s+/g, '');
-    
+
     // Check if normalized value matches any valid option
     const normalizedMatch = validSizes.find(size => size === normalized);
     if (normalizedMatch) return normalizedMatch;
-    
+
     return '';
   };
 
@@ -730,8 +731,8 @@ export function ContactsTable({
     if (!trimmed) return '';
     // Valid Job Level options - exact values as they appear in SelectItem
     const validLevels = [
-      'Analyst', 'Below Manager', 'C-Level', 'Developer', 'Director', 
-      'Engineer', 'General Manager', 'Manager', 'Managing Director', 
+      'Analyst', 'Below Manager', 'C-Level', 'Developer', 'Director',
+      'Engineer', 'General Manager', 'Manager', 'Managing Director',
       'Vice President', 'Architect'
     ];
     // Check if trimmed value matches any valid level (case-insensitive)
@@ -750,29 +751,29 @@ export function ContactsTable({
     if (!value) return '';
     const trimmed = value.trim();
     if (!trimmed) return '';
-    
+
     // Valid Job Role options - exact values as they appear in SelectItem
     const validRoles = [
-      'Administration', 'Business Development', 'Client Management', 
-      'Customer Experience', 'Customer Success', 'Data & Analytics', 
-      'Demand Generation', 'Engineering', 'Finance', 'Growth', 
-      'Human Resources', 'Information Technology', 'Legal', 'Manufacturing', 
-      'Marketing', 'Operations', 'Others', 
-      'Procurement / Sourcing / Supply Chain', 'Product', 'Quality', 
+      'Administration', 'Business Development', 'Client Management',
+      'Customer Experience', 'Customer Success', 'Data & Analytics',
+      'Demand Generation', 'Engineering', 'Finance', 'Growth',
+      'Human Resources', 'Information Technology', 'Legal', 'Manufacturing',
+      'Marketing', 'Operations', 'Others',
+      'Procurement / Sourcing / Supply Chain', 'Product', 'Quality',
       'Risk & Compliance', 'Sales', 'Sales & Marketing', 'Strategy', 'Underwriting'
     ];
-    
+
     // First check for exact match (case-sensitive)
     const exactMatch = validRoles.find(role => role === trimmed);
     if (exactMatch) return exactMatch;
-    
+
     // Check for case-insensitive match
     const caseInsensitiveMatch = validRoles.find(role => role.toLowerCase() === trimmed.toLowerCase());
     if (caseInsensitiveMatch) return caseInsensitiveMatch;
-    
+
     // Handle common variations and abbreviations
     const lowerTrimmed = trimmed.toLowerCase();
-    
+
     // Map common variations to exact values
     const variationMap: Record<string, string> = {
       // Engineering variations
@@ -785,80 +786,80 @@ export function ContactsTable({
       'programming': 'Engineering',
       'tech': 'Engineering',
       'technical': 'Engineering',
-      
+
       // IT variations
       'it': 'Information Technology',
       'information tech': 'Information Technology',
       'tech support': 'Information Technology',
       'technology': 'Information Technology',
-      
+
       // Sales variations
       'sales manager': 'Sales',
       'sales executive': 'Sales',
       'sales rep': 'Sales',
       'sales representative': 'Sales',
       'account manager': 'Sales',
-      
+
       // Marketing variations
       'marketing manager': 'Marketing',
       'digital marketing': 'Marketing',
       'brand marketing': 'Marketing',
-      
+
       // HR variations
       'hr': 'Human Resources',
       'human resource': 'Human Resources',
       'people operations': 'Human Resources',
       'talent': 'Human Resources',
-      
+
       // Finance variations
       'accounting': 'Finance',
       'financial': 'Finance',
       'accounts': 'Finance',
-      
+
       // Operations variations
       'ops': 'Operations',
       'operational': 'Operations',
-      
+
       // Product variations
       'product management': 'Product',
       'product manager': 'Product',
       'pm': 'Product',
-      
+
       // Data variations
       'data analytics': 'Data & Analytics',
       'data and analytics': 'Data & Analytics',
       'analytics': 'Data & Analytics',
       'data science': 'Data & Analytics',
-      
+
       // Procurement variations
       'procurement': 'Procurement / Sourcing / Supply Chain',
       'sourcing': 'Procurement / Sourcing / Supply Chain',
       'supply chain': 'Procurement / Sourcing / Supply Chain',
       'purchasing': 'Procurement / Sourcing / Supply Chain',
-      
+
       // Customer Success variations
       'customer support': 'Customer Success',
       'customer service': 'Customer Success',
       'cs': 'Customer Success',
-      
+
       // Legal variations
       'legal affairs': 'Legal',
       'compliance': 'Risk & Compliance',
       'risk management': 'Risk & Compliance',
     };
-    
+
     // Check variation map
     if (variationMap[lowerTrimmed]) {
       return variationMap[lowerTrimmed];
     }
-    
+
     // Check if trimmed value contains any valid role (partial match)
     const partialMatch = validRoles.find(role => {
       const lowerRole = role.toLowerCase();
       return lowerTrimmed.includes(lowerRole) || lowerRole.includes(lowerTrimmed);
     });
     if (partialMatch) return partialMatch;
-    
+
     // If still no match, return empty string
     return '';
   };
@@ -869,8 +870,8 @@ export function ContactsTable({
     const trimmed = value.trim();
     if (!trimmed) return '';
     // Check if trimmed value matches any industry value (case-insensitive)
-    const matched = industries.find(industry => 
-      industry.value.toLowerCase() === trimmed.toLowerCase() || 
+    const matched = industries.find(industry =>
+      industry.value.toLowerCase() === trimmed.toLowerCase() ||
       industry.label.toLowerCase() === trimmed.toLowerCase()
     );
     // Always return the exact matched value to ensure SelectItem match
@@ -878,7 +879,7 @@ export function ContactsTable({
       return matched.value;
     }
     // Check for exact match (handles cases where value is already correct)
-    const exactMatch = industries.find(industry => 
+    const exactMatch = industries.find(industry =>
       industry.value === trimmed || industry.label === trimmed
     );
     return exactMatch ? exactMatch.value : '';
@@ -965,7 +966,7 @@ export function ContactsTable({
       // If we reach here, the API call was successful
       // Show success message
       toast.success('Contact updated successfully');
-      
+
       // The Redux slice will update the specific contact in the list automatically
       // No need to refetch the entire list - this makes it faster and smoother
 
@@ -1007,7 +1008,7 @@ export function ContactsTable({
 
       // Show success message
       toast.success('Contact deleted successfully');
-      
+
       // No need to refetch - contact is already removed from Redux state optimistically
     } catch (error: any) {
       // Error occurred - need to restore the contact
@@ -1065,7 +1066,7 @@ export function ContactsTable({
 
       // Show success message
       toast.success(`${countToDelete} contacts deleted successfully`);
-      
+
       // No need to refetch - contacts are already removed from Redux state optimistically
     } catch (error: any) {
       // Error occurred - need to restore the contacts
@@ -1090,6 +1091,75 @@ export function ContactsTable({
       setSelectedContacts(idsToDelete);
       // Show error message
       toast.error(error.message || 'Failed to delete contacts');
+    }
+  };
+
+  const handleSyncLinkedIn = async () => {
+    if (selectedContacts.length === 0) {
+      toast.error('Please select contacts to sync LinkedIn data');
+      return;
+    }
+
+    setIsSyncingLinkedIn(true);
+
+    try {
+      // Get emails from selected contacts
+      const selectedContactsData = contacts.filter(c => {
+        const cId = c.id || (c as any)._id;
+        return selectedContacts.includes(cId);
+      });
+
+      const emails = selectedContactsData.map(c => c.email).filter(Boolean);
+
+      if (emails.length === 0) {
+        toast.error('No valid emails found in selected contacts');
+        setIsSyncingLinkedIn(false);
+        return;
+      }
+
+      // Call the sync API
+      const response = await privateApiPost<{
+        message: string;
+        results: Array<{ email: string; success: boolean; contact: any }>;
+        errors: Array<{ email: string; error: string }>;
+        summary: {
+          total: number;
+          successful: number;
+          failed: number;
+        };
+      }>('/admin/contacts/sync-linkedin', { emails });
+
+      // Show results
+      if (response.summary.successful > 0) {
+        toast.success(`Successfully synced ${response.summary.successful} of ${response.summary.total} contacts`);
+      }
+
+      if (response.errors.length > 0) {
+        // Show first few errors
+        const errorMessages = response.errors.slice(0, 3).map(e => `${e.email}: ${e.error}`).join('\n');
+        toast.error(`Failed to sync ${response.errors.length} contacts:\n${errorMessages}`);
+      }
+
+      // Refresh the contacts list to show updated data
+      const fetchParams: GetContactsParams = {
+        ...filters,
+        page: pagination?.currentPage || 1,
+        search: searchQuery || undefined,
+      };
+      const cleanedFilters = Object.fromEntries(
+        Object.entries(fetchParams).filter(([_, value]) => {
+          if (typeof value === 'number') return true;
+          return value !== '' && value !== null && value !== undefined;
+        })
+      ) as GetContactsParams;
+      await dispatch(getContacts(cleanedFilters));
+
+      // Clear selection
+      setSelectedContacts([]);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to sync LinkedIn data');
+    } finally {
+      setIsSyncingLinkedIn(false);
     }
   };
 
@@ -1136,7 +1206,7 @@ export function ContactsTable({
       escapeCSV(contact.lastUpdateDate || ''),
       escapeCSV(contact.updatedDate || contactData.updatedAt || '')
     ].join(',');
-    
+
     const csvContent = [csvHeader, csvRow].join('\n');
     downloadCSV(csvContent, `contact-${contact.firstName}-${contact.lastName}.csv`);
   };
@@ -1170,7 +1240,7 @@ export function ContactsTable({
         const queryParts: string[] = [];
         queryParts.push(`page=${page}`);
         queryParts.push(`limit=${limit}`);
-        
+
         // Add filter parameters (excluding search to get all contacts)
         if (filters.companyName) queryParts.push(`companyName=${encodeURIComponent(filters.companyName)}`);
         if (filters.employeeSize) queryParts.push(`employeeSize=${encodeURIComponent(filters.employeeSize)}`);
@@ -1197,13 +1267,13 @@ export function ContactsTable({
             hasPreviousPage: boolean;
           };
         }>(endpoint);
-        
+
         // Map contacts to ensure they have 'id' field
         const mappedContacts = response.contacts.map((contact: any) => ({
           ...contact,
           id: contact._id || contact.id,
         }));
-        
+
         allContacts.push(...mappedContacts);
 
         // Check if there are more pages
@@ -1292,319 +1362,319 @@ export function ContactsTable({
   const renderFormFields = (isEdit = false) => {
     const contactId = editingContact?.id || (editingContact as any)?._id || 'new';
     return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-firstName" : "firstName"}>First Name *</Label>
-        <Input
-          id={isEdit ? "edit-firstName" : "firstName"}
-          value={newContact.firstName}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, firstName: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-lastName" : "lastName"}>Last Name *</Label>
-        <Input
-          id={isEdit ? "edit-lastName" : "lastName"}
-          value={newContact.lastName}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, lastName: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-jobTitle" : "jobTitle"}>Job Title</Label>
-        <Input
-          id={isEdit ? "edit-jobTitle" : "jobTitle"}
-          value={newContact.jobTitle}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, jobTitle: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label>Job Level</Label>
-        <Select 
-          key={`jobLevel-${contactId}`}
-          value={newContact.jobLevel || ''} 
-          onValueChange={(value: string) => setNewContact({...newContact, jobLevel: value})}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select level" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Analyst">Analyst</SelectItem>
-            <SelectItem value="Below Manager">Below Manager</SelectItem>
-            <SelectItem value="C-Level">C-Level</SelectItem>
-            <SelectItem value="Developer">Developer</SelectItem>
-            <SelectItem value="Director">Director</SelectItem>
-            <SelectItem value="Engineer">Engineer</SelectItem>
-            <SelectItem value="General Manager">General Manager</SelectItem>
-            <SelectItem value="Manager">Manager</SelectItem>
-            <SelectItem value="Managing Director">Managing Director</SelectItem>
-            <SelectItem value="Vice President">Vice President</SelectItem>
-            <SelectItem value="Architect">Architect</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="space-y-2">
-        <Label>Job Role</Label>
-        <Select 
-          key={`jobRole-${contactId}`}
-          value={newContact.jobRole || ''} 
-          onValueChange={(value: string) => setNewContact({...newContact, jobRole: value})}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select role" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Administration">Administration</SelectItem>
-            <SelectItem value="Business Development">Business Development</SelectItem>
-            <SelectItem value="Client Management">Client Management</SelectItem>
-            <SelectItem value="Customer Experience">Customer Experience</SelectItem>
-            <SelectItem value="Customer Success">Customer Success</SelectItem>
-            <SelectItem value="Data & Analytics">Data & Analytics</SelectItem>
-            <SelectItem value="Demand Generation">Demand Generation</SelectItem>
-            <SelectItem value="Engineering">Engineering</SelectItem>
-            <SelectItem value="Finance">Finance</SelectItem>
-            <SelectItem value="Growth">Growth</SelectItem>
-            <SelectItem value="Human Resources">Human Resources</SelectItem>
-            <SelectItem value="Information Technology">Information Technology</SelectItem>
-            <SelectItem value="Legal">Legal</SelectItem>
-            <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-            <SelectItem value="Marketing">Marketing</SelectItem>
-            <SelectItem value="Operations">Operations</SelectItem>
-            <SelectItem value="Others">Others</SelectItem>
-            <SelectItem value="Procurement / Sourcing / Supply Chain">Procurement / Sourcing / Supply Chain</SelectItem>
-            <SelectItem value="Product">Product</SelectItem>
-            <SelectItem value="Quality">Quality</SelectItem>
-            <SelectItem value="Risk & Compliance">Risk & Compliance</SelectItem>
-            <SelectItem value="Sales">Sales</SelectItem>
-            <SelectItem value="Sales & Marketing">Sales & Marketing</SelectItem>
-            <SelectItem value="Strategy">Strategy</SelectItem>
-            <SelectItem value="Underwriting">Underwriting</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-email" : "email"}>Email</Label>
-        <Input
-          id={isEdit ? "edit-email" : "email"}
-          type="email"
-          value={newContact.email}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, email: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-phone" : "phone"}>Phone</Label>
-        <Input
-          id={isEdit ? "edit-phone" : "phone"}
-          value={newContact.phone}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, phone: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-directPhone" : "directPhone"}>Direct Phone</Label>
-        <Input
-          id={isEdit ? "edit-directPhone" : "directPhone"}
-          value={newContact.directPhone}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, directPhone: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-address1" : "address1"}>Address 1</Label>
-        <Input
-          id={isEdit ? "edit-address1" : "address1"}
-          value={newContact.address1}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, address1: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-address2" : "address2"}>Address 2</Label>
-        <Input
-          id={isEdit ? "edit-address2" : "address2"}
-          value={newContact.address2}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, address2: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-city" : "city"}>City</Label>
-        <Input
-          id={isEdit ? "edit-city" : "city"}
-          value={newContact.city}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, city: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-state" : "state"}>State</Label>
-        <Input
-          id={isEdit ? "edit-state" : "state"}
-          value={newContact.state}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, state: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-zipCode" : "zipCode"}>Zip Code</Label>
-        <Input
-          id={isEdit ? "edit-zipCode" : "zipCode"}
-          value={newContact.zipCode}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, zipCode: e.target.value})}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-country" : "country"}>Country</Label>
-        <CountrySelect
-          value={newContact.country}
-          onValueChange={(value: string) => setNewContact({...newContact, country: value})}
-          placeholder="Select country..."
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-website" : "website"}>Website</Label>
-        <Input
-          id={isEdit ? "edit-website" : "website"}
-          value={newContact.website}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, website: e.target.value})}
-          placeholder="https://example.com"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label>Industry</Label>
-        <Select 
-          key={`industry-${contactId}`}
-          value={newContact.industry || ''} 
-          onValueChange={(value: string) => {
-            setNewContact({...newContact, industry: value, subIndustry: ''});
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select industry" />
-          </SelectTrigger>
-          <SelectContent>
-            {industries.map((industry) => (
-              <SelectItem key={industry.value} value={industry.value}>{industry.label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {newContact.industry && (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
         <div className="space-y-2">
-          <Label>Sub-Industry</Label>
-          {newContact.industry === 'Other' ? (
-            <Input
-              value={newContact.subIndustry || ''}
-              onChange={(e: { target: { value: string } }) => setNewContact({...newContact, subIndustry: e.target.value})}
-              placeholder="Enter sub-industry"
-            />
-          ) : industrySubIndustryMap[newContact.industry] ? (
-            <Select 
-              key={`subIndustry-${contactId}-${newContact.industry}`}
-              value={newContact.subIndustry || ''} 
-              onValueChange={(value: string) => setNewContact({...newContact, subIndustry: value})}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select sub-industry" />
-              </SelectTrigger>
-              <SelectContent>
-                {industrySubIndustryMap[newContact.industry].map((subIndustry) => (
-                  <SelectItem key={subIndustry} value={subIndustry}>{subIndustry}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : null}
+          <Label htmlFor={isEdit ? "edit-firstName" : "firstName"}>First Name *</Label>
+          <Input
+            id={isEdit ? "edit-firstName" : "firstName"}
+            value={newContact.firstName}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, firstName: e.target.value })}
+          />
         </div>
-      )}
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-contactLinkedInUrl" : "contactLinkedInUrl"}>Contact LinkedIn URL</Label>
-        <Input
-          id={isEdit ? "edit-contactLinkedInUrl" : "contactLinkedInUrl"}
-          value={newContact.contactLinkedInUrl}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, contactLinkedInUrl: e.target.value})}
-          placeholder="https://linkedin.com/in/username"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-lastUpdateDate" : "lastUpdateDate"}>Last Update Date</Label>
-        <Input
-          id={isEdit ? "edit-lastUpdateDate" : "lastUpdateDate"}
-          type="date"
-          value={newContact.lastUpdateDate}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, lastUpdateDate: e.target.value})}
-        />
-      </div>
-      
-      {/* Required Company Information */}
-      <div className="md:col-span-2">
-        <div className="border-t border-gray-200 pt-4 mb-4">
-          <h3 className="font-medium text-gray-900 mb-4">Company Information</h3>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-lastName" : "lastName"}>Last Name *</Label>
+          <Input
+            id={isEdit ? "edit-lastName" : "lastName"}
+            value={newContact.lastName}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, lastName: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-jobTitle" : "jobTitle"}>Job Title</Label>
+          <Input
+            id={isEdit ? "edit-jobTitle" : "jobTitle"}
+            value={newContact.jobTitle}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, jobTitle: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>Job Level</Label>
+          <Select
+            key={`jobLevel-${contactId}`}
+            value={newContact.jobLevel || ''}
+            onValueChange={(value: string) => setNewContact({ ...newContact, jobLevel: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select level" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Analyst">Analyst</SelectItem>
+              <SelectItem value="Below Manager">Below Manager</SelectItem>
+              <SelectItem value="C-Level">C-Level</SelectItem>
+              <SelectItem value="Developer">Developer</SelectItem>
+              <SelectItem value="Director">Director</SelectItem>
+              <SelectItem value="Engineer">Engineer</SelectItem>
+              <SelectItem value="General Manager">General Manager</SelectItem>
+              <SelectItem value="Manager">Manager</SelectItem>
+              <SelectItem value="Managing Director">Managing Director</SelectItem>
+              <SelectItem value="Vice President">Vice President</SelectItem>
+              <SelectItem value="Architect">Architect</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label>Job Role</Label>
+          <Select
+            key={`jobRole-${contactId}`}
+            value={newContact.jobRole || ''}
+            onValueChange={(value: string) => setNewContact({ ...newContact, jobRole: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Administration">Administration</SelectItem>
+              <SelectItem value="Business Development">Business Development</SelectItem>
+              <SelectItem value="Client Management">Client Management</SelectItem>
+              <SelectItem value="Customer Experience">Customer Experience</SelectItem>
+              <SelectItem value="Customer Success">Customer Success</SelectItem>
+              <SelectItem value="Data & Analytics">Data & Analytics</SelectItem>
+              <SelectItem value="Demand Generation">Demand Generation</SelectItem>
+              <SelectItem value="Engineering">Engineering</SelectItem>
+              <SelectItem value="Finance">Finance</SelectItem>
+              <SelectItem value="Growth">Growth</SelectItem>
+              <SelectItem value="Human Resources">Human Resources</SelectItem>
+              <SelectItem value="Information Technology">Information Technology</SelectItem>
+              <SelectItem value="Legal">Legal</SelectItem>
+              <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+              <SelectItem value="Marketing">Marketing</SelectItem>
+              <SelectItem value="Operations">Operations</SelectItem>
+              <SelectItem value="Others">Others</SelectItem>
+              <SelectItem value="Procurement / Sourcing / Supply Chain">Procurement / Sourcing / Supply Chain</SelectItem>
+              <SelectItem value="Product">Product</SelectItem>
+              <SelectItem value="Quality">Quality</SelectItem>
+              <SelectItem value="Risk & Compliance">Risk & Compliance</SelectItem>
+              <SelectItem value="Sales">Sales</SelectItem>
+              <SelectItem value="Sales & Marketing">Sales & Marketing</SelectItem>
+              <SelectItem value="Strategy">Strategy</SelectItem>
+              <SelectItem value="Underwriting">Underwriting</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-email" : "email"}>Email</Label>
+          <Input
+            id={isEdit ? "edit-email" : "email"}
+            type="email"
+            value={newContact.email}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, email: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-phone" : "phone"}>Phone</Label>
+          <Input
+            id={isEdit ? "edit-phone" : "phone"}
+            value={newContact.phone}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, phone: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-directPhone" : "directPhone"}>Direct Phone</Label>
+          <Input
+            id={isEdit ? "edit-directPhone" : "directPhone"}
+            value={newContact.directPhone}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, directPhone: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-address1" : "address1"}>Address 1</Label>
+          <Input
+            id={isEdit ? "edit-address1" : "address1"}
+            value={newContact.address1}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, address1: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-address2" : "address2"}>Address 2</Label>
+          <Input
+            id={isEdit ? "edit-address2" : "address2"}
+            value={newContact.address2}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, address2: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-city" : "city"}>City</Label>
+          <Input
+            id={isEdit ? "edit-city" : "city"}
+            value={newContact.city}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, city: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-state" : "state"}>State</Label>
+          <Input
+            id={isEdit ? "edit-state" : "state"}
+            value={newContact.state}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, state: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-zipCode" : "zipCode"}>Zip Code</Label>
+          <Input
+            id={isEdit ? "edit-zipCode" : "zipCode"}
+            value={newContact.zipCode}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, zipCode: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-country" : "country"}>Country</Label>
+          <CountrySelect
+            value={newContact.country}
+            onValueChange={(value: string) => setNewContact({ ...newContact, country: value })}
+            placeholder="Select country..."
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-website" : "website"}>Website</Label>
+          <Input
+            id={isEdit ? "edit-website" : "website"}
+            value={newContact.website}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, website: e.target.value })}
+            placeholder="https://example.com"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>Industry</Label>
+          <Select
+            key={`industry-${contactId}`}
+            value={newContact.industry || ''}
+            onValueChange={(value: string) => {
+              setNewContact({ ...newContact, industry: value, subIndustry: '' });
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select industry" />
+            </SelectTrigger>
+            <SelectContent>
+              {industries.map((industry) => (
+                <SelectItem key={industry.value} value={industry.value}>{industry.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {newContact.industry && (
+          <div className="space-y-2">
+            <Label>Sub-Industry</Label>
+            {newContact.industry === 'Other' ? (
+              <Input
+                value={newContact.subIndustry || ''}
+                onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, subIndustry: e.target.value })}
+                placeholder="Enter sub-industry"
+              />
+            ) : industrySubIndustryMap[newContact.industry] ? (
+              <Select
+                key={`subIndustry-${contactId}-${newContact.industry}`}
+                value={newContact.subIndustry || ''}
+                onValueChange={(value: string) => setNewContact({ ...newContact, subIndustry: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select sub-industry" />
+                </SelectTrigger>
+                <SelectContent>
+                  {industrySubIndustryMap[newContact.industry].map((subIndustry) => (
+                    <SelectItem key={subIndustry} value={subIndustry}>{subIndustry}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : null}
+          </div>
+        )}
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-contactLinkedInUrl" : "contactLinkedInUrl"}>Contact LinkedIn URL</Label>
+          <Input
+            id={isEdit ? "edit-contactLinkedInUrl" : "contactLinkedInUrl"}
+            value={newContact.contactLinkedInUrl}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, contactLinkedInUrl: e.target.value })}
+            placeholder="https://linkedin.com/in/username"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-lastUpdateDate" : "lastUpdateDate"}>Last Update Date</Label>
+          <Input
+            id={isEdit ? "edit-lastUpdateDate" : "lastUpdateDate"}
+            type="date"
+            value={newContact.lastUpdateDate}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, lastUpdateDate: e.target.value })}
+          />
+        </div>
+
+        {/* Required Company Information */}
+        <div className="md:col-span-2">
+          <div className="border-t border-gray-200 pt-4 mb-4">
+            <h3 className="font-medium text-gray-900 mb-4">Company Information</h3>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-companyName" : "companyName"}>Company Name *</Label>
+          <Input
+            id={isEdit ? "edit-companyName" : "companyName"}
+            value={newContact.companyName}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, companyName: e.target.value })}
+            placeholder="Enter company name"
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={isEdit ? "edit-employeeSize" : "employeeSize"}>Employee Size *</Label>
+          <Select
+            key={`employeeSize-${contactId}`}
+            value={newContact.employeeSize || ''}
+            onValueChange={(value: string) => setNewContact({ ...newContact, employeeSize: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select employee size" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1to25">1 to 25</SelectItem>
+              <SelectItem value="26to50">26 to 50</SelectItem>
+              <SelectItem value="51to100">51 to 100</SelectItem>
+              <SelectItem value="101to250">101 to 250</SelectItem>
+              <SelectItem value="251to500">251 to 500</SelectItem>
+              <SelectItem value="501to1000">501 to 1000</SelectItem>
+              <SelectItem value="1001to2500">1001 to 2500</SelectItem>
+              <SelectItem value="2501to5000">2501 to 5000</SelectItem>
+              <SelectItem value="5001to10000">5001 to 10000</SelectItem>
+              <SelectItem value="over10001">over 10,001</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor={isEdit ? "edit-revenue" : "revenue"}>Revenue *</Label>
+          <Select
+            key={`revenue-${contactId}`}
+            value={newContact.revenue || ''}
+            onValueChange={(value: string) => setNewContact({ ...newContact, revenue: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select revenue" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Lessthan1M">Less than $1M</SelectItem>
+              <SelectItem value="1Mto5M">$1M to $5M</SelectItem>
+              <SelectItem value="5Mto10M">$5M to $10M</SelectItem>
+              <SelectItem value="10Mto50M">$10M to $50M</SelectItem>
+              <SelectItem value="50Mto100M">$50M to $100M</SelectItem>
+              <SelectItem value="100Mto250M">$100M to $250M</SelectItem>
+              <SelectItem value="250Mto500M">$250M to $500M</SelectItem>
+              <SelectItem value="500Mto1B">$500M to $1B</SelectItem>
+              <SelectItem value="Morethan1B">More than $1B</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="md:col-span-2 space-y-2">
+          <Label htmlFor={isEdit ? "edit-amfNotes" : "amfNotes"}>aMF Notes</Label>
+          <Textarea
+            id={isEdit ? "edit-amfNotes" : "amfNotes"}
+            value={newContact.amfNotes}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, amfNotes: e.target.value })}
+            rows={3}
+            placeholder="Additional notes about the contact..."
+          />
         </div>
       </div>
-      
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-companyName" : "companyName"}>Company Name *</Label>
-        <Input
-          id={isEdit ? "edit-companyName" : "companyName"}
-          value={newContact.companyName}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, companyName: e.target.value})}
-          placeholder="Enter company name"
-          required
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor={isEdit ? "edit-employeeSize" : "employeeSize"}>Employee Size *</Label>
-        <Select 
-          key={`employeeSize-${contactId}`}
-          value={newContact.employeeSize || ''} 
-          onValueChange={(value: string) => setNewContact({...newContact, employeeSize: value})}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select employee size" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="1to25">1 to 25</SelectItem>
-            <SelectItem value="26to50">26 to 50</SelectItem>
-            <SelectItem value="51to100">51 to 100</SelectItem>
-            <SelectItem value="101to250">101 to 250</SelectItem>
-            <SelectItem value="251to500">251 to 500</SelectItem>
-            <SelectItem value="501to1000">501 to 1000</SelectItem>
-            <SelectItem value="1001to2500">1001 to 2500</SelectItem>
-            <SelectItem value="2501to5000">2501 to 5000</SelectItem>
-            <SelectItem value="5001to10000">5001 to 10000</SelectItem>
-            <SelectItem value="over10001">over 10,001</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="space-y-2 md:col-span-2">
-        <Label htmlFor={isEdit ? "edit-revenue" : "revenue"}>Revenue *</Label>
-        <Select 
-          key={`revenue-${contactId}`}
-          value={newContact.revenue || ''} 
-          onValueChange={(value: string) => setNewContact({...newContact, revenue: value})}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select revenue" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Lessthan1M">Less than $1M</SelectItem>
-            <SelectItem value="1Mto5M">$1M to $5M</SelectItem>
-            <SelectItem value="5Mto10M">$5M to $10M</SelectItem>
-            <SelectItem value="10Mto50M">$10M to $50M</SelectItem>
-            <SelectItem value="50Mto100M">$50M to $100M</SelectItem>
-            <SelectItem value="100Mto250M">$100M to $250M</SelectItem>
-            <SelectItem value="250Mto500M">$250M to $500M</SelectItem>
-            <SelectItem value="500Mto1B">$500M to $1B</SelectItem>
-            <SelectItem value="Morethan1B">More than $1B</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      
-      <div className="md:col-span-2 space-y-2">
-        <Label htmlFor={isEdit ? "edit-amfNotes" : "amfNotes"}>aMF Notes</Label>
-        <Textarea
-          id={isEdit ? "edit-amfNotes" : "amfNotes"}
-          value={newContact.amfNotes}
-          onChange={(e: { target: { value: string } }) => setNewContact({...newContact, amfNotes: e.target.value})}
-          rows={3}
-          placeholder="Additional notes about the contact..."
-        />
-      </div>
-    </div>
     );
   };
 
@@ -1613,6 +1683,15 @@ export function ContactsTable({
       <CardHeader className="flex-shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle>Contacts ({totalCount})</CardTitle>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleSyncLinkedIn}
+            disabled={isSyncingLinkedIn || selectedContacts.length === 0}
+            className="flex items-center gap-2"
+          >
+            {isSyncingLinkedIn ? 'Syncing...' : 'Sync Data'}
+          </Button>
           <div className="flex items-center space-x-2">
             {onToggleFilters && (
               <Button
@@ -1637,7 +1716,7 @@ export function ContactsTable({
                 className="pl-9 h-9"
               />
             </div>
-            
+
             {/* View Mode Toggle */}
 
 
@@ -1645,9 +1724,9 @@ export function ContactsTable({
               <>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="text-red-600"
                       disabled={isDeleting}
                     >
@@ -1664,8 +1743,8 @@ export function ContactsTable({
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-                      <AlertDialogAction 
-                        onClick={handleBulkDelete} 
+                      <AlertDialogAction
+                        onClick={handleBulkDelete}
                         className="bg-red-600 hover:bg-red-700"
                         disabled={isDeleting}
                       >
@@ -1682,9 +1761,9 @@ export function ContactsTable({
             )}
             <AlertDialog open={showExportAllDialog} onOpenChange={setShowExportAllDialog}>
               <AlertDialogTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   disabled={isExportingAll || selectedContacts.length > 0}
                 >
                   <Download className="w-4 h-4 mr-2" />
@@ -1700,7 +1779,7 @@ export function ContactsTable({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel disabled={isExportingAll}>Cancel</AlertDialogCancel>
-                  <AlertDialogAction 
+                  <AlertDialogAction
                     onClick={handleConfirmExportAll}
                     disabled={isExportingAll}
                   >
@@ -1709,8 +1788,8 @@ export function ContactsTable({
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               className="bg-[#2563EB] hover:bg-[#2563EB]/90 text-white"
               onClick={() => router.push('/contacts/new')}
             >
@@ -1720,10 +1799,10 @@ export function ContactsTable({
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden" style={{ flex: '1 1 0%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-        <div className="overflow-y-auto overflow-x-auto flex-1" style={{ 
-          scrollbarWidth: 'thin', 
+        <div className="overflow-y-auto overflow-x-auto flex-1" style={{
+          scrollbarWidth: 'thin',
           scrollbarColor: '#2563EB #f1f1f1',
           minHeight: 0,
           maxHeight: '100%'
@@ -1732,7 +1811,7 @@ export function ContactsTable({
             <TableHeader>
               <TableRow>
                 <TableHead className="w-12">
-                  <Checkbox 
+                  <Checkbox
                     checked={selectedContacts.length === displayedContacts.length && displayedContacts.length > 0}
                     onCheckedChange={handleSelectAll}
                   />
@@ -1815,89 +1894,107 @@ export function ContactsTable({
               ) : (
                 displayedContacts.map((contact: Contact) => {
                   return (
-                <TableRow 
-                  key={contact.id}
-                  className="cursor-pointer hover:bg-gray-50"
-                  onClick={(e: any) => {
-                    // Don't trigger row click if clicking on interactive elements
-                    const target = e.target as HTMLElement;
-                    if (!target.closest('button') && !target.closest('[role="checkbox"]') && !target.closest('[role="menuitem"]')) {
-                      onViewContact?.(contact);
-                    }
-                  }}
-                >
-                  <TableCell onClick={(e: any) => e.stopPropagation()}>
-                    <Checkbox 
-                      checked={selectedContacts.includes(contact.id)}
-                      onCheckedChange={(checked: boolean) => handleSelectContact(contact.id, !!checked)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="bg-gray-200">
-                          {getInitials(contact.firstName, contact.lastName)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">{contact.firstName} {contact.lastName}</div>
-                        <div className="text-sm text-gray-500">{contact.jobTitle}</div>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{contact.phone || '-'}</TableCell>
-                  <TableCell>{contact.email || '-'}</TableCell>
-                  <TableCell>{getCompanyName(contact) || '-'}</TableCell>
-                  <TableCell>
-                    {(() => {
-                      const date = (contact as any).createdAt || contact.addedDate;
-                      if (!date) return '-';
-                      try {
-                        const dateObj = typeof date === 'string' ? new Date(date) : date;
-                        return dateObj.toLocaleDateString('en-US', { 
-                          year: 'numeric', 
-                          month: '2-digit', 
-                          day: '2-digit' 
-                        });
-                      } catch {
-                        return date;
-                      }
-                    })()}
-                  </TableCell>
-                  <TableCell onClick={(e: any) => e.stopPropagation()}>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => onViewContact?.(contact)}>
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleEditContact(contact)}>
-                          <Edit className="w-4 h-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleExportSingle(contact)}>
-                          <Download className="w-4 h-4 mr-2" />
-                          Export
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          onClick={() => handleDeleteContact(contact.id)}
-                          className="text-red-600"
-                          disabled={isDeleting}
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              );
+                    <TableRow
+                      key={contact.id}
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={(e: any) => {
+                        // Don't trigger row click if clicking on interactive elements
+                        const target = e.target as HTMLElement;
+                        if (!target.closest('button') && !target.closest('[role="checkbox"]') && !target.closest('[role="menuitem"]')) {
+                          onViewContact?.(contact);
+                        }
+                      }}
+                    >
+                      <TableCell onClick={(e: any) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedContacts.includes(contact.id)}
+                          onCheckedChange={(checked: boolean) => handleSelectContact(contact.id, !!checked)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            {contact.linkedInData?.photoUrl && (
+                              <AvatarImage src={contact.linkedInData.photoUrl} alt={`${contact.firstName} ${contact.lastName}`} />
+                            )}
+                            <AvatarFallback className="bg-gray-200">
+                              {getInitials(contact.firstName, contact.lastName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-medium flex items-center gap-1">
+                              {contact.firstName} {contact.lastName}
+                              {contact.email && (
+                                <img
+                                  src={contact.isEmailVerified
+                                    ? "https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg"
+                                    : "/Twitter_Verified_Badge_Gray.svg"}
+                                  alt={contact.isEmailVerified ? "Verified" : "Unverified"}
+                                  className="w-4 h-4"
+                                />
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-500">{contact.jobTitle}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{contact.mobilePhone || '-'}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {contact.email || '-'}
+                        </div>
+                      </TableCell>
+                      <TableCell>{getCompanyName(contact) || '-'}</TableCell>
+                      <TableCell>
+                        {(() => {
+                          const date = (contact as any).createdAt || contact.addedDate;
+                          if (!date) return '-';
+                          try {
+                            const dateObj = typeof date === 'string' ? new Date(date) : date;
+                            return dateObj.toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: '2-digit',
+                              day: '2-digit'
+                            });
+                          } catch {
+                            return date;
+                          }
+                        })()}
+                      </TableCell>
+                      <TableCell onClick={(e: any) => e.stopPropagation()}>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => onViewContact?.(contact)}>
+                              <Eye className="w-4 h-4 mr-2" />
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleEditContact(contact)}>
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExportSingle(contact)}>
+                              <Download className="w-4 h-4 mr-2" />
+                              Export
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteContact(contact.id)}
+                              className="text-red-600"
+                              disabled={isDeleting}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
                 })
               )}
             </TableBody>
@@ -1922,7 +2019,7 @@ export function ContactsTable({
               Showing {startIndex + 1} to {Math.min(startIndex + rowsPerPage, totalCount)} of {totalCount} results
             </span>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
@@ -1933,7 +2030,7 @@ export function ContactsTable({
               <ChevronLeft className="w-4 h-4 mr-1" />
               Previous
             </Button>
-            
+
             <div className="flex space-x-1">
               {(() => {
                 const pages: number[] = [];
@@ -1960,7 +2057,7 @@ export function ContactsTable({
                 ));
               })()}
             </div>
-            
+
             <Button
               variant="outline"
               size="sm"
