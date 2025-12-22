@@ -22,6 +22,8 @@ import { CountrySelect } from './CountrySelect';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { createContact, updateContact, deleteContacts, getContacts, type GetContactsParams } from '@/store/slices/contacts.slice';
 import { privateApiCall, privateApiPost } from '@/lib/api';
+import blue from '../assets/Twitter_Verified_Badge.svg.png'
+import gray from '../assets/Twitter_Verified_Badge_Gray.svg.png'
 
 interface ContactsTableProps {
   contacts: Contact[];
@@ -1927,8 +1929,8 @@ export function ContactsTable({
                               {contact.email && (
                                 <img
                                   src={contact.isEmailVerified
-                                    ? "https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg"
-                                    : "/Twitter_Verified_Badge_Gray.svg"}
+                                    ? blue.src
+                                    : gray.src}
                                   alt={contact.isEmailVerified ? "Verified" : "Unverified"}
                                   className="w-4 h-4"
                                 />
