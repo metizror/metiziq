@@ -1926,15 +1926,6 @@ export function ContactsTable({
                           <div>
                             <div className="font-medium flex items-center gap-1">
                               {contact.firstName} {contact.lastName}
-                              {contact.email && (
-                                <img
-                                  src={contact.isEmailVerified
-                                    ? blue.src
-                                    : gray.src}
-                                  alt={contact.isEmailVerified ? "Verified" : "Unverified"}
-                                  className="w-4 h-4"
-                                />
-                              )}
                             </div>
                             <div className="text-sm text-gray-500">{contact.jobTitle}</div>
                           </div>
@@ -1944,6 +1935,15 @@ export function ContactsTable({
                       <TableCell>
                         <div className="flex items-center gap-2">
                           {contact.email || '-'}
+                          {contact.email && (
+                            <img
+                              src={contact.isEmailVerified
+                                ? blue.src
+                                : gray.src}
+                              alt={contact.isEmailVerified ? "Verified" : "Unverified"}
+                              className="w-4 h-4"
+                            />
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>{getCompanyName(contact) || '-'}</TableCell>

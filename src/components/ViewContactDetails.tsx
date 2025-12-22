@@ -1256,15 +1256,6 @@ export function ViewContactDetails({
                     <div>
                       <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
                         {contact.firstName} {contact.lastName}
-                        {contact.email && (
-                          <img
-                            src={contact.isEmailVerified
-                              ? blueLogo.src
-                              : grayLogo.src}
-                            alt={contact.isEmailVerified ? "Verified" : "Unverified"}
-                            className="w-6 h-6"
-                          />
-                        )}
                       </h2>
                       <p className="text-lg text-gray-700 mb-3">{contact.linkedInData?.headline || '-'}</p>
                       <div className="flex items-center gap-2">
@@ -1288,15 +1279,23 @@ export function ViewContactDetails({
                   </div>
 
                   {/* Quick Contact Info */}
-                  <div className="grid grid-cols-3 gap-4 mt-6">
+                  <div className="grid gap-4 mt-6">
                     {contact.email && (
-                      <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200 w-fit">
                         <div className="p-2 bg-blue-100 rounded-lg">
                           <Mail className="w-5 h-5 text-blue-600" />
                         </div>
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 ">
                           <div className="text-xs text-blue-700 mb-1 font-medium">Email</div>
-                          <div className="text-sm text-gray-900 truncate font-medium">{contact.email}</div>
+                          <div className="text-sm text-gray-900 truncate flex items-center gap-2 font-medium">{contact.email}{contact.email && (
+                            <img
+                              src={contact.isEmailVerified
+                                ? blueLogo.src
+                                : grayLogo.src}
+                              alt={contact.isEmailVerified ? "Verified" : "Unverified"}
+                              className="w-6 h-6"
+                            />
+                          )}</div>
                         </div>
                       </div>
                     )}
