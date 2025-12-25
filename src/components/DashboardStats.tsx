@@ -82,15 +82,6 @@ export function DashboardStats({ contacts, companies, users, role, adminUsersCou
       label: 'Added by you'
     },
     {
-      title: 'Companies Added',
-      value: companiesCount.toLocaleString(),
-      icon: Building2,
-      gradient: 'from-green-500 to-emerald-500',
-      glowColor: 'rgba(34, 197, 94, 0.3)',
-      iconBg: 'from-green-100 to-emerald-100',
-      label: 'Added by you'
-    },
-    {
       title: 'Growth This Month',
       value: '+12%',
       icon: TrendingUp,
@@ -118,14 +109,13 @@ export function DashboardStats({ contacts, companies, users, role, adminUsersCou
       if (index === 2) return isLoading?.users ?? false;
       if (index === 3) return isLoading?.importDate ?? false;
     } else {
-      // For admin role: same logic as superadmin - each card checks its loading state
-      // Cards 0 and 1 map to contacts and companies
-      // Cards 2 and 3 (Growth, Last Updated) show skeleton when any data is loading
+      // For admin role:
+      // Card 0: Contacts Added
+      // Cards 1 and 2 (Growth, Last Updated) show skeleton when any data is loading
       if (index === 0) return isLoading?.contacts ?? false;
-      if (index === 1) return isLoading?.companies ?? false;
       // For Growth This Month and Last Updated cards, show skeleton when dashboard data is loading
+      if (index === 1) return isLoading?.contacts ?? false; // Use contacts loading as indicator
       if (index === 2) return isLoading?.contacts ?? false; // Use contacts loading as indicator
-      if (index === 3) return isLoading?.contacts ?? false; // Use contacts loading as indicator
     }
     return false;
   };

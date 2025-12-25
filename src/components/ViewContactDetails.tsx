@@ -163,7 +163,7 @@ export function ViewContactDetails({
   const { companies: reduxCompanies } = useAppSelector((state) => state.companies);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const resolvedCompanyName = contact.linkedInData?.positions?.positionHistory[0]?.companyName || '-';
+  const resolvedCompanyName = contact.linkedInData?.person?.positions?.positionHistory[0]?.companyName || '-';
   // Try to find company ID from multiple sources
   let resolvedCompanyId = company?.id || (company as any)?._id || contact.companyId;
 
@@ -1242,14 +1242,14 @@ export function ViewContactDetails({
                   : 'linear-gradient(to right, #f3f4f6, #e5e7eb)'
               }}
             /> */}
-            <img src={(contact as any).linkedInData?.backgroundUrl} alt="image" className="w-full h-[180px] object-cover" style={{ objectFit: 'fill', width: '100%', height: '180px', objectPosition: 'center' }} />
+            <img src={(contact as any).linkedInData?.person?.backgroundUrl} alt="image" className="w-full h-[180px] object-cover" style={{ objectFit: 'fill', width: '100%', height: '180px', objectPosition: 'center' }} />
 
             <div className="px-8 pb-8">
               <div className="flex items-start gap-6">
                 {/* Avatar */}
                 <Avatar className="h-24 w-24 border-4 border-white shadow-lg -mt-12 bg-white relative z-10">
-                  {(contact as any).linkedInData?.photoUrl && (
-                    <AvatarImage src={(contact as any).linkedInData.photoUrl} alt={`${contact.firstName} ${contact.lastName}`} />
+                  {(contact as any).linkedInData?.person?.photoUrl && (
+                    <AvatarImage src={(contact as any).linkedInData?.person?.photoUrl} alt={`${contact.firstName} ${contact.lastName}`} />
                   )}
                   <AvatarFallback className="bg-gradient-to-br from-orange-400 to-pink-400 text-white text-2xl font-semibold">
                     {getInitials(contact.firstName, contact.lastName)}
@@ -1263,7 +1263,7 @@ export function ViewContactDetails({
                       <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
                         {contact.firstName} {contact.lastName}
                       </h2>
-                      <p className="text-lg text-gray-700 mb-3">{contact.linkedInData?.headline || '-'}</p>
+                      <p className="text-lg text-gray-700 mb-3">{contact.linkedInData?.person?.headline || '-'}</p>
                       <div className="flex items-center gap-2">
                         {contact.jobLevel && (
                           <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-0 rounded-full px-3 py-1">
@@ -1305,7 +1305,7 @@ export function ViewContactDetails({
                         </div>
                       </div>
                     )}
-                    {contact.phone && (
+                    {/* {contact.phone && (
                       <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg border border-green-200">
                         <div className="p-2 bg-green-100 rounded-lg">
                           <Phone className="w-5 h-5 text-green-600" />
@@ -1315,8 +1315,8 @@ export function ViewContactDetails({
                           <div className="text-sm text-gray-900 font-medium">{contact.phone}</div>
                         </div>
                       </div>
-                    )}
-                    {(contact.city || contact.state) && (
+                    )} */}
+                    {/* {(contact.city || contact.state) && (
                       <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
                         <div className="p-2 bg-purple-100 rounded-lg">
                           <MapPin className="w-5 h-5 text-purple-600" />
@@ -1328,7 +1328,7 @@ export function ViewContactDetails({
                           </div>
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -1368,7 +1368,7 @@ export function ViewContactDetails({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-gray-500 mb-0.5">Job Title</div>
-                    <div className="text-sm font-medium text-gray-900">{contact.linkedInData?.positions?.positionHistory[0]?.title || '-'}</div>
+                    <div className="text-sm font-medium text-gray-900">{contact.linkedInData?.person?.headline || '-'}</div>
                   </div>
                 </div>
 
@@ -1390,7 +1390,7 @@ export function ViewContactDetails({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-gray-500 mb-0.5">Role/Department</div>
-                    <div className="text-sm font-medium text-gray-900">{contact.jobRole || '-'}</div>
+                    <div className="text-sm font-medium text-gray-900">{contact.linkedInData?.extractedProfileData?.role?.value || '-'}</div>
                   </div>
                 </div>
 
@@ -1467,8 +1467,8 @@ export function ViewContactDetails({
                     <div className="text-xs text-gray-500 mb-0.5">Contact_LinkedIn</div>
                     {((contact as any).linkedInData || contact.contactLinkedInUrl) ? (
                       <div className="text-sm font-medium text-blue-600">
-                        <a href={formatLinkedInUrl((contact as any).contactLinkedIn || contact.contactLinkedInUrl || '')} target="_blank" rel="noopener noreferrer" className="hover:underline break-all">
-                          {(contact as any).contactLinkedIn || contact.contactLinkedInUrl}
+                        <a href={formatLinkedInUrl((contact as any).linkedInData?.extractedProfileData?.linkedin_url?.value)} target="_blank" rel="noopener noreferrer" className="hover:underline break-all">
+                          {(contact as any).linkedInData?.extractedProfileData?.linkedin_url?.value}
                         </a>
                       </div>
                     ) : (
@@ -1531,14 +1531,14 @@ export function ViewContactDetails({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-gray-500 mb-0.5">Website</div>
-                      {company?.website || contact.website ? (
+                      {contact?.linkedInData?.extractedProfileData?.company_site?.url || contact.website ? (
                         <a
-                          href={formatWebsiteUrl(company?.website || contact.website)}
+                          href={formatWebsiteUrl(contact?.linkedInData?.extractedProfileData?.company_site?.url || contact.website)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-sm font-medium text-blue-600 hover:underline break-all"
                         >
-                          {company?.website || contact.website}
+                          {contact?.linkedInData?.extractedProfileData?.company_site?.url || contact.website}
                         </a>
                       ) : (
                         <div className="text-sm font-medium text-gray-400">-</div>
@@ -1553,7 +1553,7 @@ export function ViewContactDetails({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-gray-500 mb-0.5">Industry</div>
-                      <div className="text-sm font-medium text-gray-900">{company?.industry || contact.industry || '-'}</div>
+                      <div className="text-sm font-medium text-gray-900">{contact?.linkedInData?.extractedProfileData?.industry?.value || contact.industry || '-'}</div>
                     </div>
                   </div>
 
@@ -1587,7 +1587,7 @@ export function ViewContactDetails({
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-gray-500 mb-0.5">Address/Location</div>
                       <div className="text-sm font-medium text-gray-900">
-                        {contact.linkedInData?.positions?.positionHistory[0]?.locationName || '-'}
+                        {contact.linkedInData?.extractedProfileData?.company_address?.value || '-'}
                       </div>
                     </div>
                   </div>
@@ -1646,7 +1646,10 @@ export function ViewContactDetails({
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Record Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-1">
+              <div>
+                {contact.linkedInData?.extractedProfileData?.summary?.value}
+              </div>
+              {/* <div className="space-y-1">
                 <div className="text-sm text-gray-500">Contact ID</div>
                 <div className="text-base font-medium text-gray-900">#{contact.id}</div>
               </div>
@@ -1687,7 +1690,7 @@ export function ViewContactDetails({
                     }
                   })()}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
