@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
+import { AuthState } from "@/store/slices/auth.slice";
 
 /**
  * Custom hook to get user role from Redux state
@@ -12,7 +13,7 @@ import { useAppSelector } from "@/store/hooks";
  */
 export function useRoleBasedDashboard() {
   const router = useRouter();
-  const { user, isAuthenticated, isLoading, isInitializing, token } = useAppSelector((state) => state.auth);
+  const { user, isAuthenticated, isLoading, isInitializing, token } = useAppSelector((state) => state.auth as AuthState);
 
   // Redirect to login ONLY if loading is complete AND user is not authenticated
   // Wait for initialization from localStorage before redirecting

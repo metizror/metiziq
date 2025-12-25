@@ -47,15 +47,15 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
         email: user.email || '',
         role: user.role || 'admin'
       };
-      
+
       setCurrentUser(updatedUser);
-      
+
       // Update original values and profile when user data changes
       originalValues.current = {
         name: user.name || '',
         email: user.email || ''
       };
-      
+
       setProfile({
         name: user.name || '',
         email: user.email || '',
@@ -63,7 +63,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
         newPassword: '',
         confirmPassword: ''
       });
-      
+
       setIsInitializing(false);
     } else if (user && user.id) {
       // User exists but name/email might be loading, keep skeleton visible
@@ -143,7 +143,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
       // Fetch updated user data from GET API
       try {
         const updatedUserResponse = await privateApiCall<{ admin: any }>('/auth/me');
-        
+
         if (updatedUserResponse.admin) {
           const adminData = updatedUserResponse.admin;
           const updatedUser: User = {
@@ -152,13 +152,13 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
             email: adminData.email || '',
             role: adminData.role || currentUser.role || 'admin'
           };
-          
+
           // Update original values to reflect the new state
           originalValues.current = {
             name: adminData.name || '',
             email: adminData.email || ''
           };
-          
+
           // Update local state
           setCurrentUser(updatedUser);
           setProfile({
@@ -202,32 +202,32 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
       {/* Profile Settings */}
       <Card className="border-0 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
         {/* Gradient Header */}
-        <div 
+        <div
           className="h-24 relative overflow-hidden"
           style={{
-            background: currentUser.role === 'superadmin' 
+            background: currentUser.role === 'superadmin'
               ? 'linear-gradient(135deg, #FFF5E6 0%, #FFE5CC 50%, #FFDBB8 100%)'
               : 'linear-gradient(135deg, #FFF5E6 0%, #FFE5CC 50%, #FFDBB8 100%)'
           }}
         >
           {/* Decorative Elements */}
-          <div className="absolute top-0 right-0 w-32 h-32 opacity-20" 
-            style={{ 
+          <div className="absolute top-0 right-0 w-32 h-32 opacity-20"
+            style={{
               background: `radial-gradient(circle, ${currentUser.role === 'superadmin' ? '#2563EB' : '#2563EB'} 0%, transparent 70%)`
             }}
           ></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 opacity-10"
-            style={{ 
+            style={{
               background: `radial-gradient(circle, ${currentUser.role === 'superadmin' ? '#2563EB' : '#2563EB'} 0%, transparent 70%)`
             }}
           ></div>
-          
+
           {/* Icon Badge */}
           <div className="absolute bottom-4 left-6">
-            <div 
+            <div
               className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
-              style={{ 
-                background: currentUser.role === 'superadmin' 
+              style={{
+                background: currentUser.role === 'superadmin'
                   ? 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
                   : 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
               }}
@@ -240,7 +240,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
         <CardHeader className="pt-6">
           <CardTitle className="flex items-center justify-between">
             <span>Profile Settings</span>
-            <Badge 
+            <Badge
               variant={currentUser.role === 'superadmin' ? 'default' : 'secondary'}
               className="px-3 py-1"
             >
@@ -302,10 +302,10 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
           ) : (
             <>
               <div className="flex items-center space-x-4 mb-6 p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100/50 border border-gray-200/50">
-                <div 
+                <div
                   className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-md relative overflow-hidden group"
-                  style={{ 
-                    background: currentUser.role === 'superadmin' 
+                  style={{
+                    background: currentUser.role === 'superadmin'
                       ? 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
                       : 'linear-gradient(135deg, #EB432F 0%, #FF5A47 100%)'
                   }}
@@ -327,7 +327,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
                   <Input
                     id="name"
                     value={profile.name}
-                    onChange={(e: { target: { value: string } }) => setProfile({...profile, name: e.target.value})}
+                    onChange={(e: { target: { value: string } }) => setProfile({ ...profile, name: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -345,10 +345,10 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
               <Separator className="my-6" />
 
               <div className="flex items-center space-x-2 mb-4">
-                <div 
+                <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ 
-                    background: currentUser.role === 'superadmin' 
+                  style={{
+                    background: currentUser.role === 'superadmin'
                       ? 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
                       : 'linear-gradient(135deg, #EB432F 0%, #FF5A47 100%)'
                   }}
@@ -363,7 +363,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
                   <PasswordInput
                     id="current-password"
                     value={profile.currentPassword}
-                    onChange={(e: any) => setProfile({...profile, currentPassword: e.target.value})}
+                    onChange={(e: any) => setProfile({ ...profile, currentPassword: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -371,7 +371,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
                   <PasswordInput
                     id="new-password"
                     value={profile.newPassword}
-                    onChange={(e: any) => setProfile({...profile, newPassword: e.target.value})}
+                    onChange={(e: any) => setProfile({ ...profile, newPassword: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -379,18 +379,18 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
                   <PasswordInput
                     id="confirm-password"
                     value={profile.confirmPassword}
-                    onChange={(e: any) => setProfile({...profile, confirmPassword: e.target.value})}
+                    onChange={(e: any) => setProfile({ ...profile, confirmPassword: e.target.value })}
                   />
                 </div>
               </div>
 
               <div className="pt-2">
-                <Button 
+                <Button
                   onClick={handleProfileUpdate}
                   disabled={isUpdating || isInitializing}
                   className="shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ 
-                    background: currentUser.role === 'superadmin' 
+                  style={{
+                    background: currentUser.role === 'superadmin'
                       ? 'linear-gradient(135deg, #2563EB 0%, #FF9F5A 100%)'
                       : 'linear-gradient(135deg, #EB432F 0%, #FF5A47 100%)'
                   }}
@@ -404,32 +404,32 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
       </Card>
 
       {/* Notification Settings */}
-      <Card className="border-0 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
-        {/* Gradient Header */}
-        <div 
+      {/* <Card className="border-0 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"> */}
+      {/* Gradient Header */}
+      {/* <div
           className="h-24 relative overflow-hidden"
           style={{
             background: 'linear-gradient(135deg, #E8F5FF 0%, #D6ECFF 50%, #C4E3FF 100%)'
           }}
-        >
-          {/* Decorative Elements */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full blur-2xl"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 rounded-full blur-xl"></div>
-          
-          {/* Icon Badge */}
-          <div className="absolute bottom-4 left-6">
-            <div 
+        > */}
+      {/* Decorative Elements */}
+      {/* <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full blur-2xl"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 rounded-full blur-xl"></div> */}
+
+      {/* Icon Badge */}
+      {/* <div className="absolute bottom-4 left-6">
+            <div
               className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg bg-gradient-to-br from-blue-500 to-blue-600"
             >
               <Bell className="w-6 h-6 text-white" />
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <CardHeader className="pt-6">
+      {/* <CardHeader className="pt-6">
           <CardTitle>Notification Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        </CardHeader> */}
+      {/* <CardContent className="space-y-4">
           <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 to-white border border-gray-200/50 hover:border-blue-200 transition-colors duration-300">
             <div>
               <Label htmlFor="email-notifications">Email Notifications</Label>
@@ -438,7 +438,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
             <Switch
               id="email-notifications"
               checked={notifications.emailNotifications}
-              onCheckedChange={(checked: boolean) => setNotifications({...notifications, emailNotifications: checked})}
+              onCheckedChange={(checked: boolean) => setNotifications({ ...notifications, emailNotifications: checked })}
             />
           </div>
 
@@ -450,7 +450,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
             <Switch
               id="import-alerts"
               checked={notifications.importAlerts}
-              onCheckedChange={(checked: boolean) => setNotifications({...notifications, importAlerts: checked})}
+              onCheckedChange={(checked: boolean) => setNotifications({ ...notifications, importAlerts: checked })}
             />
           </div>
 
@@ -462,7 +462,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
             <Switch
               id="export-alerts"
               checked={notifications.exportAlerts}
-              onCheckedChange={(checked: boolean) => setNotifications({...notifications, exportAlerts: checked})}
+              onCheckedChange={(checked: boolean) => setNotifications({ ...notifications, exportAlerts: checked })}
             />
           </div>
 
@@ -474,7 +474,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
             <Switch
               id="weekly-reports"
               checked={notifications.weeklyReports}
-              onCheckedChange={(checked: boolean) => setNotifications({...notifications, weeklyReports: checked})}
+              onCheckedChange={(checked: boolean) => setNotifications({ ...notifications, weeklyReports: checked })}
             />
           </div>
 
@@ -482,7 +482,7 @@ export function SettingsPanel({ user }: SettingsPanelProps) {
             Save Notification Settings
           </Button>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

@@ -103,13 +103,13 @@ export default function DashboardPage() {
   };
 
   const initialCacheState = initializeFromCache();
-  
+
   const [contactsCount, setContactsCount] = useState(initialCacheState.contactsCount);
   const [companiesCount, setCompaniesCount] = useState(initialCacheState.companiesCount);
   const [adminUsersCount, setAdminUsersCount] = useState(initialCacheState.adminUsersCount);
   const [lastImportDate, setLastImportDate] = useState(initialCacheState.lastImportDate);
   const [activityLogs, setActivityLogs] = useState(initialCacheState.activityLogs);
-  
+
   // Single loading state for all dashboard data - initialize from cache
   const [isLoading, setIsLoading] = useState(initialCacheState.isLoading);
   // Background refresh indicator (separate from loading)
@@ -128,14 +128,14 @@ export default function DashboardPage() {
 
     // Check if cached data exists and is still valid
     const now = Date.now();
-    const cacheValid = dashboardDataCache.current && 
-                      (now - dashboardDataCache.current.timestamp) < CACHE_DURATION;
+    const cacheValid = dashboardDataCache.current &&
+      (now - dashboardDataCache.current.timestamp) < CACHE_DURATION;
     const hasCachedData = dashboardDataCache.current !== null;
 
     // If navigating to page
     if (isNavigationToPage) {
       previousPathname.current = pathname;
-      
+
       // If we have cached data, show it immediately and fetch in background
       if (hasCachedData && dashboardDataCache.current) {
         // Show cached data immediately
@@ -145,7 +145,7 @@ export default function DashboardPage() {
         setLastImportDate(dashboardDataCache.current.lastImportDate);
         setActivityLogs(dashboardDataCache.current.activityLogs);
         setIsLoading(false); // Don't show loader, we have cached data
-        
+
         // Fetch fresh data in background
         if (!isFetching.current) {
           isFetching.current = true;
@@ -179,83 +179,83 @@ export default function DashboardPage() {
         }
         return;
       }
-      
+
       if (hasFetchedDashboard.current && cacheValid) {
         return;
       }
-      
+
       // Need to fetch
       isFetching.current = true;
       setIsLoading(true);
     }
-    
+
     // Store whether we had cached data before fetch (for error handling)
     const hadCachedDataBeforeFetch = dashboardDataCache.current !== null;
-    
+
     // Use different endpoints based on role
     const apiEndpoint = role === "admin" ? "/admin/admin-dashboard" : "/admin/dashboard";
-    
+
     if (role === "admin") {
       // Call admin-dashboard API and map response
       privateApiCall<AdminDashboardData>(apiEndpoint)
-          .then((response) => {
-            const data = {
-              contactsCount: response.addedContacts || 0,
-              companiesCount: response.addedCompanies || 0,
-              adminUsersCount: 0,
-              lastImportDate: response.lastImportContact?.createdAt 
-                ? new Date(response.lastImportContact.createdAt).toISOString()
-                : null,
-              activityLogs: (response.activityLogs || []).map((log: any) => ({
-                id: log._id?.toString() || log.id,
-                action: log.action,
-                description: log.details || log.description || log.action,
-                details: log.details || log.description || log.action,
-                userId: log.userId?.toString() || log.userId,
-                userName: log.user || log.userName || "Unknown",
-                user: log.user || log.userName || "Unknown",
-                createdBy: log.user || log.userName || "Unknown",
-                timestamp: log.createdAt || log.timestamp,
-                createdAt: log.createdAt,
-                updatedAt: log.updatedAt,
-              })),
-              timestamp: now,
-            };
-            
-            // Update all state and cache
-            dashboardDataCache.current = data;
-            // Persist cache to sessionStorage
+        .then((response) => {
+          const data = {
+            contactsCount: response.addedContacts || 0,
+            companiesCount: response.addedCompanies || 0,
+            adminUsersCount: 0,
+            lastImportDate: response.lastImportContact?.createdAt
+              ? new Date(response.lastImportContact.createdAt).toISOString()
+              : null,
+            activityLogs: (response.activityLogs || []).map((log: any) => ({
+              id: log._id?.toString() || log.id,
+              action: log.action,
+              description: log.details || log.description || log.action,
+              details: log.details || log.description || log.action,
+              userId: log.userId?.toString() || log.userId,
+              userName: log.user || log.userName || "Unknown",
+              user: log.user || log.userName || "Unknown",
+              createdBy: log.user || log.userName || "Unknown",
+              timestamp: log.createdAt || log.timestamp,
+              createdAt: log.createdAt,
+              updatedAt: log.updatedAt,
+            })),
+            timestamp: now,
+          };
+
+          // Update all state and cache
+          dashboardDataCache.current = data;
+          // Persist cache to sessionStorage
+          if (typeof window !== "undefined") {
+            try {
+              sessionStorage.setItem("dashboardCache", JSON.stringify(data));
+            } catch (error) {
+              console.error("Error saving dashboard cache:", error);
+            }
+          }
+          setContactsCount(data.contactsCount);
+          setCompaniesCount(data.companiesCount);
+          setAdminUsersCount(data.adminUsersCount);
+          setLastImportDate(data.lastImportDate);
+          setActivityLogs(data.activityLogs);
+          setIsLoading(false);
+          setIsRefreshing(false);
+          isFetching.current = false;
+          hasFetchedDashboard.current = true; // Mark as fetched only after successful API call
+        })
+        .catch((error) => {
+          console.error("Failed to fetch admin dashboard data:", error);
+          setIsLoading(false);
+          setIsRefreshing(false);
+          isFetching.current = false;
+          // Only clear cache if this was an initial load (not a background refresh)
+          if (!hadCachedDataBeforeFetch) {
+            hasFetchedDashboard.current = false;
+            dashboardDataCache.current = null;
             if (typeof window !== "undefined") {
-              try {
-                sessionStorage.setItem("dashboardCache", JSON.stringify(data));
-              } catch (error) {
-                console.error("Error saving dashboard cache:", error);
-              }
+              sessionStorage.removeItem("dashboardCache");
             }
-            setContactsCount(data.contactsCount);
-            setCompaniesCount(data.companiesCount);
-            setAdminUsersCount(data.adminUsersCount);
-            setLastImportDate(data.lastImportDate);
-            setActivityLogs(data.activityLogs);
-            setIsLoading(false);
-            setIsRefreshing(false);
-            isFetching.current = false;
-            hasFetchedDashboard.current = true; // Mark as fetched only after successful API call
-          })
-          .catch((error) => {
-            console.error("Failed to fetch admin dashboard data:", error);
-            setIsLoading(false);
-            setIsRefreshing(false);
-            isFetching.current = false;
-            // Only clear cache if this was an initial load (not a background refresh)
-            if (!hadCachedDataBeforeFetch) {
-              hasFetchedDashboard.current = false;
-              dashboardDataCache.current = null;
-              if (typeof window !== "undefined") {
-                sessionStorage.removeItem("dashboardCache");
-              }
-            }
-          });
+          }
+        });
     } else {
       // Call superadmin dashboard API
       privateApiCall<DashboardData>(apiEndpoint)
@@ -268,7 +268,7 @@ export default function DashboardPage() {
             activityLogs: response.activityLogs || [],
             timestamp: now,
           };
-          
+
           // Update all state and cache
           dashboardDataCache.current = data;
           // Persist cache to sessionStorage
@@ -326,7 +326,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <DashboardStats 
+      <DashboardStats
         contacts={contacts}
         companies={companies}
         users={users}
@@ -342,7 +342,7 @@ export default function DashboardPage() {
       />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {role === "superadmin" && (
-          <ImportDataModule 
+          <ImportDataModule
             onImportComplete={(newContacts, newCompanies) => {
               // Handle import complete - can be connected to state management later
               console.log("Import complete", { newContacts, newCompanies });
@@ -389,25 +389,43 @@ export default function DashboardPage() {
           <div className="bg-white rounded-lg border p-6">
             <h3 className="font-semibold mb-4">Quick Actions</h3>
             <div className="space-y-3">
-              <a 
+              <a
                 href="/contacts"
                 className="block w-full text-left px-4 py-2 border rounded-md hover:bg-gray-50"
               >
                 Manage Contacts
               </a>
-              <a 
+              {/* <a 
                 href="/companies"
                 className="block w-full text-left px-4 py-2 border rounded-md hover:bg-gray-50"
               >
                 Manage Companies
+              </a> */}
+              <a
+                href="/activity"
+                className="block w-full text-left px-4 py-2 border rounded-md hover:bg-gray-50"
+              >
+                Show Activity Logs
+              </a>
+              <a
+                href="/import"
+                className="block w-full text-left px-4 py-2 border rounded-md hover:bg-gray-50"
+              >
+                Import Contacts
+              </a>
+              <a
+                href="/settings"
+                className="block w-full text-left px-4 py-2 border rounded-md hover:bg-gray-50"
+              >
+                Settings
               </a>
             </div>
           </div>
         )}
-        <ActivityLogsPanel 
-          logs={activityLogs} 
+        <ActivityLogsPanel
+          logs={activityLogs}
           pagination={null}
-          isLoading={isLoading} 
+          isLoading={isLoading}
           isFullScreen={false}
         />
       </div>

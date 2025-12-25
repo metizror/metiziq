@@ -36,6 +36,10 @@ export async function GET(request: NextRequest) {
 
     const query: any = {};
 
+    if (tokenVerification.admin?.role !== "superadmin") {
+      query.uploaderId = tokenVerification.admin?._id;
+    }
+
     if (employeeSize) {
       query.employeeSize = { $regex: employeeSize, $options: "i" };
     }

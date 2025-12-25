@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useRoleBasedDashboard } from "@/hooks/useRoleBasedDashboard";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { logout, updateUser } from "@/store/slices/auth.slice";
+import { logout, updateUser, AuthState } from "@/store/slices/auth.slice";
 import { useRouter, usePathname } from "next/navigation";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { useState } from "react";
@@ -31,7 +31,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const role = useRoleBasedDashboard();
-  const { user, isLoading, isInitializing, isAuthenticated, token } = useAppSelector((state) => state.auth);
+  const { user, isLoading, isInitializing, isAuthenticated, token } = useAppSelector((state) => state.auth as AuthState);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const pathname = usePathname();
@@ -193,16 +193,16 @@ export default function DashboardLayout({
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', path: '/dashboard' },
     { id: 'contacts', label: 'Contacts', icon: 'Users', path: '/contacts' },
-    { id: 'companies', label: 'Companies', icon: 'Building2', path: '/companies' },
-    {
-      id: 'customers',
-      label: 'Customers',
-      icon: 'CheckCircle2',
-      path: '/customers',
-      ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
-    },
-    // ...(role === 'superadmin' ? [{ id: 'users', label: 'AMF Users', icon: 'UserCheck', path: '/users' }] : []),
-    ...(role === 'superadmin' ? [{ id: 'import', label: 'Import Data', icon: 'Upload', path: '/import', exclusive: true }] : []),
+    // { id: 'companies', label: 'Companies', icon: 'Building2', path: '/companies' },
+    // {
+    //   id: 'customers',
+    //   label: 'Customers',
+    //   icon: 'CheckCircle2',
+    //   path: '/customers',
+    //   ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
+    // },
+    ...(role === 'superadmin' ? [{ id: 'users', label: 'Companies', icon: 'UserCheck', path: '/users' }] : []),
+    { id: 'import', label: 'Import Data', icon: 'Upload', path: '/import' },
     { id: 'activity', label: 'Activity Logs', icon: 'Activity', path: '/activity' },
     { id: 'settings', label: 'Settings', icon: 'Settings', path: '/settings' }
   ];
@@ -279,8 +279,8 @@ export default function DashboardLayout({
               <main className={`flex-1 overflow-hidden relative`}>
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                   <div className={`absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br rounded-full blur-3xl ${role === 'superadmin'
-                      ? 'from-orange-200/30 via-orange-100/20 to-transparent'
-                      : 'from-orange-200/30 via-orange-100/20 to-transparent'
+                    ? 'from-orange-200/30 via-orange-100/20 to-transparent'
+                    : 'from-orange-200/30 via-orange-100/20 to-transparent'
                     }`}></div>
                   <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-200/20 via-purple-100/20 to-transparent rounded-full blur-3xl"></div>
                   <div className="absolute inset-0 opacity-[0.02]" style={{

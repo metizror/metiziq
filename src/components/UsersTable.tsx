@@ -24,7 +24,7 @@ interface UsersTableProps {
 export function UsersTable({ users, setUsers }: UsersTableProps) {
   const dispatch = useAppDispatch();
   const { users: adminUsers, isLoading, isCreating, isUpdating, isDeleting, error } = useAppSelector((state) => state.adminUsers);
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null as User | null);
@@ -93,7 +93,7 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
         isActive: true
       });
       setIsAddDialogOpen(false);
-      
+
       // Refresh the users list
       dispatch(getAdminUsers({ page: 1, limit: 25 }));
     } catch (error: any) {
@@ -163,272 +163,272 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
 
   return (
     <>
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Users ({filteredUsers.length})</CardTitle>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" style={{ backgroundColor: '#2563EB' }}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add User
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New User</DialogTitle>
-                <DialogDescription>Fill in the user details below to add a new user to the system.</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={newUser.email}
-                    onChange={(e: any) => setNewUser({...newUser, email: e.target.value})}
-                    placeholder="user@company.com"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name *</Label>
-                  <Input
-                    id="name"
-                    value={newUser.name}
-                    onChange={(e: any) => setNewUser({...newUser, name: e.target.value})}
-                    placeholder="John Doe"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password *</Label>
-                  <PasswordInput
-                    id="password"
-                    value={newUser.password}
-                    onChange={(e: any) => setNewUser({...newUser, password: e.target.value})}
-                    placeholder="Enter password (min 8 characters)"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Role</Label>
-                  <Select value="admin" disabled>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2 mt-6">
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} disabled={isCreating}>
-                  Cancel
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Companies ({filteredUsers.length})</CardTitle>
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" style={{ backgroundColor: '#2563EB' }}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Company
                 </Button>
-                <Button onClick={handleAddUser} style={{ backgroundColor: '#2563EB' }} disabled={isCreating}>
-                  {isCreating ? 'Adding...' : 'Add User'}
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-        
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Search users..."
-            value={searchQuery}
-            onChange={(e: any) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-      </CardHeader>
-      
-      <CardContent>
-        {isLoading ? (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {[...Array(10)].map((_, index) => (
-                  <TableRow key={`skeleton-${index}`}>
-                    <TableCell>
-                      <Skeleton className="h-4 w-32" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-48" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-6 w-24 rounded-full" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-6 w-20 rounded-full" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Skeleton className="h-8 w-8 rounded" />
-                        <Skeleton className="h-8 w-8 rounded" />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Company</DialogTitle>
+                  <DialogDescription>Fill in the company details below to add a new company to the system.</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={newUser.email}
+                      onChange={(e: any) => setNewUser({ ...newUser, email: e.target.value })}
+                      placeholder="company@domain.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Company Name *</Label>
+                    <Input
+                      id="name"
+                      value={newUser.name}
+                      onChange={(e: any) => setNewUser({ ...newUser, name: e.target.value })}
+                      placeholder="Company Name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password *</Label>
+                    <PasswordInput
+                      id="password"
+                      value={newUser.password}
+                      onChange={(e: any) => setNewUser({ ...newUser, password: e.target.value })}
+                      placeholder="Enter password (min 8 characters)"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Role</Label>
+                    <Select value="admin" disabled>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex justify-end space-x-2 mt-6">
+                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} disabled={isCreating}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleAddUser} style={{ backgroundColor: '#2563EB' }} disabled={isCreating}>
+                    {isCreating ? 'Adding...' : 'Add Company'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.length === 0 ? (
+
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search companies..."
+              value={searchQuery}
+              onChange={(e: any) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          {isLoading ? (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                      No users found
-                    </TableCell>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
-                ) : (
-                  filteredUsers.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={user.role === 'superadmin' ? 'default' : 'secondary'}
-                      className="flex items-center space-x-1 w-fit"
-                    >
-                      {user.role === 'superadmin' ? (
-                        <Shield className="w-3 h-3" />
-                      ) : (
-                        <Users className="w-3 h-3" />
-                      )}
-                      <span>{user.role === 'superadmin' ? 'Owner' : 'Admin'}</span>
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant="outline" 
-                      className={(user as any).isActive === false 
-                        ? "text-red-600 border-red-200" 
-                        : "text-green-600 border-green-200"
-                      }
-                    >
-                      {(user as any).isActive === false ? 'Inactive' : 'Active'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleEditUser(user)}
-                      >
-                        <Edit className="w-3 h-3" />
-                      </Button>
-                      <Dialog open={editingUser?.id === user.id} onOpenChange={(open: boolean) => {
-                        if (!open) {
-                          setEditingUser(null);
-                          setNewUser({
-                            email: '',
-                            name: '',
-                            password: '',
-                            role: 'admin',
-                            isActive: true
-                          });
-                        }
-                      }}>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Edit User</DialogTitle>
-                            <DialogDescription>Update the user information below.</DialogDescription>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-email">Email</Label>
-                              <Input
-                                id="edit-email"
-                                type="email"
-                                value={newUser.email}
-                                disabled
-                                className="bg-gray-100 cursor-not-allowed"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-name">Name *</Label>
-                              <Input
-                                id="edit-name"
-                                value={newUser.name}
-                                onChange={(e: any) => setNewUser({...newUser, name: e.target.value})}
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label>Role</Label>
-                              <Select value="admin" disabled>
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="admin">Admin</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="space-y-2">
-                              <Label>Status</Label>
-                              <Select 
-                                value={newUser.isActive ? 'true' : 'false'} 
-                                onValueChange={(value: string) => setNewUser({...newUser, isActive: value === 'true'})}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="true">Active</SelectItem>
-                                  <SelectItem value="false">Inactive</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-                          <div className="flex justify-end space-x-2 mt-6">
-                            <Button variant="outline" onClick={() => setEditingUser(null)} disabled={isUpdating}>
-                              Cancel
-                            </Button>
-                            <Button onClick={handleUpdateUser} style={{ backgroundColor: '#2563EB' }} disabled={isUpdating}>
-                              {isUpdating ? 'Updating...' : 'Update User'}
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteClick(user)}
-                        className="text-red-600 hover:text-red-700"
-                        disabled={isDeleting}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </TableCell>
+                </TableHeader>
+                <TableBody>
+                  {[...Array(10)].map((_, index) => (
+                    <TableRow key={`skeleton-${index}`}>
+                      <TableCell>
+                        <Skeleton className="h-4 w-32" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-48" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-6 w-24 rounded-full" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-6 w-20 rounded-full" />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Skeleton className="h-8 w-8 rounded" />
+                          <Skeleton className="h-8 w-8 rounded" />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {filteredUsers.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                        No users found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredUsers.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">{user.name}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={user.role === 'superadmin' ? 'default' : 'secondary'}
+                            className="flex items-center space-x-1 w-fit"
+                          >
+                            {user.role === 'superadmin' ? (
+                              <Shield className="w-3 h-3" />
+                            ) : (
+                              <Users className="w-3 h-3" />
+                            )}
+                            <span>{user.role === 'superadmin' ? 'Owner' : 'Admin'}</span>
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={(user as any).isActive === false
+                              ? "text-red-600 border-red-200"
+                              : "text-green-600 border-green-200"
+                            }
+                          >
+                            {(user as any).isActive === false ? 'Inactive' : 'Active'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditUser(user)}
+                            >
+                              <Edit className="w-3 h-3" />
+                            </Button>
+                            <Dialog open={editingUser?.id === user.id} onOpenChange={(open: boolean) => {
+                              if (!open) {
+                                setEditingUser(null);
+                                setNewUser({
+                                  email: '',
+                                  name: '',
+                                  password: '',
+                                  role: 'admin',
+                                  isActive: true
+                                });
+                              }
+                            }}>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Edit User</DialogTitle>
+                                  <DialogDescription>Update the user information below.</DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div className="space-y-2">
+                                    <Label htmlFor="edit-email">Email</Label>
+                                    <Input
+                                      id="edit-email"
+                                      type="email"
+                                      value={newUser.email}
+                                      disabled
+                                      className="bg-gray-100 cursor-not-allowed"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label htmlFor="edit-name">Name *</Label>
+                                    <Input
+                                      id="edit-name"
+                                      value={newUser.name}
+                                      onChange={(e: any) => setNewUser({ ...newUser, name: e.target.value })}
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Role</Label>
+                                    <Select value="admin" disabled>
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="admin">Admin</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Status</Label>
+                                    <Select
+                                      value={newUser.isActive ? 'true' : 'false'}
+                                      onValueChange={(value: string) => setNewUser({ ...newUser, isActive: value === 'true' })}
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="true">Active</SelectItem>
+                                        <SelectItem value="false">Inactive</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
+                                <div className="flex justify-end space-x-2 mt-6">
+                                  <Button variant="outline" onClick={() => setEditingUser(null)} disabled={isUpdating}>
+                                    Cancel
+                                  </Button>
+                                  <Button onClick={handleUpdateUser} style={{ backgroundColor: '#2563EB' }} disabled={isUpdating}>
+                                    {isUpdating ? 'Updating...' : 'Update User'}
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteClick(user)}
+                              className="text-red-600 hover:text-red-700"
+                              disabled={isDeleting}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -460,5 +460,5 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
         </AlertDialogContent>
       </AlertDialog>
     </>
-    );
-  }
+  );
+}

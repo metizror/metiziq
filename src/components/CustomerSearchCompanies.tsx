@@ -50,7 +50,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
   const previousPathname = useRef(null as string | null);
   const fetchInProgressRef = useRef(false);
   const { countries: apiCountries } = useCountries();
-  
+
   // Check if user can buy companies
   const ableToBuyCompanies = user?.ableToBuyCompanies === true;
 
@@ -189,7 +189,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
     }
 
     const params: GetCustomerCompaniesParams = { page: currentPage, limit };
-    
+
     if (appliedFilters.search) params.search = appliedFilters.search;
     if (appliedFilters.company) params.company = appliedFilters.company;
     if (appliedFilters.industry) params.industry = appliedFilters.industry;
@@ -199,7 +199,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
     if (appliedFilters.excludeEmailsFile) {
       params.excludeEmailsFile = appliedFilters.excludeEmailsFile;
     }
-    
+
     // If ableToBuyCompanies is true and no limitFilter, fetch all companies (set high limit)
     // Otherwise, use the limitFilter from appliedFilters if it exists
     if (appliedFilters.limitFilter) {
@@ -267,16 +267,16 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
   const handleApplyFilters = async () => {
     // Convert file to base64 if a new file was selected
     let excludeEmailsFileBase64: string | null = appliedFilters.excludeEmailsFile;
-    
+
     if (filters.excludeEmailsFile && filters.excludeEmailsFile !== appliedFilters.excludeEmailsFile) {
       // New file selected, convert to base64
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
         const base64 = result.includes(',') ? result.split(',')[1] : result;
-        setAppliedFilters({ 
-          ...filters, 
-          excludeEmailsFile: base64 
+        setAppliedFilters({
+          ...filters,
+          excludeEmailsFile: base64
         });
         setCurrentPage(1);
         setSelectedCompanies([]);
@@ -285,9 +285,9 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
       return; // Will trigger useEffect when appliedFilters updates
     } else {
       // No new file, just apply existing filters
-      setAppliedFilters({ 
-        ...filters, 
-        excludeEmailsFile: excludeEmailsFileBase64 
+      setAppliedFilters({
+        ...filters,
+        excludeEmailsFile: excludeEmailsFileBase64
       });
       setCurrentPage(1);
       setSelectedCompanies([]);
@@ -295,13 +295,13 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
   };
 
   const resetFilters = () => {
-    const cleared = { 
-      search: '', 
-      company: '', 
-      industry: '', 
-      country: '', 
-      employeeSize: '', 
-      revenue: '', 
+    const cleared = {
+      search: '',
+      company: '',
+      industry: '',
+      country: '',
+      employeeSize: '',
+      revenue: '',
       limitFilter: '',
       excludeEmailsFile: null as File | null,
     };
@@ -387,7 +387,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
 
       {/* Filter Bar - Sticky */}
       <div className={`sticky z-20 bg-white border-b border-gray-200 px-8 py-4 shadow-sm transition-all duration-300 ${showFilters ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
-          }`} style={{
+        }`} style={{
           top: `${headerHeight || 104}px`
         }}>
         <div className="flex flex-wrap items-center gap-3">
@@ -721,152 +721,152 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                     // If ableToBuyCompanies is true, show companyName and location unblurred
                     // Otherwise, blur all fields after the first 5 companies (index > 4)
                     const shouldBlur = ableToBuyCompanies ? false : index > 4;
-                    
+
                     return (
-                    <tr
-                      key={company.id}
-                      className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-red-50/50 transition-all group"
-                      style={{ animation: `slideInRow 0.3s ease-out ${index * 0.03}s both` }}
-                    >
-                      {/* Checkbox Column */}
-                      <td className="px-4 py-4" onClick={(e: any) => e.stopPropagation()}>
-                        <Checkbox
-                          checked={selectedCompanies.includes(company.id)}
-                          onCheckedChange={(checked: boolean) => {
-                            // Multiple selection: toggle company
-                            if (checked) {
-                              setSelectedCompanies([...selectedCompanies, company.id]);
-                            } else {
-                              setSelectedCompanies(selectedCompanies.filter((id: string) => id !== company.id));
-                            }
-                          }}
-                        />
-                      </td>
-                      {/* Company Name Column */}
-                      <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
-                        {ableToBuyCompanies ? (
-                          <div className="overflow-hidden">
-                            <p className="text-[#030000] font-medium truncate" title={company.companyName}>{company.companyName}</p>
-                            {company.companyLocation && (
-                              <p className="text-gray-500 text-xs mt-1 truncate" title={company.companyLocation}>{company.companyLocation}</p>
-                            )}
-                          </div>
-                        ) : shouldBlur ? (
+                      <tr
+                        key={company.id}
+                        className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-red-50/50 transition-all group"
+                        style={{ animation: `slideInRow 0.3s ease-out ${index * 0.03}s both` }}
+                      >
+                        {/* Checkbox Column */}
+                        <td className="px-4 py-4" onClick={(e: any) => e.stopPropagation()}>
+                          <Checkbox
+                            checked={selectedCompanies.includes(company.id)}
+                            onCheckedChange={(checked: boolean) => {
+                              // Multiple selection: toggle company
+                              if (checked) {
+                                setSelectedCompanies([...selectedCompanies, company.id]);
+                              } else {
+                                setSelectedCompanies(selectedCompanies.filter((id: string) => id !== company.id));
+                              }
+                            }}
+                          />
+                        </td>
+                        {/* Company Name Column */}
+                        <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
+                          {ableToBuyCompanies ? (
+                            <div className="overflow-hidden">
+                              <p className="text-[#030000] font-medium truncate" title={company.companyName}>{company.companyName}</p>
+                              {company.companyLocation && (
+                                <p className="text-gray-500 text-xs mt-1 truncate" title={company.companyLocation}>{company.companyLocation}</p>
+                              )}
+                            </div>
+                          ) : shouldBlur ? (
+                            <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
+                              <Lock className="text-gray-500 flex-shrink-0" size={14} />
+                              <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.companyName || '-'}</span>
+                            </div>
+                          ) : (
+                            <div className="overflow-hidden">
+                              <p className="text-[#030000] font-medium truncate" title={company.companyName}>{company.companyName}</p>
+                              {company.companyLocation && (
+                                <p className="text-gray-500 text-xs mt-1 truncate" title={company.companyLocation}>{company.companyLocation}</p>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                        {/* Phone Column - Always blurred */}
+                        <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
                           <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
                             <Lock className="text-gray-500 flex-shrink-0" size={14} />
-                            <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.companyName || '-'}</span>
+                            <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.phone || '-'}</span>
                           </div>
-                        ) : (
-                          <div className="overflow-hidden">
-                            <p className="text-[#030000] font-medium truncate" title={company.companyName}>{company.companyName}</p>
-                            {company.companyLocation && (
-                              <p className="text-gray-500 text-xs mt-1 truncate" title={company.companyLocation}>{company.companyLocation}</p>
-                            )}
-                          </div>
-                        )}
-                      </td>
-                      {/* Phone Column - Always blurred */}
-                      <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
-                        <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
-                          <Lock className="text-gray-500 flex-shrink-0" size={14} />
-                          <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.phone || '-'}</span>
-                        </div>
-                      </td>
-                      {/* Location Column */}
-                      <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
-                        {ableToBuyCompanies ? (
-                          <div className="overflow-hidden">
-                            {company.location ? (
-                              <>
-                                <p className="text-gray-700 text-sm truncate" title={company.location.split(',')[0]}>{company.location.split(',')[0] || '-'}</p>
-                                {company.location.split(',').length > 1 && (
-                                  <p className="text-gray-500 text-xs mt-1 truncate" title={company.location.split(',').slice(1).join(',').trim()}>
-                                    {company.location.split(',').slice(1).join(',').trim()}
-                                  </p>
-                                )}
-                              </>
-                            ) : (
-                              <span className="text-gray-700 text-sm">-</span>
-                            )}
-                          </div>
-                        ) : shouldBlur ? (
+                        </td>
+                        {/* Location Column */}
+                        <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
+                          {ableToBuyCompanies ? (
+                            <div className="overflow-hidden">
+                              {company.location ? (
+                                <>
+                                  <p className="text-gray-700 text-sm truncate" title={company.location.split(',')[0]}>{company.location.split(',')[0] || '-'}</p>
+                                  {company.location.split(',').length > 1 && (
+                                    <p className="text-gray-500 text-xs mt-1 truncate" title={company.location.split(',').slice(1).join(',').trim()}>
+                                      {company.location.split(',').slice(1).join(',').trim()}
+                                    </p>
+                                  )}
+                                </>
+                              ) : (
+                                <span className="text-gray-700 text-sm">-</span>
+                              )}
+                            </div>
+                          ) : shouldBlur ? (
+                            <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
+                              <Lock className="text-gray-500 flex-shrink-0" size={14} />
+                              <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">
+                                {company.location || '-'}
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="overflow-hidden">
+                              {company.location ? (
+                                <>
+                                  <p className="text-gray-700 text-sm truncate" title={company.location.split(',')[0]}>{company.location.split(',')[0] || '-'}</p>
+                                  {company.location.split(',').length > 1 && (
+                                    <p className="text-gray-500 text-xs mt-1 truncate" title={company.location.split(',').slice(1).join(',').trim()}>
+                                      {company.location.split(',').slice(1).join(',').trim()}
+                                    </p>
+                                  )}
+                                </>
+                              ) : (
+                                <span className="text-gray-700 text-sm">-</span>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                        {/* Website Column */}
+                        <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
                           <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
                             <Lock className="text-gray-500 flex-shrink-0" size={14} />
-                            <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">
-                              {company.location || '-'}
-                            </span>
+                            <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.website || '-'}</span>
                           </div>
-                        ) : (
-                          <div className="overflow-hidden">
-                            {company.location ? (
-                              <>
-                                <p className="text-gray-700 text-sm truncate" title={company.location.split(',')[0]}>{company.location.split(',')[0] || '-'}</p>
-                                {company.location.split(',').length > 1 && (
-                                  <p className="text-gray-500 text-xs mt-1 truncate" title={company.location.split(',').slice(1).join(',').trim()}>
-                                    {company.location.split(',').slice(1).join(',').trim()}
-                                  </p>
-                                )}
-                              </>
-                            ) : (
-                              <span className="text-gray-700 text-sm">-</span>
-                            )}
+                        </td>
+                        {/* Revenue Column */}
+                        <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
+                          <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
+                            <Lock className="text-gray-500 flex-shrink-0" size={14} />
+                            <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.revenue || '-'}</span>
                           </div>
-                        )}
-                      </td>
-                      {/* Website Column */}
-                      <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
-                        <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
-                          <Lock className="text-gray-500 flex-shrink-0" size={14} />
-                          <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.website || '-'}</span>
-                        </div>
-                      </td>
-                      {/* Revenue Column */}
-                      <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
-                        <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
-                          <Lock className="text-gray-500 flex-shrink-0" size={14} />
-                          <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.revenue || '-'}</span>
-                        </div>
-                      </td>
-                      {/* Employee Size Column */}
-                      <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
-                        <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
-                          <Lock className="text-gray-500 flex-shrink-0" size={14} />
-                          <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.employeeSize || '-'}</span>
-                        </div>
-                      </td>
-                      {/* Industry Column */}
-                      <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
-                        <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
-                          <Lock className="text-gray-500 flex-shrink-0" size={14} />
-                          <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.industry || '-'}</span>
-                        </div>
-                      </td>
-                      {/* Technology Column */}
-                      <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
-                        <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
-                          <Lock className="text-gray-500 flex-shrink-0" size={14} />
-                          <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.technology || '-'}</span>
-                        </div>
-                      </td>
-                      {/* Actions Column */}
-                      <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
-                        <div className="flex items-center gap-2">
-                          <button
-                            className="p-3 rounded-xl bg-gray-200 text-gray-500 cursor-not-allowed flex-shrink-0"
-                            disabled
-                            title="Locked"
-                          >
-                            <Lock size={16} />
-                          </button>
-                          <button
-                            className="p-3 border-2 border-gray-200 rounded-xl hover:border-[#2563EB] hover:bg-orange-50 transition-all hover:scale-105 flex-shrink-0"
-                            title="View Details"
-                          >
-                            <Eye size={16} className="text-gray-600" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                        </td>
+                        {/* Employee Size Column */}
+                        <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
+                          <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
+                            <Lock className="text-gray-500 flex-shrink-0" size={14} />
+                            <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.employeeSize || '-'}</span>
+                          </div>
+                        </td>
+                        {/* Industry Column */}
+                        <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
+                          <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
+                            <Lock className="text-gray-500 flex-shrink-0" size={14} />
+                            <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.industry || '-'}</span>
+                          </div>
+                        </td>
+                        {/* Technology Column */}
+                        <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
+                          <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg w-full overflow-hidden">
+                            <Lock className="text-gray-500 flex-shrink-0" size={14} />
+                            <span className="text-gray-400 blur-[4px] select-none pointer-events-none text-xs truncate min-w-0 flex-1">{company.technology || '-'}</span>
+                          </div>
+                        </td>
+                        {/* Actions Column */}
+                        <td className="px-4 py-4" style={{ width: '160px', overflow: 'hidden' }}>
+                          <div className="flex items-center gap-2">
+                            <button
+                              className="p-3 rounded-xl bg-gray-200 text-gray-500 cursor-not-allowed flex-shrink-0"
+                              disabled
+                              title="Locked"
+                            >
+                              <Lock size={16} />
+                            </button>
+                            <button
+                              className="p-3 border-2 border-gray-200 rounded-xl hover:border-[#2563EB] hover:bg-orange-50 transition-all hover:scale-105 flex-shrink-0"
+                              title="View Details"
+                            >
+                              <Eye size={16} className="text-gray-600" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
                     );
                   })
                 )}
@@ -992,8 +992,8 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                   }}
                   disabled={selectedCompanies.length !== 10 || !!appliedFilters.limitFilter}
                   className={`group px-8 py-4 rounded-xl transition-all flex items-center gap-3 shadow-lg whitespace-nowrap flex-shrink-0 font-medium ${selectedCompanies.length === 10 && !appliedFilters.limitFilter
-                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
+                    ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                     }`}
                 >
                   <span>Unlock & Download Companies</span>
@@ -1005,7 +1005,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
             </div>
           </div>
         )}
-        
+
         {/* Buy Companies Banner - When ableToBuyCompanies is true */}
         {ableToBuyCompanies && !error && (
           <div className="sticky bottom-0 z-50 mt-8">
@@ -1028,8 +1028,8 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
                   }}
                   disabled={selectedCompanies.length === 0}
                   className={`group px-8 py-4 rounded-xl transition-all flex items-center gap-3 shadow-lg whitespace-nowrap flex-shrink-0 font-medium ${selectedCompanies.length > 0
-                      ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
+                    ? 'bg-gradient-to-r from-[#2563EB] to-[#EB432F] text-white hover:shadow-2xl hover:scale-105 cursor-pointer'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                     }`}
                 >
                   <span>Buy Companies</span>
