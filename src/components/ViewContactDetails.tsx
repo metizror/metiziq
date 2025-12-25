@@ -1421,7 +1421,12 @@ export function ViewContactDetails({
                       <div className="text-xs text-gray-500">Phone#</div>
                       <div className="flex gap-1">
                         <button
-                          onClick={() => window.open('https://web.whatsapp.com', '_blank')}
+                          onClick={() => {
+                            const phoneNumber = contact.mobilePhone?.replace(/\D/g, '');
+                            if (phoneNumber) {
+                              window.open(`https://web.whatsapp.com/send?phone=${phoneNumber}`, '_blank');
+                            }
+                          }}
                           className="bg-green-100 hover:bg-green-200 text-green-700 p-1 rounded transition-colors"
                           title="Connect on WhatsApp"
                         >
@@ -1493,21 +1498,20 @@ export function ViewContactDetails({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Company Name */}
                   {resolvedCompanyName && resolvedCompanyName !== '-' ? (
-                    <button
-                      type="button"
-                      onClick={handleCompanyNavigation}
-                      className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 text-left w-full transition-all hover:border-orange-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-orange-300 cursor-pointer group"
+                    <div
+                      // onClick={handleCompanyNavigation}
+                      className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 text-left w-full transition-all hover:border-orange-400 hover:shadow-md focus:outline-none focus:ring-orange-300 group"
                     >
                       <div className="mt-0.5">
                         <Building2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500 transition-colors" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-xs text-gray-500 mb-0.5">Company Name</div>
-                        <div className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline break-all transition-colors">
+                        <div className="text-sm font-medium text-black break-all transition-colors">
                           {resolvedCompanyName}
                         </div>
                       </div>
-                    </button>
+                    </div>
                   ) : (
                     <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                       <div className="mt-0.5">

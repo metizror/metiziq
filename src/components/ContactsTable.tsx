@@ -1686,6 +1686,37 @@ export function ContactsTable({
     );
   };
 
+  const handleConnectWhatsApp = () => {
+    if (selectedContacts.length === 0) {
+      toast.error('Please select a contact to connect on WhatsApp');
+      return;
+    }
+
+    if (selectedContacts.length > 1) {
+      toast.error('Please select only one contact to connect on WhatsApp');
+      return;
+    }
+
+    const contactId = selectedContacts[0];
+    const contact = displayedContacts.find((c: Contact) => {
+      const cId = c.id || (c as any)._id;
+      return cId === contactId;
+    });
+
+    if (!contact) return;
+
+    const phone = contact.mobilePhone || contact.phone || contact.directPhone;
+
+    if (!phone) {
+      toast.error('Selected contact does not have a phone number');
+      return;
+    }
+
+    // Remove all non-numeric characters
+    const cleanPhone = phone.replace(/\D/g, '');
+    window.open(`https://web.whatsapp.com/send?phone=${cleanPhone}`, '_blank');
+  };
+
   return (
     <Card className="h-full flex flex-col overflow-hidden" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardHeader className="flex-shrink-0">
@@ -1704,7 +1735,7 @@ export function ContactsTable({
             <Button
               size="sm"
               className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
-              onClick={() => window.open('https://web.whatsapp.com', '_blank')}
+              onClick={handleConnectWhatsApp}
             >
               <WhatsAppIcon className="w-4 h-4" />
               Connect WhatsApp
