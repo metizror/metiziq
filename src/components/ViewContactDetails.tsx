@@ -50,7 +50,7 @@ import {
 } from './ui/select';
 import { toast } from 'sonner';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { updateContact, deleteContacts } from '@/store/slices/contacts.slice';
+import { updateContact, deleteContacts, setPendingFilters } from '@/store/slices/contacts.slice';
 import { useRouter } from 'next/navigation';
 import { privateApiCall } from '@/lib/api';
 import blueLogo from "../assets/Twitter_Verified_Badge.svg.png"
@@ -1647,7 +1647,10 @@ export function ViewContactDetails({
                           return industries.map((ind: string, idx: number) => (
                             <span key={idx}>
                               <span
-                                onClick={() => router.push(`/contacts?industry=${encodeURIComponent(ind)}`)}
+                                onClick={() => {
+                                  dispatch(setPendingFilters({ industry: ind }));
+                                  router.push('/contacts');
+                                }}
                                 className="text-blue-600 hover:underline hover:text-blue-800 cursor-pointer"
                               >
                                 {ind}

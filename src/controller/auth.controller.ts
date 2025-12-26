@@ -42,14 +42,14 @@ const verifyCaptcha = async (token: string): Promise<{ valid: boolean; error?: s
     }
 
     const data = await response.json();
-    
+
     if (data.success === true) {
       return { valid: true };
     } else {
       // Log the error details from hCaptcha
       const errorMessages = data['error-codes'] || [];
-      const errorMessage = errorMessages.length > 0 
-        ? `Invalid hCaptcha: ${errorMessages.join(', ')}` 
+      const errorMessage = errorMessages.length > 0
+        ? `Invalid hCaptcha: ${errorMessages.join(', ')}`
         : "CAPTCHA verification failed";
       console.error("hCaptcha verification failed:", errorMessages, "Token:", token.substring(0, 20) + "...");
       return { valid: false, error: errorMessage };
@@ -268,10 +268,11 @@ export const loginController = async (
           process.env.JWT_SECRET as string,
           { expiresIn: "1d" }
         );
-        await customerAuthModel.updateOne(
-          { _id: customer._id },
-          { $set: { currentToken: token } }
-        );
+        // Single login logic removed - no need to update currentToken
+        // await customerAuthModel.updateOne(
+        //   { _id: customer._id },
+        //   { $set: { currentToken: token } }
+        // );
         return {
           status: 200,
           message: "Login successfully",
@@ -289,10 +290,11 @@ export const loginController = async (
           process.env.JWT_SECRET as string,
           { expiresIn: "1d" }
         );
-        await adminAuthModel.updateOne(
-          { _id: admin._id },
-          { $set: { currentToken: token } }
-        );
+        // Single login logic removed - no need to update currentToken
+        // await adminAuthModel.updateOne(
+        //   { _id: admin._id },
+        //   { $set: { currentToken: token } }
+        // );
         return {
           status: 200,
           message: "Login successfully",

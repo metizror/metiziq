@@ -77,9 +77,10 @@ export const verifyAdminToken = async (
       return { valid: false };
     }
 
-    if (admin.currentToken !== token) {
-      return { valid: false };
-    }
+    // Single login check removed
+    // if (admin.currentToken !== token) {
+    //   return { valid: false };
+    // }
 
     const adminObject: AdminUser = {
       _id: admin._id.toString(),
@@ -120,9 +121,10 @@ export const verifyCustomerToken = async (
       return { valid: false };
     }
 
-    if (customer.currentToken !== token) {
-      return { valid: false };
-    }
+    // Single login check removed
+    // if (customer.currentToken !== token) {
+    //   return { valid: false };
+    // }
 
     const customerObject: CustomerUser = {
       _id: customer._id.toString(),

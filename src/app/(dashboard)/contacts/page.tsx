@@ -5,7 +5,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { ContactsTable } from "@/components/ContactsTable";
 import { FilterPanel } from "@/components/FilterPanel";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { getContacts, type GetContactsParams } from "@/store/slices/contacts.slice";
+import { getContacts, clearPendingFilters, type GetContactsParams } from "@/store/slices/contacts.slice";
 import type { Company, User, Contact } from "@/types/dashboard.types";
 
 export default function ContactsPage() {
@@ -29,6 +29,22 @@ export default function ContactsPage() {
     name: user.name || `${user.firstName} ${user.lastName}`.trim() || user.email,
     role: user.role || null,
   } : null;
+
+  // Get pendingFilters from state alongside other contact state
+  const { contacts, pagination, isLoading, isRefreshing, error, lastFetchParams, pendingFilters } = useAppSelector((state) => state.contacts);
+
+  // Handle pending filters from other pages (Redux state transfer)
+  useEffect(() => {
+    if (pendingFilters) {
+      setFilters((prev: GetContactsParams) => ({
+        ...prev,
+        ...pendingFilters,
+        page: 1
+      }));
+      // Clear the pending filters from Redux once applied
+      dispatch(clearPendingFilters());
+    }
+  }, [pendingFilters, dispatch]);
 
   // Debounce search query with 1 second delay
   useEffect(() => {
@@ -57,7 +73,7 @@ export default function ContactsPage() {
     }
   }, [searchParams]);
 
-  const { contacts, pagination, isLoading, isRefreshing, error, lastFetchParams } = useAppSelector((state) => state.contacts);
+
 
   // Helper function to check if params match
   const paramsMatch = (params1: GetContactsParams | null, params2: GetContactsParams): boolean => {

@@ -49,6 +49,7 @@ interface ContactsState {
   // Cache tracking
   lastFetchParams: GetContactsParams | null;
   lastFetchTime: number | null;
+  pendingFilters: GetContactsParams | null;
 }
 
 const initialState: ContactsState = {
@@ -62,6 +63,7 @@ const initialState: ContactsState = {
   error: null,
   lastFetchParams: null,
   lastFetchTime: null,
+  pendingFilters: null,
 };
 
 export const getContacts = createAsyncThunk<
@@ -79,7 +81,7 @@ export const getContacts = createAsyncThunk<
 
     // Build query string manually to avoid URL encoding issues with special characters
     const queryParts: string[] = [];
-    
+
     if (params.page) queryParts.push(`page=${params.page.toString()}`);
     if (params.limit) queryParts.push(`limit=${params.limit.toString()}`);
     if (params.search) queryParts.push(`search=${encodeURIComponent(params.search)}`);
@@ -102,7 +104,7 @@ export const getContacts = createAsyncThunk<
 
     const queryString = queryParts.join('&');
     const endpoint = `/admin/contacts${queryString ? `?${queryString}` : ''}`;
-    
+
     const response = await privateApiCall<ContactsResponse>(endpoint);
     return { ...response, _background: background || false };
   } catch (error: any) {
@@ -334,6 +336,12 @@ const contactsSlice = createSlice({
       state.lastFetchParams = null;
       state.lastFetchTime = null;
     },
+    setPendingFilters: (state, action) => {
+      state.pendingFilters = action.payload;
+    },
+    clearPendingFilters: (state) => {
+      state.pendingFilters = null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getContacts.pending, (state, action) => {
@@ -473,5 +481,5 @@ const contactsSlice = createSlice({
   },
 });
 
-export const { clearContacts, clearError, invalidateCache } = contactsSlice.actions;
+export const { clearContacts, clearError, invalidateCache, setPendingFilters, clearPendingFilters } = contactsSlice.actions;
 export default contactsSlice.reducer;
