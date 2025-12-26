@@ -1546,10 +1546,13 @@ export function ViewContactDetails({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-gray-500 mb-0.5">Contact_LinkedIn</div>
-                    {((contact as any).linkedInData || contact.contactLinkedInUrl) ? (
+                    {((contact as any).linkedInData?.person?.
+                      linkedInUrl) ? (
                       <div className="text-sm font-medium text-blue-600">
-                        <a href={formatLinkedInUrl((contact as any).linkedInData?.extractedProfileData?.linkedin_url?.value)} target="_blank" rel="noopener noreferrer" className="hover:underline break-all">
-                          {(contact as any).linkedInData?.extractedProfileData?.linkedin_url?.value}
+                        <a href={formatLinkedInUrl((contact as any).linkedInData?.person?.
+                          linkedInUrl)} target="_blank" rel="noopener noreferrer" className="hover:underline break-all">
+                          {(contact as any).linkedInData?.person?.
+                            linkedInUrl}
                         </a>
                       </div>
                     ) : (
@@ -1689,8 +1692,18 @@ export function ViewContactDetails({
                       <Phone className="w-4 h-4 text-gray-500" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">Phone#</div>
-                      <div className="text-sm font-medium text-gray-900">{company?.phone || contact.phone || '-'}</div>
+                      <div className="text-xs text-gray-500 mb-0.5">Phone</div>
+                      <div className="text-sm font-medium text-gray-900">{contact.linkedInData?.extractedProfileData?.company_contact?.value || '-'}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="mt-0.5">
+                      <Phone className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-gray-500 mb-0.5">Company Email</div>
+                      <div className="text-sm font-medium text-gray-900">{contact.linkedInData?.extractedProfileData?.company_email?.value || '-'}</div>
                     </div>
                   </div>
 
