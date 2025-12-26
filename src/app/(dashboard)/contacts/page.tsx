@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { ContactsTable } from "@/components/ContactsTable";
 import { FilterPanel } from "@/components/FilterPanel";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
@@ -43,6 +43,20 @@ export default function ContactsPage() {
     return () => clearTimeout(timer);
   }, [searchQuery, debouncedSearchQuery]);
 
+  const searchParams = useSearchParams();
+
+  // Listen for URL query parameters (specifically industry)
+  useEffect(() => {
+    const industryParam = searchParams.get('industry');
+    if (industryParam) {
+      setFilters((prev: GetContactsParams) => ({
+        ...prev,
+        industry: industryParam,
+        page: 1,
+      }));
+    }
+  }, [searchParams]);
+
   const { contacts, pagination, isLoading, isRefreshing, error, lastFetchParams } = useAppSelector((state) => state.contacts);
 
   // Helper function to check if params match
@@ -68,7 +82,7 @@ export default function ContactsPage() {
         return value !== '' && value !== null && value !== undefined;
       })
     ) as GetContactsParams;
-    
+
     const fetchParams: GetContactsParams = {
       ...cleanedFilters,
       search: debouncedSearchQuery || undefined,
@@ -76,19 +90,19 @@ export default function ContactsPage() {
 
     // Check if we navigated to this page (pathname changed to /contacts)
     const isNavigationToPage = previousPathname.current !== pathname && pathname === '/contacts';
-    
+
     // Check if we have cached data for the same params
     const hasCachedData = paramsMatch(lastFetchParams, fetchParams) && contacts.length > 0;
-    
+
     // Always fetch when:
     // 1. No data exists AND we've never fetched before
     // 2. Params changed (filters or search changed)
     // 3. Navigating to this page - if we have cached data, refresh in background; otherwise show loader
-    const shouldFetch = 
-      (contacts.length === 0 && lastFetchParams === null) || 
+    const shouldFetch =
+      (contacts.length === 0 && lastFetchParams === null) ||
       !paramsMatch(lastFetchParams, fetchParams) ||
       isNavigationToPage;
-    
+
     if (shouldFetch) {
       // If we have cached data for same params, fetch in background
       // Otherwise, fetch normally (will show loader)
@@ -125,7 +139,7 @@ export default function ContactsPage() {
       const value = newFilters[key as keyof GetContactsParams];
       return key === 'page' || key === 'limit' || value === undefined || value === null || value === '';
     });
-    
+
     if (hasOnlyDefaults && Object.keys(newFilters).length > 2) {
       // Clear All was clicked - reset to default state
       setFilters({
@@ -152,17 +166,17 @@ export default function ContactsPage() {
   return (
     <div className="flex h-full w-full overflow-hidden" style={{ height: '100vh', maxHeight: '100vh' }}>
       {showFilters && (
-        <FilterPanel 
+        <FilterPanel
           filters={filters}
           onFilterChange={handleFilterChange}
           onClose={() => setShowFilters(false)}
         />
       )}
       <div className={`flex-1 flex flex-col min-w-0 overflow-hidden p-6`} style={{ height: 'calc(100vh - 0px)', maxHeight: 'calc(100vh - 0px)' }}>
-        <ContactsTable 
+        <ContactsTable
           contacts={contacts}
-          user={dashboardUser} 
-          companies={companies} 
+          user={dashboardUser}
+          companies={companies}
           filters={filters}
           searchQuery={searchQuery}
           pagination={pagination}

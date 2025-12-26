@@ -14,7 +14,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Skeleton } from './ui/skeleton';
-import { Plus, Edit, Trash2, Download, Search, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ArrowUpDown, MoreVertical, LayoutList, Table2, Filter, Phone } from 'lucide-react';
+import { Plus, Edit, Trash2, Download, Search, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ArrowUpDown, MoreVertical, LayoutList, Table2, Filter, Phone, X } from 'lucide-react';
 import { Contact, User, Company } from '@/types/dashboard.types';
 import { toast } from 'sonner';
 import { ContactsListView } from './ContactsListView';
@@ -1686,6 +1686,32 @@ export function ContactsTable({
     );
   };
 
+  const handleCreateContact = async () => {
+    try {
+      if (!newContact.firstName || !newContact.lastName) {
+        toast.error('First Name and Last Name are required');
+        return;
+      }
+      if (!newContact.companyName) {
+        toast.error('Company Name is required');
+        return;
+      }
+
+      await dispatch(createContact(newContact)).unwrap();
+      toast.success('Contact created successfully');
+      setIsAddDialogOpen(false);
+      setNewContact({
+        firstName: '', lastName: '', jobTitle: '', jobLevel: '', jobRole: '',
+        email: '', phone: '', directPhone: '', address1: '', address2: '',
+        city: '', state: '', zipCode: '', country: '', website: '',
+        industry: '', subIndustry: '', contactLinkedInUrl: '', amfNotes: '',
+        lastUpdateDate: '', companyName: '', employeeSize: '', revenue: ''
+      });
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create contact');
+    }
+  };
+
   const handleConnectWhatsApp = () => {
     if (selectedContacts.length === 0) {
       toast.error('Please select a contact to connect on WhatsApp');
@@ -1721,7 +1747,9 @@ export function ContactsTable({
     <Card className="h-full flex flex-col overflow-hidden" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardHeader className="flex-shrink-0">
         <div className="flex items-center justify-between">
-          <CardTitle>Contacts ({totalCount})</CardTitle>
+          <CardTitle>
+            Contacts ({totalCount})
+          </CardTitle>
           <div className="flex items-center gap-2">
             <Button
               variant="secondary"
@@ -1748,34 +1776,26 @@ export function ContactsTable({
               <Phone className="w-4 h-4" />
               Call Now
             </Button>
-          </div>
-          <div className="flex items-center space-x-2">
             {onToggleFilters && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={onToggleFilters}
-                className="flex items-center gap-2"
+                className={showFilters ? 'bg-blue-50 text-blue-600 border-blue-200' : ''}
               >
-                <Filter className="w-4 h-4" />
-                Search Filters
+                <Filter className="w-4 h-4 mr-2" />
+                {showFilters ? 'Hide Filters' : 'Search Filters'}
               </Button>
             )}
-            <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search contacts..."
-                value={searchQuery || ''}
-                onChange={(e: { target: { value: string } }) => {
-                  const value = e.target.value;
-                  handleSearchInputChange(value);
-                }}
-                className="pl-9 h-9"
+                value={searchQuery}
+                onChange={(e: any) => onSearchChange && onSearchChange(e.target.value)}
+                className="pl-8 w-[250px]"
               />
             </div>
-
-            {/* View Mode Toggle */}
-
 
             {selectedContacts.length > 0 && (
               <>
@@ -1784,7 +1804,7 @@ export function ContactsTable({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="text-red-600"
+                      className="text-red-600 border-red-200 bg-red-50 hover:bg-red-100"
                       disabled={isDeleting}
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
@@ -1816,6 +1836,7 @@ export function ContactsTable({
                 </Button>
               </>
             )}
+
             <AlertDialog open={showExportAllDialog} onOpenChange={setShowExportAllDialog}>
               <AlertDialogTrigger asChild>
                 <Button
@@ -1845,17 +1866,105 @@ export function ContactsTable({
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <Button
-              size="sm"
-              className="bg-[#2563EB] hover:bg-[#2563EB]/90 text-white"
-              onClick={() => router.push('/contacts/new')}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Contact
-            </Button>
+
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" style={{ backgroundColor: user.role === 'superadmin' ? '#2563EB' : '#EB432F' }}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Contact
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Add New Contact</DialogTitle>
+                  <DialogDescription>
+                    Enter the details of the new contact below.
+                  </DialogDescription>
+                </DialogHeader>
+                {renderFormFields(false)}
+                <div className="flex justify-end space-x-2 mt-4">
+                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleCreateContact} disabled={isCreating} style={{ backgroundColor: user.role === 'superadmin' ? '#2563EB' : '#EB432F' }}>
+                    {isCreating ? 'Creating...' : 'Create Contact'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
-      </CardHeader>
+
+        {/* Active Filters Display */}
+        {(searchQuery || (filters && Object.keys(filters).some(key => {
+          const val = filters[key as keyof typeof filters];
+          return key !== 'page' && key !== 'limit' && val !== undefined && val !== '';
+        }))) && (
+            <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+              <span className="text-sm text-gray-500 font-medium">Active Filters:</span>
+
+              {/* Search Query Chip */}
+              {searchQuery && (
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100">
+                  <span className="font-normal">Search:</span> <span className="font-semibold">{searchQuery}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-4 w-4 p-0 ml-1 hover:bg-blue-200 rounded-full"
+                    onClick={() => onSearchChange && onSearchChange('')}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </Badge>
+              )}
+
+              {/* Other Filters Chips */}
+              {filters && Object.entries(filters).map(([key, value]) => {
+                if (key === 'page' || key === 'limit' || !value) return null;
+
+                // Format key for display (camelCase to Title Case)
+                const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+
+                return (
+                  <Badge key={key} variant="secondary" className="pl-3 pr-1 py-1 flex items-center gap-1 bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200">
+                    <span className="font-normal">{label}:</span> <span className="font-semibold">{String(value)}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-4 w-4 p-0 ml-1 hover:bg-gray-300 rounded-full"
+                      onClick={() => onFilterChange && onFilterChange({ [key]: undefined })}
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </Badge>
+                );
+              })}
+
+              {/* Clear All Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 h-6 px-2"
+                onClick={() => {
+                  if (onSearchChange) onSearchChange('');
+                  // Create an object with all current filter keys set to undefined
+                  const resetFilters = Object.keys(filters || {}).reduce((acc, key) => {
+                    if (key !== 'page' && key !== 'limit') {
+                      acc[key] = undefined;
+                    }
+                    return acc;
+                  }, {} as any);
+                  if (onFilterChange) onFilterChange(resetFilters);
+                }}
+              >
+                Clear All
+              </Button>
+            </div>
+          )}
+        {/* View Mode Toggle */}
+
+
+      </CardHeader >
 
       <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden" style={{ flex: '1 1 0%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <div className="overflow-y-auto overflow-x-auto flex-1" style={{
@@ -2127,6 +2236,6 @@ export function ContactsTable({
           </div>
         </div>
       </CardContent>
-    </Card>
+    </Card >
   );
 }

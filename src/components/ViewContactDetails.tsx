@@ -1637,7 +1637,26 @@ export function ViewContactDetails({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-gray-500 mb-0.5">Industry</div>
-                      <div className="text-sm font-medium text-gray-900">{contact?.linkedInData?.extractedProfileData?.industry?.value || contact.industry || '-'}</div>
+                      <div className="text-sm font-medium text-gray-900 leading-relaxed">
+                        {(() => {
+                          const industryText = contact?.linkedInData?.extractedProfileData?.industry?.value || contact.industry;
+                          if (!industryText || industryText === '-') return '-';
+
+                          const industries = industryText.split(/,(?![^(]*\))/).map((s: string) => s.trim()).filter((s: string) => s);
+
+                          return industries.map((ind: string, idx: number) => (
+                            <span key={idx}>
+                              <span
+                                onClick={() => router.push(`/contacts?industry=${encodeURIComponent(ind)}`)}
+                                className="text-blue-600 hover:underline hover:text-blue-800 cursor-pointer"
+                              >
+                                {ind}
+                              </span>
+                              {idx < industries.length - 1 && <span className="text-gray-900 mr-1">,</span>}
+                            </span>
+                          ));
+                        })()}
+                      </div>
                     </div>
                   </div>
 

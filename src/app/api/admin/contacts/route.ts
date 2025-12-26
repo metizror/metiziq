@@ -40,42 +40,56 @@ export async function GET(request: NextRequest) {
       query.uploaderId = tokenVerification.admin?._id;
     }
 
+    const escapeRegex = (string: string) => {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    };
+
     if (employeeSize) {
-      query.employeeSize = { $regex: employeeSize, $options: "i" };
+      query.employeeSize = { $regex: escapeRegex(employeeSize), $options: "i" };
     }
     if (comapnyName) {
-      query.companyName = { $regex: comapnyName, $options: "i" };
+      query.companyName = { $regex: escapeRegex(comapnyName), $options: "i" };
     }
     if (revenue) {
-      query.revenue = { $regex: revenue, $options: "i" };
+      query.revenue = { $regex: escapeRegex(revenue), $options: "i" };
     }
     if (industry) {
-      query.industry = { $regex: industry, $options: "i" };
+      query["linkedInData.extractedProfileData.industry.value"] = { $regex: escapeRegex(industry), $options: "i" };
     }
     if (country) {
-      query.country = { $regex: country, $options: "i" };
+      query.country = { $regex: escapeRegex(country), $options: "i" };
     }
     if (state) {
-      query.state = { $regex: state, $options: "i" };
+      query.state = { $regex: escapeRegex(state), $options: "i" };
     }
     if (jobTitle) {
-      query.jobTitle = { $regex: jobTitle, $options: "i" };
+      query.jobTitle = { $regex: escapeRegex(jobTitle), $options: "i" };
     }
     if (jobLevel) {
-      query.jobLevel = { $regex: jobLevel, $options: "i" };
+      query.jobLevel = { $regex: escapeRegex(jobLevel), $options: "i" };
     }
     if (jobRole) {
-      query.jobRole = { $regex: jobRole, $options: "i" };
+      query.jobRole = { $regex: escapeRegex(jobRole), $options: "i" };
     }
     if (search) {
-      query.$or = [
-        { firstName: { $regex: search, $options: "i" } },
-        { lastName: { $regex: search, $options: "i" } },
-        { fullName: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-        { companyName: { $regex: search, $options: "i" } },
-        { jobTitle: { $regex: search, $options: "i" } },
-      ];
+      const terms = search.trim().split(/\s+/);
+      if (terms.length > 0) {
+        query.$and = query.$and || [];
+        terms.forEach((term) => {
+          const escapedTerm = escapeRegex(term);
+          query.$and.push({
+            $or: [
+              { firstName: { $regex: escapedTerm, $options: "i" } },
+              { lastName: { $regex: escapedTerm, $options: "i" } },
+              { fullName: { $regex: escapedTerm, $options: "i" } },
+              { email: { $regex: escapedTerm, $options: "i" } },
+              { companyName: { $regex: escapedTerm, $options: "i" } },
+              { jobTitle: { $regex: escapedTerm, $options: "i" } },
+              { "linkedInData.extractedProfileData.industry.value": { $regex: escapedTerm, $options: "i" } },
+            ],
+          });
+        });
+      }
     }
 
     const [contacts, totalCount] = await Promise.all([
