@@ -30,13 +30,13 @@ export const contactFormSchema = yup.object().shape({
     .required('First name is required')
     .trim()
     .min(1, 'First name is required'),
-  
+
   lastName: yup
     .string()
     .required('Last name is required')
     .trim()
     .min(1, 'Last name is required'),
-  
+
   // Optional contact fields
   jobTitle: yup.string().trim(),
   jobLevel: yup.string(),
@@ -100,22 +100,17 @@ export const contactFormSchema = yup.object().shape({
   subIndustry: yup.string().nullable().transform((value) => (value === '' ? null : value)),
   contactLinkedInUrl: yup.string().trim().url('Please enter a valid URL').nullable().transform((value) => (value === '' ? null : value)),
   lastUpdateDate: yup.string().nullable().transform((value) => (value === '' ? null : value)),
-  
+
   // Required company fields
   companyName: yup
-    .string()
-    .required('Company name is required')
-    .trim()
-    .min(1, 'Company name is required'),
-  
+    .string(),
+
   employeeSize: yup
-    .string()
-    .required('Employee size is required'),
-  
+    .string(),
+
   revenue: yup
-    .string()
-    .required('Revenue is required'),
-  
+    .string(),
+
   // Optional company fields
   amfNotes: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
 });
