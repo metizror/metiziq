@@ -146,6 +146,87 @@ const WhatsAppIcon = (props: any) => (
   </svg>
 );
 
+
+const renderValueWithLinks = (text: string) => {
+  const linkRegex = /\[(.*?)\]\((.*?)\)/g;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = linkRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    parts.push(
+      <a
+        key={match.index}
+        href={match[2]}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 hover:underline"
+      >
+        {match[1]}
+      </a>
+    );
+    lastIndex = linkRegex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : text;
+};
+
+const formatRecordInfo = (text: string | null | undefined) => {
+  if (!text) return <p className="text-gray-500 italic">No record information available.</p>;
+
+  // Split text by bold markers (**text**)
+  const parts = text.split('**');
+
+  // If no structure found, return formatted text
+  if (parts.length === 1) {
+    return <p className="text-gray-700 whitespace-pre-line">{text}</p>;
+  }
+
+  const items = [];
+  // First part is usually intro text
+  const intro = parts[0].trim();
+
+  // Iterate through parts: odd indices are keys (inside **), even are values
+  for (let i = 1; i < parts.length; i += 2) {
+    const key = parts[i].replace(/:$/, '').trim();
+    // The value follows immediately after the key's closing **
+    let value = parts[i + 1] ? parts[i + 1].trim() : '';
+
+    // Clean up value: remove leading colon if present closer to the split
+    if (value.startsWith(':')) {
+      value = value.substring(1).trim();
+    }
+    // Remove trailing asterisks if any
+    value = value.replace(/\*+$/, '').trim();
+
+    if (key) {
+      items.push(
+        <div key={i} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2 text-sm border-b border-gray-100 last:border-0 py-2">
+          <span className="font-semibold text-gray-900 min-w-[180px] shrink-0">{key}</span>
+          <span className="text-gray-700 break-words flex-1">
+            {renderValueWithLinks(value)}
+          </span>
+        </div>
+      );
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {intro && <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 italic mb-4">{renderValueWithLinks(intro)}</p>}
+      <div className="space-y-1">
+        {items}
+      </div>
+    </div>
+  );
+};
+
 export function ViewContactDetails({
   contact,
   user,
@@ -1564,7 +1645,7 @@ export function ViewContactDetails({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-gray-500 mb-0.5">Employee Size</div>
-                      <div className="text-sm font-medium text-gray-900">{company?.employeeSize || contact.employeeSize || '-'}</div>
+                      <div className="text-sm font-medium text-gray-900">{contact?.linkedInData?.extractedProfileData?.company_size?.value || contact.employeeSize || '-'}</div>
                     </div>
                   </div>
 
@@ -1575,7 +1656,17 @@ export function ViewContactDetails({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-gray-500 mb-0.5">Revenue</div>
-                      <div className="text-sm font-medium text-gray-900">{formatRevenue(company?.revenue || contact.revenue)}</div>
+                      <div className="text-sm font-medium text-gray-900">{formatRevenue(contact?.linkedInData?.extractedProfileData?.annual_revenue_range?.value || contact.revenue)}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="mt-0.5">
+                      {/* <DollarSign className="w-4 h-4 text-gray-500" /> */}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-gray-500 mb-0.5">Business Model</div>
+                      <div className="text-sm font-medium text-gray-900">{contact?.linkedInData?.extractedProfileData?.business_model?.value || "-"}</div>
                     </div>
                   </div>
 
@@ -1646,8 +1737,8 @@ export function ViewContactDetails({
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Record Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                {contact.linkedInData?.extractedProfileData?.summary?.value}
+              <div className="col-span-full">
+                {formatRecordInfo(contact.linkedInData?.extractedProfileData?.summary?.value)}
               </div>
               {/* <div className="space-y-1">
                 <div className="text-sm text-gray-500">Contact ID</div>
