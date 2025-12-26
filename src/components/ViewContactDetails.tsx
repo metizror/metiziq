@@ -207,9 +207,9 @@ const formatRecordInfo = (text: string | null | undefined) => {
 
     if (key) {
       items.push(
-        <div key={i} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2 text-sm border-b border-gray-100 last:border-0 py-2">
-          <span className="font-semibold text-gray-900 min-w-[180px] shrink-0">{key}</span>
-          <span className="text-gray-700 break-words flex-1">
+        <div key={i} className="flex flex-col gap-1 text-sm p-3 bg-gray-50 rounded-lg border border-gray-100">
+          <span className="font-semibold text-gray-900">{key}</span>
+          <span className="text-gray-700 break-words">
             {renderValueWithLinks(value)}
           </span>
         </div>
@@ -220,7 +220,7 @@ const formatRecordInfo = (text: string | null | undefined) => {
   return (
     <div className="space-y-4">
       {intro && <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 italic mb-4">{renderValueWithLinks(intro)}</p>}
-      <div className="space-y-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {items}
       </div>
     </div>
@@ -1749,11 +1749,11 @@ export function ViewContactDetails({
           {/* Record Information Section */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Record Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="col-span-full">
-                {formatRecordInfo(contact.linkedInData?.extractedProfileData?.summary?.value)}
-              </div>
-              {/* <div className="space-y-1">
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> */}
+            <div className="col-span-full">
+              {formatRecordInfo(contact.linkedInData?.extractedProfileData?.summary?.value)}
+            </div>
+            {/* <div className="space-y-1">
                 <div className="text-sm text-gray-500">Contact ID</div>
                 <div className="text-base font-medium text-gray-900">#{contact.id}</div>
               </div>
@@ -1795,8 +1795,8 @@ export function ViewContactDetails({
                   })()}
                 </div>
               </div> */}
-            </div>
           </div>
+          {/* </div> */}
         </div>
       </div>
 
