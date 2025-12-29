@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
       query.revenue = { $regex: escapeRegex(revenue), $options: "i" };
     }
     if (industry) {
-      query["linkedInData.extractedProfileData.industry.value"] = { $regex: escapeRegex(industry), $options: "i" };
+      query["linkedInData.extractedProfileData.company_details.industry"] = { $regex: escapeRegex(industry), $options: "i" };
     }
     if (country) {
       query.country = { $regex: escapeRegex(country), $options: "i" };
