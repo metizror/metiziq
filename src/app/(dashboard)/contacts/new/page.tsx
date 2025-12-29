@@ -900,7 +900,7 @@ export default function NewContactPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="employeeSize">Employee Size *</Label>
+                    <Label htmlFor="employeeSize">Employee Size</Label>
                     <Select 
                       value={formik.values.employeeSize || ''} 
                       onValueChange={(value: string) => formik.setFieldValue('employeeSize', value)}
@@ -927,7 +927,7 @@ export default function NewContactPage() {
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="revenue">Revenue *</Label>
+                    <Label htmlFor="revenue">Revenue</Label>
                     <Select 
                       value={formik.values.revenue || ''} 
                       onValueChange={(value: string) => formik.setFieldValue('revenue', value)}

@@ -5,7 +5,6 @@ import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from './ui/dialog';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
@@ -80,7 +79,6 @@ export function ContactsTable({
   const dispatch = useAppDispatch();
   const { isCreating, isUpdating, isDeleting } = useAppSelector((state) => state.contacts);
   const [isPending, startTransition] = useTransition();
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingContact, setEditingContact] = useState(null as Contact | null);
   const [viewingContact, setViewingContact] = useState(null as Contact | null);
   const [selectedContacts, setSelectedContacts] = useState([] as string[]);
@@ -578,9 +576,6 @@ export function ContactsTable({
 
       // If we reach here, the API call was successful
       // Contact is already added optimistically to Redux state
-      // Close dialog first
-      setIsAddDialogOpen(false);
-
       // Reset form
       resetForm();
 
@@ -1699,7 +1694,6 @@ export function ContactsTable({
 
       await dispatch(createContact(newContact)).unwrap();
       toast.success('Contact created successfully');
-      setIsAddDialogOpen(false);
       setNewContact({
         firstName: '', lastName: '', jobTitle: '', jobLevel: '', jobRole: '',
         email: '', phone: '', directPhone: '', address1: '', address2: '',
@@ -1867,31 +1861,14 @@ export function ContactsTable({
               </AlertDialogContent>
             </AlertDialog>
 
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" style={{ backgroundColor: user.role === 'superadmin' ? '#2563EB' : '#EB432F' }}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Contact
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Add New Contact</DialogTitle>
-                  <DialogDescription>
-                    Enter the details of the new contact below.
-                  </DialogDescription>
-                </DialogHeader>
-                {renderFormFields(false)}
-                <div className="flex justify-end space-x-2 mt-4">
-                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleCreateContact} disabled={isCreating} style={{ backgroundColor: user.role === 'superadmin' ? '#2563EB' : '#EB432F' }}>
-                    {isCreating ? 'Creating...' : 'Create Contact'}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button 
+              size="sm" 
+              style={{ backgroundColor: user.role === 'superadmin' ? '#2563EB' : '#EB432F' }}
+              onClick={() => router.push('/contacts/new')}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Contact
+            </Button>
           </div>
         </div>
 

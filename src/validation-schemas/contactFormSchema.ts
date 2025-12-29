@@ -103,7 +103,7 @@ export const contactFormSchema = yup.object().shape({
 
   // Required company fields
   companyName: yup
-    .string(),
+    .string().required('Company name is required'),
 
   employeeSize: yup
     .string(),

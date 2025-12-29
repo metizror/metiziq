@@ -259,7 +259,7 @@ export function ViewContactDetails({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const resolvedCompanyName =
-    contact.linkedInData?.person?.positions?.positionHistory[0]?.companyName ||
+    contact.linkedInData?.extractedProfileData?.company_details?.company_name ||
     "-";
   // Try to find company ID from multiple sources
   let resolvedCompanyId =
