@@ -1807,7 +1807,7 @@ export function ViewContactDetails({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-gray-500 mb-0.5">
-                      Contact_LinkedIn
+                      LinkedIn URL
                     </div>
                     {(contact as any).linkedInData?.person?.linkedInUrl ? (
                       <div className="text-sm font-medium text-blue-600">
@@ -2194,6 +2194,20 @@ export function ViewContactDetails({
                             return <div key={index}>{formattedText}</div>;
                           }
                         ) || "-"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="mt-0.5">
+                      <DollarSign className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-gray-500 mb-0.5">
+                        Last Year Revenue
+                      </div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {contact.linkedInData?.extractedProfileData?.company_details?.last_year_turnover || "-"}
                       </div>
                     </div>
                   </div>
