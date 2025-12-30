@@ -19,6 +19,7 @@ import {
   DollarSign,
   Users,
   BarChart,
+  Star,
 } from "lucide-react";
 import { Contact, User as UserType, Company } from "@/types/dashboard.types";
 import {
@@ -1826,6 +1827,99 @@ export function ViewContactDetails({
                     )}
                   </div>
                 </div>
+
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <Star className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Google Reviews
+                    </div>
+                    <div className="text-sm font-medium text-gray-900 space-y-2">
+                      {contact.linkedInData?.extractedProfileData?.person_details?.google_reviews?.map(
+                        (review: any, index: number) => {
+                          const sitename =
+                            review.sitename ||
+                            review.Sitename ||
+                            review.site ||
+                            "";
+                          const rating = review.rating || review.Rating || "";
+                          const formattedText =
+                            sitename && rating
+                              ? `${sitename} - ${rating}`
+                              : Object.entries(review)
+                                  .map(
+                                    ([key, value]: [string, any]) =>
+                                      `${key}: ${value}`
+                                  )
+                                  .join(", ");
+
+                          return (
+                            <div
+                              key={index}
+                              className="border-b pb-2 last:border-b-0"
+                            >
+                              {formattedText}
+                            </div>
+                          );
+                        }
+                      ) || "-"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <Star className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Other Trusted Reviews
+                    </div>
+                    <div className="text-sm font-medium text-gray-900 space-y-2">
+                      {contact.linkedInData?.extractedProfileData?.person_details?.other_trusted_reviews?.map(
+                        (review: any, index: number) => {
+                          const sitename =
+                            review.sitename ||
+                            review.Sitename ||
+                            review.site ||
+                            "";
+                          const rating = review.rating || review.Rating || "";
+                          const formattedText =
+                            sitename && rating
+                              ? `${sitename} - ${rating}`
+                              : Object.entries(review)
+                                  .map(
+                                    ([key, value]: [string, any]) =>
+                                      `${key}: ${value}`
+                                  )
+                                  .join(", ");
+
+                          return (
+                            <div
+                              key={index}
+                              className="border-b pb-2 last:border-b-0"
+                            >
+                              {formattedText}
+                            </div>
+                          );
+                        }
+                      ) || "-"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  About the Contact
+                </h3>
+                <div className="col-span-full">
+                  {formatRecordInfo(
+                    contact.linkedInData?.extractedProfileData?.person_details
+                      ?.about
+                  ) || "-"}
+                </div>
               </div>
             </div>
           </div>
@@ -1971,8 +2065,7 @@ export function ViewContactDetails({
                       </div>
                       <div className="text-sm font-medium text-gray-900">
                         {contact?.linkedInData?.extractedProfileData
-                          ?.company_details?.company_size ||
-                          "-"}
+                          ?.company_details?.company_size || "-"}
                       </div>
                     </div>
                   </div>
@@ -2036,9 +2129,7 @@ export function ViewContactDetails({
                       <div className="text-sm font-medium text-gray-900 space-y-1">
                         {contact.linkedInData?.extractedProfileData?.company_details?.contact_phone?.map(
                           (phone: any, index: number) => (
-                            <div key={index}>
-                              {phone}
-                            </div>
+                            <div key={index}>{phone}</div>
                           )
                         ) || "-"}
                       </div>
@@ -2060,6 +2151,53 @@ export function ViewContactDetails({
                     </div>
                   </div>
 
+                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="mt-0.5">
+                      <Star className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-gray-500 mb-0.5">
+                        Google Reviews
+                      </div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {contact.linkedInData?.extractedProfileData?.company_details?.google_reviews?.map(
+                          (review: any, index: number) => {
+                            const sitename = review.sitename || review.Sitename || review.site || "";
+                            const rating = review.rating || review.Rating || "";
+                            const formattedText = sitename && rating
+                              ? `${sitename} - ${rating}`
+                              : Object.entries(review).map(([key, value]: [string, any]) => `${key}: ${value}`).join(', ');
+                            return <div key={index}>{formattedText}</div>;
+                          }
+                        ) || "-"}
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="mt-0.5">
+                      <Star className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-gray-500 mb-0.5">
+                        Other Trusted Reviews
+                      </div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {contact.linkedInData?.extractedProfileData?.company_details?.other_trusted_reviews?.map(
+                          (review: any, index: number) => {
+                            const sitename = review.sitename || review.Sitename || review.site || "";
+                            const rating = review.rating || review.Rating || "";
+                            const formattedText = sitename && rating
+                              ? `${sitename} - ${rating}`
+                              : Object.entries(review).map(([key, value]: [string, any]) => `${key}: ${value}`).join(', ');
+                            return <div key={index}>{formattedText}</div>;
+                          }
+                        ) || "-"}
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Company LinkedIn */}
                   {/* {((company as any)?.companyLinkedInUrl || (contact as any).contactLinkedIn || contact.contactLinkedInUrl) && (
                     <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
@@ -2077,6 +2215,17 @@ export function ViewContactDetails({
                     </div>
                   )} */}
                 </div>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  About the Company
+                </h3>
+                <div className="col-span-full">
+                  {formatRecordInfo(
+                    contact.linkedInData?.extractedProfileData?.company_details
+                      ?.about
+                  ) || "-"}
+                </div>
+              </div>
               </div>
             </div>
           )}
@@ -2108,56 +2257,12 @@ export function ViewContactDetails({
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Record Information
             </h3>
-            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> */}
             <div className="col-span-full">
               {formatRecordInfo(
                 contact.linkedInData?.extractedProfileData?.summery
               )}
             </div>
-            {/* <div className="space-y-1">
-                <div className="text-sm text-gray-500">Contact ID</div>
-                <div className="text-base font-medium text-gray-900">#{contact.id}</div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm text-gray-500">Added Date</div>
-                <div className="text-base font-medium text-gray-900">
-                  {(() => {
-                    const date = contact.addedDate || (contact as any).createdAt;
-                    if (!date) return '-';
-                    try {
-                      const dateObj = typeof date === 'string' ? new Date(date) : date;
-                      return dateObj.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                      });
-                    } catch {
-                      return date;
-                    }
-                  })()}
-                </div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm text-gray-500">Last Updated</div>
-                <div className="text-base font-medium text-gray-900">
-                  {(() => {
-                    const date = contact.lastUpdateDate || contact.updatedDate || (contact as any).updatedAt;
-                    if (!date) return '-';
-                    try {
-                      const dateObj = typeof date === 'string' ? new Date(date) : date;
-                      return dateObj.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                      });
-                    } catch {
-                      return date;
-                    }
-                  })()}
-                </div>
-              </div> */}
           </div>
-          {/* </div> */}
         </div>
       </div>
 
