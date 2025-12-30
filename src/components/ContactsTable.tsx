@@ -2095,7 +2095,7 @@ export function ContactsTable({
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>{getCompanyName(contact) || '-'}</TableCell>
+                      {/* <TableCell>{getCompanyName(contact) || '-'}</TableCell> */}
                       <TableCell>{contact.linkedInData?.extractedProfileData?.company_details?.company_name || '-'}</TableCell>
                       <TableCell>
                         {(() => {
