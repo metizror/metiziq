@@ -627,30 +627,6 @@ export default function EditContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate required fields
-    if (!formData.firstName || !formData.lastName) {
-      toast.error('Please enter first and last name');
-      return;
-    }
-
-    // Validate required company fields
-    if (!formData.companyName || !formData.employeeSize || !formData.revenue) {
-      toast.error('Company Name, Employee Size, and Revenue are required');
-      return;
-    }
-
-    // Validate otherCountry if country is "Other"
-    if (formData.country === 'Other' && !formData.otherCountry) {
-      toast.error('Please enter the country name');
-      return;
-    }
-
-    // Validate otherIndustry if industry is "Other"
-    if (formData.industry === 'Other' && !formData.otherIndustry) {
-      toast.error('Please enter the industry name');
-      return;
-    }
-
     try {
       const payload = {
         id: contactId,
@@ -748,26 +724,24 @@ export default function EditContactPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name *</Label>
+                    <Label htmlFor="firstName">First Name</Label>
                     <Input
                       id="firstName"
                       value={formData.firstName}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({...formData, firstName: e.target.value})}
                       placeholder="John"
                       className="h-11"
-                      required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name *</Label>
+                    <Label htmlFor="lastName">Last Name</Label>
                     <Input
                       id="lastName"
                       value={formData.lastName}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({...formData, lastName: e.target.value})}
                       placeholder="Doe"
                       className="h-11"
-                      required
                     />
                   </div>
 
@@ -950,14 +924,13 @@ export default function EditContactPage() {
 
                   {formData.country === 'Other' && (
                     <div className="space-y-2">
-                      <Label htmlFor="otherCountry">Other Country *</Label>
+                      <Label htmlFor="otherCountry">Other Country</Label>
                       <Input
                         id="otherCountry"
                         value={formData.otherCountry}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({...formData, otherCountry: e.target.value})}
                         placeholder="Enter country name"
                         className="h-11"
-                        required
                       />
                     </div>
                   )}
@@ -999,14 +972,13 @@ export default function EditContactPage() {
 
                   {formData.industry === 'Other' && (
                     <div className="space-y-2">
-                      <Label htmlFor="otherIndustry">Other Industry *</Label>
+                      <Label htmlFor="otherIndustry">Other Industry</Label>
                       <Input
                         id="otherIndustry"
                         value={formData.otherIndustry}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({...formData, otherIndustry: e.target.value})}
                         placeholder="Enter industry name"
                         className="h-11"
-                        required
                       />
                     </div>
                   )}
@@ -1075,19 +1047,18 @@ export default function EditContactPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="companyName">Company Name *</Label>
+                    <Label htmlFor="companyName">Company Name</Label>
                     <Input
                       id="companyName"
                       value={formData.companyName}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({...formData, companyName: e.target.value})}
                       placeholder="Enter company name"
                       className="h-11"
-                      required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="employeeSize">Employee Size *</Label>
+                    <Label htmlFor="employeeSize">Employee Size</Label>
                     <Select 
                       value={formData.employeeSize || ''} 
                       onValueChange={(value: string) => setFormData({...formData, employeeSize: value})}
@@ -1111,7 +1082,7 @@ export default function EditContactPage() {
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="revenue">Revenue *</Label>
+                    <Label htmlFor="revenue">Revenue</Label>
                     <Select 
                       value={formData.revenue || ''} 
                       onValueChange={(value: string) => setFormData({...formData, revenue: value})}

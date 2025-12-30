@@ -1123,7 +1123,7 @@ export function ContactsTable({
       // Call the sync API
       const response = await privateApiPost<{
         message: string;
-        results: Array<{ email: string; success: boolean; contact: any }>;
+        results: Array<{ email: string; success: boolean; contact?: any; skipped?: boolean; message?: string }>;
         errors: Array<{ email: string; error: string }>;
         summary: {
           total: number;
@@ -1133,8 +1133,24 @@ export function ContactsTable({
       }>('/admin/contacts/sync-linkedin', { emails });
 
       // Show results
-      if (response.summary.successful > 0) {
-        toast.success(`Successfully synced ${response.summary.successful} of ${response.summary.total} contacts`);
+      const skippedItems = response.results.filter(r => r.skipped);
+      const successfulItems = response.results.filter(r => r.success && !r.skipped);
+
+      if (successfulItems.length > 0) {
+        toast.success(`Successfully synced ${successfulItems.length} of ${response.summary.total} contacts`);
+      }
+
+      if (skippedItems.length > 0) {
+        // Show toast for skipped items (synced less than 1 day ago)
+        const skippedMessages = skippedItems.map(item => {
+          return item.message || `Please sync tomorrow for ${item.email}`;
+        });
+        
+        if (skippedItems.length === 1) {
+          toast.warning(skippedMessages[0], { duration: 5000 });
+        } else {
+          toast.warning(`${skippedItems.length} contacts skipped: ${skippedMessages.slice(0, 2).join('; ')}${skippedItems.length > 2 ? '...' : ''}`, { duration: 6000 });
+        }
       }
 
       if (response.errors.length > 0) {
@@ -1872,7 +1888,6 @@ export function ContactsTable({
           </div>
         </div>
 
-        {/* Active Filters Display */}
         {(searchQuery || (filters && Object.keys(filters).some(key => {
           const val = filters[key as keyof typeof filters];
           return key !== 'page' && key !== 'limit' && val !== undefined && val !== '';
@@ -1880,7 +1895,6 @@ export function ContactsTable({
             <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-100">
               <span className="text-sm text-gray-500 font-medium">Active Filters:</span>
 
-              {/* Search Query Chip */}
               {searchQuery && (
                 <Badge variant="secondary" className="pl-3 pr-1 py-1 flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100">
                   <span className="font-normal">Search:</span> <span className="font-semibold">{searchQuery}</span>
@@ -1895,11 +1909,9 @@ export function ContactsTable({
                 </Badge>
               )}
 
-              {/* Other Filters Chips */}
               {filters && Object.entries(filters).map(([key, value]) => {
                 if (key === 'page' || key === 'limit' || !value) return null;
 
-                // Format key for display (camelCase to Title Case)
                 const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
 
                 return (
@@ -1917,14 +1929,12 @@ export function ContactsTable({
                 );
               })}
 
-              {/* Clear All Button */}
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 h-6 px-2"
                 onClick={() => {
                   if (onSearchChange) onSearchChange('');
-                  // Create an object with all current filter keys set to undefined
                   const resetFilters = Object.keys(filters || {}).reduce((acc, key) => {
                     if (key !== 'page' && key !== 'limit') {
                       acc[key] = undefined;
@@ -1938,8 +1948,6 @@ export function ContactsTable({
               </Button>
             </div>
           )}
-        {/* View Mode Toggle */}
-
 
       </CardHeader >
 
@@ -2057,8 +2065,8 @@ export function ContactsTable({
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">
-                            {contact.linkedInData?.photoUrl && (
-                              <AvatarImage src={contact.linkedInData.photoUrl} alt={`${contact.firstName} ${contact.lastName}`} />
+                            {contact.linkedInData?.person?.photoUrl && (
+                              <AvatarImage src={contact.linkedInData?.person?.photoUrl} alt={`${contact.firstName} ${contact.lastName}`} />
                             )}
                             <AvatarFallback className="bg-gray-200">
                               {getInitials(contact.firstName, contact.lastName)}
@@ -2144,7 +2152,6 @@ export function ContactsTable({
           </Table>
         </div>
 
-        {/* Pagination Controls - Fixed at bottom */}
         <div className="flex items-center justify-between pt-4 border-t" style={{ flexShrink: 0, flexGrow: 0 }}>
           <div className="flex items-center space-x-2">
             <Label>Rows per page:</Label>

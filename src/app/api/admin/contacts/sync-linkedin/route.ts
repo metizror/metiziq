@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
         for (const email of emails) {
             try {
                 // Find contact first to get details for the payload
-                const contact = await Contacts.findOne({ email });
+                const contact: any = await Contacts.findOne({ email });
 
                 if (!contact) {
                     errors.push({
@@ -44,6 +44,28 @@ export async function POST(request: NextRequest) {
                         error: "Contact not found in database",
                     });
                     continue;
+                }
+
+                // Check if sync was done within the last 24 hours
+                if (contact.syncDate) {
+                    const lastSyncDate = new Date(contact.syncDate);
+                    const now = new Date();
+                    const timeDifference = now.getTime() - lastSyncDate.getTime();
+                    const oneDayInMs = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+
+                    if (timeDifference < oneDayInMs) {
+                        // Calculate hours until next sync is allowed
+                        const hoursUntilNextSync = Math.ceil((oneDayInMs - timeDifference) / (60 * 60 * 1000));
+                        const nextSyncDate = new Date(lastSyncDate.getTime() + oneDayInMs);
+                        
+                        results.push({
+                            email,
+                            success: false,
+                            message: `Please sync tomorrow. Last synced on ${lastSyncDate.toLocaleString()}. Next sync available after ${nextSyncDate.toLocaleString()}`,
+                            skipped: true,
+                        });
+                        continue;
+                    }
                 }
 
                 // Call LinkedIn API using axios

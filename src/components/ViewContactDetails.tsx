@@ -1511,10 +1511,10 @@ export function ViewContactDetails({
               }}
             />
 
-            <div className="px-8 pb-8">
+            <div className="avtarTitle px-8 pb-8 relative">
               <div className="flex items-start gap-6">
                 {/* Avatar */}
-                <Avatar className="h-24 w-24 border-4 border-white shadow-lg -mt-12 bg-white relative z-10">
+                <Avatar className="avtarLogo h-24 w-24 border-4 border-white shadow-lg -mt-12 bg-white  absolute left-20 translate-y-[-50%] z-10">
                   {(contact as any).linkedInData?.person?.photoUrl && (
                     <AvatarImage
                       src={(contact as any).linkedInData?.person?.photoUrl}
