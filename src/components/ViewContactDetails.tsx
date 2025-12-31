@@ -1830,6 +1830,20 @@ export function ViewContactDetails({
 
                 <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
                   <div className="mt-0.5">
+                    <Briefcase className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Experience
+                    </div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {contact.linkedInData?.extractedProfileData?.person_details?.experience || "-"}
+                    </div>
+                  </div>
+                  </div>
+
+                {/* <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
                     <Star className="w-4 h-4 text-gray-500" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -1908,7 +1922,7 @@ export function ViewContactDetails({
                       ) || "-"}
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
