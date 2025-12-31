@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
                 };
 
                 // Only add linkedInData if profile was found successfully
-                if (responseData.success && responseData.data) {
+                if (responseData.data) {
                     updateData.linkedInData = responseData.data;
                 }
 
