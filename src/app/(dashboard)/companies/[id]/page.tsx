@@ -6,7 +6,7 @@ import { ViewCompanyDetails } from "@/components/ViewCompanyDetails";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { getCompanies } from "@/store/slices/companies.slice";
 import { privateApiCall } from "@/lib/api";
-import type { Company, User } from "@/types/dashboard.types";
+import type { User } from "@/types/dashboard.types";
 import { toast } from "sonner";
 
 export default function CompanyDetailPage() {
@@ -17,7 +17,7 @@ export default function CompanyDetailPage() {
   const { user } = useAppSelector((state) => state.auth);
   const { companies: reduxCompanies } = useAppSelector((state) => state.companies);
   const dispatch = useAppDispatch();
-  const [company, setCompany] = useState(null as Company | null);
+  const [company, setCompany] = useState(null as any | null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null as string | null);
   const hasFetchedRef = useRef(false);
@@ -46,7 +46,7 @@ export default function CompanyDetailPage() {
         setError(null);
         
         // First, check if company is already in Redux store
-        let companyData: any = reduxCompanies.find((c: Company) => {
+        let companyData: any = reduxCompanies.find((c: any) => {
           const cId = (c as any)._id?.toString() || c.id?.toString();
           return cId === companyId;
         });
@@ -65,30 +65,14 @@ export default function CompanyDetailPage() {
         }
         
         // Map the API response to Company type
-        const mappedCompany: Company = {
+        const mappedCompany: any = {
           id: companyData._id?.toString() || companyData.id,
           companyName: companyData.companyName || '',
-          phone: companyData.phone || undefined,
-          address1: companyData.address1 || '',
-          address2: companyData.address2 || '',
-          city: companyData.city || '',
-          state: companyData.state || '',
-          zipCode: companyData.zipCode || '',
-          country: companyData.country || '',
-          website: companyData.website || '',
-          revenue: companyData.revenue || '',
-          employeeSize: companyData.employeeSize || '',
-          industry: companyData.industry || '',
-          subIndustry: companyData.subIndustry || undefined,
-          technology: companyData.technology || '',
-          companyLinkedInUrl: companyData.companyLinkedInUrl || undefined,
-          amfNotes: companyData.amfNotes || '',
-          lastUpdateDate: companyData.lastUpdateDate || (companyData as any).updatedAt || '',
-          addedBy: companyData.addedBy || undefined,
-          addedByRole: companyData.addedByRole || undefined,
+          allDetails: companyData.allDetails || {},
           createdBy: companyData.createdBy || companyData.addedBy || undefined,
-          addedDate: companyData.addedDate || (companyData as any).createdAt || '',
-          updatedDate: companyData.updatedDate || (companyData as any).updatedAt || '',
+          uploaderId: companyData.uploaderId || undefined,
+          createdAt: companyData.createdAt || '',
+          updatedAt: companyData.updatedAt || '',
         };
 
         setCompany(mappedCompany);
@@ -123,30 +107,13 @@ export default function CompanyDetailPage() {
        const companyData = response?.company || response;
       
       if (companyData) {
-        const mappedCompany: Company = {
+        const mappedCompany: any = {
           id: companyData._id?.toString() || companyData.id,
           companyName: companyData.companyName || '',
-          phone: companyData.phone || undefined,
-          address1: companyData.address1 || '',
-          address2: companyData.address2 || '',
-          city: companyData.city || '',
-          state: companyData.state || '',
-          zipCode: companyData.zipCode || '',
-          country: companyData.country || '',
-          website: companyData.website || '',
-          revenue: companyData.revenue || '',
-          employeeSize: companyData.employeeSize || '',
-          industry: companyData.industry || '',
-          subIndustry: companyData.subIndustry || undefined,
-          technology: companyData.technology || '',
-          companyLinkedInUrl: companyData.companyLinkedInUrl || undefined,
-          amfNotes: companyData.amfNotes || '',
-          lastUpdateDate: companyData.lastUpdateDate || (companyData as any).updatedAt || '',
-          addedBy: companyData.addedBy || undefined,
-          addedByRole: companyData.addedByRole || undefined,
+          allDetails: companyData.allDetails || {},
           createdBy: companyData.createdBy || companyData.addedBy || undefined,
-          addedDate: companyData.addedDate || (companyData as any).createdAt || '',
-          updatedDate: companyData.updatedDate || (companyData as any).updatedAt || '',
+          createdAt: companyData.createdAt || '',
+          updatedAt: companyData.updatedAt || '',
         };
         setCompany(mappedCompany);
       }
@@ -170,13 +137,13 @@ export default function CompanyDetailPage() {
     return str;
   };
 
-  const handleExport = (company: Company) => {
+  const handleExport = (company: any) => {
     const companyData = company as any;
     const csvHeader = 'Company ID,Company Name,Phone,Address 1,Address 2,City,State,Zip Code,Country,Website,Revenue,Employee Size,Industry,Sub-Industry,Technology,Company LinkedIn URL,aMF Notes,Created By,Added Date,Last Update Date,Updated Date';
     const csvRow = [
       escapeCSV(company.id || companyData._id || ''),
       escapeCSV(company.companyName || ''),
-      escapeCSV(company.phone || ''),
+      escapeCSV(company.allDetails?.phone || ''),
       escapeCSV(company.address1 || ''),
       escapeCSV(company.address2 || ''),
       escapeCSV(company.city || ''),

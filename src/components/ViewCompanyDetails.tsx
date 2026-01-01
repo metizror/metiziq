@@ -56,15 +56,12 @@ import {
 } from "./ui/dropdown-menu";
 import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  deleteCompanies,
-  getCompanies,
-} from "@/store/slices/companies.slice";
+import { deleteCompanies, getCompanies } from "@/store/slices/companies.slice";
 import { getContacts } from "@/store/slices/contacts.slice";
 import { privateApiCall } from "@/lib/api";
 
 interface ViewCompanyDetailsProps {
-  company: Company;
+  company: any;
   user: UserType;
   onBack: () => void;
   onExport: (company: Company) => void;
@@ -76,14 +73,14 @@ const industrySubIndustryMap: Record<string, string[]> = {
   "Agriculture, Forestry and Fishing": [
     "Commercial Fishing",
     "Crop and Animal Production",
-    "Forestry and Logging"
+    "Forestry and Logging",
   ],
   "Aerospace and Defense": [
     "Aircraft Engine and Parts Manufacturing",
     "Aircraft Manufacturing",
     "Guided Missile and Space Vehicle Manufacturing",
     "Space Research and Technology",
-    "Weapons and Ammunition Manufacturing"
+    "Weapons and Ammunition Manufacturing",
   ],
   "Automotive, Transportation and Logistics": [
     "Air Transportation Services",
@@ -108,7 +105,7 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Storage and Warehousing",
     "Train and Railroad Equipment Manufacturing",
     "Transportation Equipment Wholesale",
-    "Trucking"
+    "Trucking",
   ],
   "Banking and Finance": [
     "Banking",
@@ -118,7 +115,7 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Investment Banking",
     "Investment Services",
     "Mortgage and Credit",
-    "Securities"
+    "Securities",
   ],
   "Business, Consulting and Professional Services": [
     "Administrative Services",
@@ -142,15 +139,15 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Marketing Services",
     "Industrial Machinery Repair and Maintenance",
     "Miscellaneous Repair and Maintenance",
-    "Computer and Office Machine Repair and Maintenance"
+    "Computer and Office Machine Repair and Maintenance",
   ],
-  "Chemicals": [
+  Chemicals: [
     "Agricultural Chemical Manufacturing",
     "Basic Chemical Manufacturing",
     "Chemical Wholesale",
     "Miscellaneous Chemical Manufacturing",
     "Paint, Coating, and Adhesive Manufacturing",
-    "Synthetic Chemical Manufacturing"
+    "Synthetic Chemical Manufacturing",
   ],
   "Construction and Building Materials": [
     "Cement and Concrete Product Manufacturing",
@@ -158,7 +155,7 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Construction and Hardware Materials Wholesale",
     "Construction Machinery Manufacturing",
     "Residential and Commercial Building Construction",
-    "Specialty Construction Trade Contractors"
+    "Specialty Construction Trade Contractors",
   ],
   "Consumer Services": [
     "Consumer Goods Rental",
@@ -168,16 +165,16 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Miscellaneous Personal Services",
     "Personal Care Services",
     "Photofinishing",
-    "Residential Real Estate Leasing"
+    "Residential Real Estate Leasing",
   ],
-  "Education": [
+  Education: [
     "Child Day Care Services",
     "Colleges and Universities",
     "Miscellaneous Educational Services",
     "Primary and Secondary Education",
-    "Professional and Management Training"
+    "Professional and Management Training",
   ],
-  "Electronics": [
+  Electronics: [
     "Appliance Repair and Maintenance",
     "Audio and Video Equipment Manufacturing",
     "Consumer Electronics Repair and Maintenance",
@@ -187,7 +184,7 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Electronics and Appliances Stores",
     "Electronics Wholesale",
     "Magnetic and Optical Media Manufacturing",
-    "Semiconductor and Other Electronic Component Manufacturing"
+    "Semiconductor and Other Electronic Component Manufacturing",
   ],
   "Entertainment, Travel and Leisure": [
     "Airlines",
@@ -202,7 +199,7 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Restaurants and Bars",
     "Spectator Sports",
     "Sporting Goods and Recreation Stores",
-    "Travel and Reservation Services"
+    "Travel and Reservation Services",
   ],
   "Food and Beverage": [
     "Alcoholic Beverage Wholesale",
@@ -213,7 +210,7 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Food Manufacturing",
     "Grocery Stores",
     "Grocery Wholesale",
-    "Restaurants and Bars"
+    "Restaurants and Bars",
   ],
   "Healthcare, Biotechnology and Pharmaceuticals": [
     "Ambulatory Services",
@@ -229,7 +226,7 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Pharmaceutical Manufacturing",
     "Pharmacies and Personal Care Stores",
     "Physicians and Health Practitioners",
-    "Social and Rehabilitation Services"
+    "Social and Rehabilitation Services",
   ],
   "High Tech": [
     "Communications Equipment Manufacturing",
@@ -241,16 +238,16 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Electromedical and Control Instruments Manufacturing",
     "Software",
     "Internet and Web Services",
-    "Managed Service Providers (MSPs)"
+    "Managed Service Providers (MSPs)",
   ],
-  "Insurance": [
+  Insurance: [
     "Insurance Agents",
     "Insurance Services",
     "Life and Health Insurance",
     "Pensions and Funds",
-    "Property and Casualty Insurance"
+    "Property and Casualty Insurance",
   ],
-  "Manufacturing": [
+  Manufacturing: [
     "Agricultural Chemical Manufacturing",
     "Aircraft Engine and Parts Manufacturing",
     "Aircraft Manufacturing",
@@ -288,32 +285,30 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Tobacco Production",
     "Train and Railroad Equipment Manufacturing",
     "Weapons and Ammunition Manufacturing",
-    "Wood Product Manufacturing"
+    "Wood Product Manufacturing",
   ],
   "Mining, Quarrying and Drilling": [
     "Coal Mining",
     "Metals Mining",
     "NonMetallic Minerals Mining",
     "Petroleum and Natural Gas Extraction",
-    "Support Activities for Mining"
+    "Support Activities for Mining",
   ],
-  "Non-Profit": [
-    "Non-profit Organisations"
-  ],
+  "Non-Profit": ["Non-profit Organisations"],
   "Government Administration": [
     "Administration of Public Programs",
     "Courts, Justice and Public Safety",
     "Executive and Legislature",
     "National Security and International Affairs",
     "Space Research and Technology",
-    "Local Authorities (Cities, Counties, States)"
+    "Local Authorities (Cities, Counties, States)",
   ],
   "Real Estate": [
     "Commercial Real Estate Leasing",
     "Property Managers",
     "Real Estate Agents and Brokers",
     "Real Estate Services",
-    "Residential Real Estate Leasing"
+    "Residential Real Estate Leasing",
   ],
   "Rental and Leasing": [
     "Commercial and Industrial Rental",
@@ -321,9 +316,9 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Consumer Goods Rental",
     "Miscellaneous Rental",
     "Motor Vehicle Rental",
-    "Residential Real Estate Leasing"
+    "Residential Real Estate Leasing",
   ],
-  "Retail": [
+  Retail: [
     "Beer, Wine, and Liquor Stores",
     "Clothing and Apparel Stores",
     "Department Stores",
@@ -338,7 +333,7 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Pharmacies and Personal Care Stores",
     "Sporting Goods and Recreation Stores",
     "Convenience Store",
-    "eCommerce"
+    "eCommerce",
   ],
   "Telecommunications and Publishing": [
     "Broadcasting and Media",
@@ -354,7 +349,7 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Wired Telecommunications Carriers",
     "Wireless Telecommunications Carriers",
     "Music",
-    "Printing"
+    "Printing",
   ],
   "Utilities and Energy": [
     "Electricity Generation and Distribution",
@@ -362,9 +357,9 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Waste Management",
     "Water and Sewage Services",
     "Renweable Energy Services",
-    "Petroleum and Natural Gas Extraction"
+    "Petroleum and Natural Gas Extraction",
   ],
-  "Wholesale": [
+  Wholesale: [
     "Alcoholic Beverage Wholesale",
     "Chemical Wholesale",
     "Clothing and Apparel Wholesale",
@@ -381,55 +376,57 @@ const industrySubIndustryMap: Record<string, string[]> = {
     "Paper Wholesale",
     "Petroleum Wholesale",
     "Professional and Commercial Equipment Wholesale",
-    "Transportation Equipment Wholesale"
-  ]
+    "Transportation Equipment Wholesale",
+  ],
 };
 
 const industries = [
-  ...Object.keys(industrySubIndustryMap).map(industry => ({
+  ...Object.keys(industrySubIndustryMap).map((industry) => ({
     label: industry,
     value: industry,
   })),
-  { label: 'Other', value: 'Other' }
+  { label: "Other", value: "Other" },
 ];
 
 // Helper function to format revenue with $ sign
 const formatRevenue = (revenue: string | undefined | null): string => {
-  if (!revenue || revenue === '-') return '-';
-  
+  if (!revenue || revenue === "-") return "Not Available";
+
   // If already has $ sign, return as is
-  if (revenue.includes('$')) return revenue;
-  
+  if (revenue.includes("$")) return revenue;
+
   // Map revenue values to formatted strings
   const revenueMap: { [key: string]: string } = {
-    'Lessthan1M': 'Less than $1M',
-    '1Mto5M': '$1M-$5M',
-    '5Mto10M': '$5M-$10M',
-    '10Mto50M': '$10M-$50M',
-    '50Mto100M': '$50M-$100M',
-    '100Mto250M': '$100M-$250M',
-    '250Mto500M': '$250M-$500M',
-    '500Mto1B': '$500M-$1B',
-    'Morethan1B': 'More than $1B',
+    Lessthan1M: "Less than $1M",
+    "1Mto5M": "$1M-$5M",
+    "5Mto10M": "$5M-$10M",
+    "10Mto50M": "$10M-$50M",
+    "50Mto100M": "$50M-$100M",
+    "100Mto250M": "$100M-$250M",
+    "250Mto500M": "$250M-$500M",
+    "500Mto1B": "$500M-$1B",
+    Morethan1B: "More than $1B",
   };
-  
+
   // Check if it's a known format
   if (revenueMap[revenue]) {
     return revenueMap[revenue];
   }
-  
+
   // If it's in format like "1Mto5M" or "1M-5M", add $ signs
-  const rangeMatch = revenue.match(/^(\d+(?:\.\d+)?[MB]?)to(\d+(?:\.\d+)?[MB]?)$/i) || revenue.match(/^(\d+(?:\.\d+)?[MB]?)-(\d+(?:\.\d+)?[MB]?)$/i);
+  const rangeMatch =
+    revenue.match(/^(\d+(?:\.\d+)?[MB]?)to(\d+(?:\.\d+)?[MB]?)$/i) ||
+    revenue.match(/^(\d+(?:\.\d+)?[MB]?)-(\d+(?:\.\d+)?[MB]?)$/i);
   if (rangeMatch) {
     return `$${rangeMatch[1]}-$${rangeMatch[2]}`;
   }
-  
+
   // If it starts with a number and M/B, add $ sign
   const singleMatch = revenue.match(/^(\d+(?:\.\d+)?)([MB])$/i);
   if (singleMatch) {
     return `$${singleMatch[1]}${singleMatch[2]}`;
   }
-  
+
   // Default: return as is
   return revenue;
 };
@@ -449,6 +446,8 @@ export function ViewCompanyDetails({
   const [contactsCount, setContactsCount] = useState(0);
   const [isLoadingContacts, setIsLoadingContacts] = useState(false);
   const lastFetchedCompanyRef = useRef(null as string | null);
+
+  console.log("company", company);
 
   // Fetch contacts for this company
   useEffect(() => {
@@ -514,7 +513,6 @@ export function ViewCompanyDetails({
 
     fetchCompanyContacts();
   }, [company.companyName]);
-
 
   const handleDelete = async () => {
     try {
@@ -677,18 +675,18 @@ export function ViewCompanyDetails({
               <div className="flex items-center gap-4">
                 {/* Company Icon - Overlapping both sections */}
                 <div className="w-22 h-22 bg-white rounded-xl border border-gray-200 shadow-sm  absolute left-5 top-0 -translate-y-1/2">
-                <div className="p-2">
-                  <div className=" w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-                    <Building2 className="w-10 h-10 text-white" />
+                  <div className="p-2">
+                    <div className=" w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                      <Building2 className="w-10 h-10 text-white" />
+                    </div>
                   </div>
-                </div>
                 </div>
                 <div className="flex flex-col -mt-6">
                   <h2 className="text-2xl font-medium text-gray-900 ">
                     {company.companyName}
                   </h2>
                   <p className="text-lg text-gray-600">
-                    {company.industry || "-"}
+                    {company.allDetails?.industry || "-"}
                   </p>
                 </div>
               </div>
@@ -790,20 +788,20 @@ export function ViewCompanyDetails({
                     <div className="text-base font-medium capitalize text-gray-900 mb-2">
                       {company.companyName}
                     </div>
-                    {company.website && (
+                    {company.allDetails?.website && (
                       <div className="flex items-center gap-2 mt-2">
                         <Globe className="w-4 h-4 text-gray-600" />
                         <a
                           href={
-                            company.website.startsWith("http")
-                              ? company.website
-                              : `https://${company.website}`
+                            company.allDetails?.website?.startsWith("http")
+                              ? company.allDetails?.website
+                              : `https://${company.allDetails?.website}`
                           }
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-sm text-blue-800 hover:underline"
                         >
-                          {company.website}
+                          {company.allDetails?.website}
                         </a>
                       </div>
                     )}
@@ -813,7 +811,9 @@ export function ViewCompanyDetails({
                     <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 shadow-sm">
                       <div className="text-xs text-gray-500 mb-1">Revenue</div>
                       <div className="text-base font-medium capitalize text-gray-900">
-                        {formatRevenue(company.revenue)}
+                        {formatRevenue(
+                          company.allDetails?.annual_revenue_range
+                        ) || "-"}
                       </div>
                     </div>
 
@@ -823,7 +823,7 @@ export function ViewCompanyDetails({
                         Employees
                       </div>
                       <div className="text-base font-medium capitalize text-gray-900">
-                        {company.employeeSize || "-"}
+                        {company.allDetails?.company_size || "-"}
                       </div>
                     </div>
 
@@ -831,7 +831,7 @@ export function ViewCompanyDetails({
                     <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 shadow-sm">
                       <div className="text-xs text-gray-500 mb-1">Industry</div>
                       <div className="text-base font-medium capitalize text-gray-900">
-                        {company.industry || "-"}
+                        {company.allDetails?.industry || "Not Available"}
                       </div>
                     </div>
 
@@ -841,7 +841,7 @@ export function ViewCompanyDetails({
                         Last Updated
                       </div>
                       <div className="text-base font-medium capitalize text-gray-900">
-                        {formatDate(company.lastUpdateDate)}
+                        {formatDate(company.createdAt)}
                       </div>
                     </div>
                   </div>
@@ -849,10 +849,19 @@ export function ViewCompanyDetails({
                   {/* Technology Stack - Light Yellow Card */}
                   <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200 shadow-sm">
                     <div className="text-xs text-yellow-700 font-medium mb-1">
-                      Technology Stack
+                      Business Model
                     </div>
                     <div className="text-base font-medium capitalize text-gray-900">
-                      {company.technology || "-"}
+                      {company.allDetails?.business_model || "-"}
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 shadow-sm">
+                    <div className="text-xs text-gray-500 mb-1">
+                      Company Email
+                    </div>
+                    <div className="text-base font-medium capitalize text-gray-900">
+                      {company.allDetails?.contact_email || "Not Available"}
                     </div>
                   </div>
                 </div>
@@ -875,9 +884,7 @@ export function ViewCompanyDetails({
                           Address
                         </div>
                         <div className="text-sm text-gray-900 space-y-1">
-                          {formatAddressLines().map((line, index) => (
-                            <div key={index}>{line}</div>
-                          ))}
+                          {company.allDetails?.address || "-"}
                         </div>
                       </div>
                     </div>
@@ -915,16 +922,37 @@ export function ViewCompanyDetails({
                       <div>
                         Added on:{" "}
                         <span className="font-medium text-gray-900">
-                          {formatDate(company.addedDate)}
+                          {formatDate(company.createdAt)}
                         </span>
                       </div>
                       <div>
                         Updated:{" "}
                         <span className="font-medium text-gray-900">
-                          {formatDate(
-                            company.updatedDate || company.lastUpdateDate
-                          )}
+                          {formatDate(company.updatedAt)}
                         </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-xs uppercase tracking-wider text-gray-600 font-semibold mb-4">
+                    About Company
+                  </h4>
+
+                  {/* Address - Light Mint Green/Teal Card */}
+                  <div
+                    className="rounded-lg p-4 border border-emerald-200 shadow-sm"
+                    style={{ backgroundColor: "#E0F7F2" }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1">
+                        <div className="text-xs text-emerald-700 font-medium mb-1">
+                         Summary
+                        </div>
+                        <div className="text-sm text-gray-900 space-y-1">
+                          {company.allDetails?.about || "-"}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1017,7 +1045,6 @@ export function ViewCompanyDetails({
           </div>
         </div>
       </div>
-
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

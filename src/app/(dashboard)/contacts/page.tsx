@@ -12,8 +12,8 @@ export default function ContactsPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const pathname = usePathname();
-  const { user } = useAppSelector((state) => state.auth);
-  const [companies] = useState([] as Company[]);
+  const { user} = useAppSelector((state) => state.auth);
+  const [companies] = useState([] as any);
   const [filters, setFilters] = useState({
     page: 1,
     limit: 25,

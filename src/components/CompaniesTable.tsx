@@ -19,7 +19,7 @@ import { deleteCompanies, getCompanies, type GetCompaniesParams } from '@/store/
 import { privateApiCall } from '@/lib/api';
 
 interface CompaniesTableProps {
-  companies: Company[];
+  companies: any;
   user: User;
   filters?: any;
   searchQuery?: string;
@@ -608,7 +608,7 @@ export function CompaniesTable({
     }
 
     // Find the company to restore if deletion fails
-    const companyToDelete = companies.find(c => {
+    const companyToDelete = companies.find((c: any) => {
       const cId = c.id || (c as any)._id;
       return cId === companyId;
     });
@@ -662,7 +662,7 @@ export function CompaniesTable({
     const idsToDelete = [...selectedCompanies];
 
     // Find companies to restore if deletion fails
-    const companiesToDelete = companies.filter(c => {
+    const companiesToDelete = companies.filter((c: any) => {
       const cId = c.id || (c as any)._id;
       return idsToDelete.includes(cId);
     });
@@ -752,7 +752,7 @@ export function CompaniesTable({
 
   const handleExportBulk = () => {
     if (selectedCompanies.length > 0) {
-      const companiesToExport = companies.filter(company => selectedCompanies.includes(company.id));
+      const companiesToExport = companies.filter((company: any) => selectedCompanies.includes(company.id || (company as any)._id));
       exportCompaniesToCSV(companiesToExport, `companies-export-${companiesToExport.length}.csv`);
       toast.success(`${companiesToExport.length} companies exported successfully`);
       return;
@@ -1087,7 +1087,7 @@ export function CompaniesTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                displayedCompanies.map((company: Company) => {
+                displayedCompanies.map((company: any) => {
                   return (
                 <TableRow 
                   key={company.id}
@@ -1121,17 +1121,15 @@ export function CompaniesTable({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline">{company.industry || '-'}</Badge>
+                    <Badge variant="outline">{company.allDetails?.industry || '-'}</Badge>
                   </TableCell>
                   <TableCell>
-                    {company.city || company.state 
-                      ? `${company.city || ''}${company.city && company.state ? ', ' : ''}${company.state || ''}`.trim() || '-'
-                      : '-'
+                    {company.allDetails?.geography
                     }
                   </TableCell>
-                  <TableCell>{formatRevenue(company.revenue)}</TableCell>
-                  <TableCell>{formatEmployeeSize(company.employeeSize)}</TableCell>
-                  <TableCell className="max-w-xs truncate">{company.website || '-'}</TableCell>
+                  <TableCell>{formatRevenue(company.allDetails?.annual_revenue_range) || 'Not Available'}</TableCell>
+                  <TableCell>{formatEmployeeSize(company.allDetails?.company_size)}</TableCell>
+                  <TableCell className="max-w-xs truncate">{company.allDetails?.website || '-'}</TableCell>
                   <TableCell onClick={(e: any) => e.stopPropagation()}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

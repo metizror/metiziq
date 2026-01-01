@@ -193,7 +193,7 @@ export default function DashboardLayout({
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', path: '/dashboard' },
     { id: 'contacts', label: 'Contacts', icon: 'Users', path: '/contacts' },
-    // { id: 'companies', label: 'Companies', icon: 'Building2', path: '/companies' },
+    { id: 'companies', label: 'Companies', icon: 'Building2', path: '/companies' },
     // {
     //   id: 'customers',
     //   label: 'Customers',
@@ -201,7 +201,7 @@ export default function DashboardLayout({
     //   path: '/customers',
     //   ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
     // },
-    ...(role === 'superadmin' ? [{ id: 'users', label: 'Companies', icon: 'UserCheck', path: '/users' }] : []),
+    ...(role === 'superadmin' ? [{ id: 'users', label: 'Users', icon: 'UserCheck', path: '/users' }] : []),
     { id: 'import', label: 'Import Data', icon: 'Upload', path: '/import' },
     { id: 'activity', label: 'Activity Logs', icon: 'Activity', path: '/activity' },
     { id: 'settings', label: 'Settings', icon: 'Settings', path: '/settings' }

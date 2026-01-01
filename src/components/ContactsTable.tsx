@@ -1120,7 +1120,7 @@ export function ContactsTable({
         return;
       }
 
-      // Call the sync API
+      // Call the sync API with extended timeout (2 minutes)
       const response = await privateApiPost<{
         message: string;
         results: Array<{ email: string; success: boolean; contact?: any; skipped?: boolean; message?: string }>;
@@ -1130,7 +1130,9 @@ export function ContactsTable({
           successful: number;
           failed: number;
         };
-      }>('/admin/contacts/sync-linkedin', { emails });
+      }>('/admin/contacts/sync-linkedin', { emails }, {
+        timeout: 120000, // 2 minutes (120 seconds)
+      });
 
       // Show results
       const skippedItems = response.results.filter(r => r.skipped);
@@ -1967,19 +1969,19 @@ export function ContactsTable({
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
-                <TableHead onClick={() => handleSort('firstName')} className="cursor-pointer">
+                <TableHead>
                   <div className="flex items-center">
-                    Name {getSortIcon('firstName')}
+                    Name
                   </div>
                 </TableHead>
-                <TableHead onClick={() => handleSort('phone')} className="cursor-pointer">
+                <TableHead>
                   <div className="flex items-center">
-                    Phone {getSortIcon('phone')}
+                    Phone
                   </div>
                 </TableHead>
-                <TableHead onClick={() => handleSort('email')} className="cursor-pointer">
+                <TableHead>
                   <div className="flex items-center">
-                    Email {getSortIcon('email')}
+                    Email
                   </div>
                 </TableHead>
                 <TableHead>
@@ -1987,9 +1989,14 @@ export function ContactsTable({
                     Company
                   </div>
                 </TableHead>
-                <TableHead onClick={() => handleSort('addedDate')} className="cursor-pointer">
+                <TableHead>
                   <div className="flex items-center">
-                    Created Date {getSortIcon('addedDate')}
+                    Created Date
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center">
+                    Created By
                   </div>
                 </TableHead>
                 <TableHead className="w-12"></TableHead>
@@ -2023,6 +2030,9 @@ export function ContactsTable({
                       </TableCell>
                       <TableCell>
                         <Skeleton className="h-4 w-20" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-8 w-8 rounded" />
                       </TableCell>
                       <TableCell>
                         <Skeleton className="h-8 w-8 rounded" />
@@ -2113,6 +2123,7 @@ export function ContactsTable({
                           }
                         })()}
                       </TableCell>
+                      <TableCell>{contact.createdBy || '-'}</TableCell>
                       <TableCell onClick={(e: any) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
