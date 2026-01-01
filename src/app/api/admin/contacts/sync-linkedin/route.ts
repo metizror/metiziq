@@ -119,11 +119,33 @@ export async function POST(request: NextRequest) {
           { new: true }
         );
 
-        const existCompany = await companyModel.findOne({
-          companyName:
-            updatedContact?.linkedInData?.extractedProfileData?.company_details
-              ?.company_name || "",
-        });
+        // Get company name and website from LinkedIn data
+        const companyName = updatedContact?.linkedInData?.extractedProfileData?.company_details?.company_name || "";
+        const companyWebsite = updatedContact?.linkedInData?.extractedProfileData?.company_details?.website || "";
+        
+        // Check if company exists: first 10 chars of name match AND website matches
+        let existCompany = null;
+        if (companyName && companyName.length >= 10) {
+          const first10Chars = companyName.substring(0, 10).trim();
+          const queryConditions: any[] = [
+            {
+              companyName: {
+                $regex: new RegExp(`^${first10Chars.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i')
+              }
+            }
+          ];
+          
+          // Add website condition only if website is provided
+          if (companyWebsite) {
+            queryConditions.push({
+              'allDetails.website': companyWebsite
+            });
+          }
+          
+          existCompany = await companyModel.findOne({
+            $and: queryConditions
+          });
+        }
         if (!existCompany) {
             console.log("company not found creating company");
           await companyModel.create({
@@ -137,10 +159,17 @@ export async function POST(request: NextRequest) {
                 ?.company_details || {},
           });
         } else {
-          console.log("company found but your data is synced");
-          return NextResponse.json(
-            { message: "Company already exists but your data is synced" },
-            { status: 200 }
+          console.log("company found, updating company name and details");
+          // Update company name and allDetails with the latest data from contact
+          await companyModel.findByIdAndUpdate(
+            existCompany._id,
+            {
+              $set: {
+                companyName: companyName || existCompany.companyName,
+                allDetails: updatedContact?.linkedInData?.extractedProfileData?.company_details || existCompany.allDetails
+              }
+            },
+            { new: true }
           );
         }
 
