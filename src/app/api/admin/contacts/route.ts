@@ -36,9 +36,9 @@ export async function GET(request: NextRequest) {
 
     const query: any = {};
 
-    if (tokenVerification.admin?.role !== "superadmin") {
-      query.uploaderId = tokenVerification.admin?._id;
-    }
+    // if (tokenVerification.admin?.role !== "superadmin") {
+    //   query.uploaderId = tokenVerification.admin?._id;
+    // }
 
     const escapeRegex = (string: string) => {
       return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

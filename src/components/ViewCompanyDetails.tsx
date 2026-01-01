@@ -442,7 +442,8 @@ export function ViewCompanyDetails({
   const dispatch = useAppDispatch();
   const { isDeleting } = useAppSelector((state) => state.companies);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [contacts, setContacts] = useState([] as Contact[]);
+  const [contacts, setContacts] = useState([]);
+  console.log("contacts", contacts);
   const [contactsCount, setContactsCount] = useState(0);
   const [isLoadingContacts, setIsLoadingContacts] = useState(false);
   const lastFetchedCompanyRef = useRef(null as string | null);
@@ -458,7 +459,7 @@ export function ViewCompanyDetails({
 
       try {
         setIsLoadingContacts(true);
-        
+
         // First, get the total count
         const countResponse = await privateApiCall<{
           contacts: any[];
@@ -477,9 +478,9 @@ export function ViewCompanyDetails({
         setContactsCount(totalCount);
 
         // Fetch all contacts in batches (API max limit is 100)
-        const allContacts: Contact[] = [];
+        const allContacts: any[] = [];
         const totalPages = countResponse.pagination?.totalPages || 1;
-        
+
         for (let page = 1; page <= totalPages; page++) {
           const response = await privateApiCall<{
             contacts: any[];
@@ -490,7 +491,7 @@ export function ViewCompanyDetails({
             )}&limit=100&page=${page}`
           );
 
-          const mappedContacts: Contact[] = response.contacts.map(
+          const mappedContacts: any[] = response.contacts.map(
             (contact: any) => ({
               id: contact._id?.toString() || contact.id,
               firstName: contact.firstName || "",
@@ -510,6 +511,7 @@ export function ViewCompanyDetails({
               country: contact.country || "",
               website: contact.website || "",
               industry: contact.industry || "",
+              linkedInData: contact.linkedInData || null,
               contactLinkedInUrl:
                 contact.contactLinkedInUrl || contact.LinkedInUrl || "",
               amfNotes: contact.amfNotes || "",
@@ -972,7 +974,7 @@ export function ViewCompanyDetails({
                     <div className="flex items-start gap-3">
                       <div className="flex-1">
                         <div className="text-xs text-emerald-700 font-medium mb-1">
-                         Summary
+                          Summary
                         </div>
                         <div className="text-sm text-gray-900 space-y-1">
                           {company.allDetails?.about || "-"}
@@ -986,6 +988,89 @@ export function ViewCompanyDetails({
           </div>
 
           {/* Available Contacts Section */}
+
+          {/* Company Contacts List Section */}
+          {contacts.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">
+                  All Company Contacts ({contactsCount})
+                </h3>
+
+                {isLoadingContacts ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Name
+                          </th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Job Title
+                          </th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Email
+                          </th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Phone
+                          </th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {contacts.map((contact: Contact) => (
+                          <tr
+                            key={contact.id}
+                            className="hover:bg-gray-50 transition-colors"
+                          >
+                            <td className="py-4 px-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {contact.firstName} {contact.lastName}
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              <div className="text-sm text-gray-600">
+                                {contact?.linkedInData?.person?.headline || "-"}
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              <div className="text-sm text-gray-600">
+                                {contact.email || "-"}
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              <div className="text-sm text-gray-600">
+                                {contact.phone || "-"}
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  router.push(`/contacts/${contact.id}`)
+                                }
+                                className="text-xs"
+                              >
+                                View
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="bg-gradient-to-br from-orange-50 via-white to-amber-50 p-8 rounded-xl shadow-lg overflow-hidden relative">
             {/* Content wrapper */}
             <div className="pt-12 pb-8 px-8">
@@ -1051,7 +1136,7 @@ export function ViewCompanyDetails({
                 </div>
 
                 {/* Download Button - Horizontal gradient from orange-500 to orange-600 */}
-                <div className="pt-4 w-full max-w-md">
+                {/* <div className="pt-4 w-full max-w-md">
                   <Button
                     onClick={handleExportContacts}
                     disabled={contactsCount === 0 || isLoadingContacts}
@@ -1060,7 +1145,7 @@ export function ViewCompanyDetails({
                     <Download className="w-5 h-5 mr-2" strokeWidth={2} />
                     Download All Contacts
                   </Button>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -1068,90 +1153,12 @@ export function ViewCompanyDetails({
             <div className="h-0.5 bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700"></div>
           </div>
 
-          {/* Company Contacts List Section */}
-          {contacts.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">
-                  All Company Contacts ({contactsCount})
-                </h3>
-                
-                {isLoadingContacts ? (
-                  <div className="flex items-center justify-center py-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-gray-200">
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Name
-                          </th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Job Title
-                          </th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Email
-                          </th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Phone
-                          </th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200">
-                        {contacts.map((contact: Contact) => (
-                          <tr
-                            key={contact.id}
-                            className="hover:bg-gray-50 transition-colors"
-                          >
-                            <td className="py-4 px-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                {contact.firstName} {contact.lastName}
-                              </div>
-                            </td>
-                            <td className="py-4 px-4">
-                              <div className="text-sm text-gray-600">
-                                {contact.jobTitle || "-"}
-                              </div>
-                            </td>
-                            <td className="py-4 px-4">
-                              <div className="text-sm text-gray-600">
-                                {contact.email || "-"}
-                              </div>
-                            </td>
-                            <td className="py-4 px-4">
-                              <div className="text-sm text-gray-600">
-                                {contact.phone || "-"}
-                              </div>
-                            </td>
-                            <td className="py-4 px-4">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => router.push(`/contacts/${contact.id}`)}
-                                className="text-xs"
-                              >
-                                View
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
           {contacts.length === 0 && !isLoadingContacts && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center">
               <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No contacts found for this company.</p>
+              <p className="text-gray-600">
+                No contacts found for this company.
+              </p>
             </div>
           )}
         </div>
