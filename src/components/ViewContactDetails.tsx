@@ -2279,60 +2279,32 @@ export function ViewContactDetails({
                           ?.company_details?.last_year_turnover || "-"}
                       </div>
                     </div>
-
-                    
-                  </div>
-
-                  <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                  {/* Icon */}
-                  <div className="mt-1 flex h-7 w-7 items-center justify-center rounded-md bg-indigo-50">
-                    <Briefcase className="h-4 w-4 text-indigo-600" />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                      What we can sell
-                    </div>
-
-                    <ul className="space-y-2">
-                      {contact.linkedInData?.extractedProfileData
-                        ?.person_details?.personSalesStrategyReportDataMeta?.map
-                        ?.length > 0 ? (
-                        contact.linkedInData.extractedProfileData.company_details.companySalesStrategyReportDataMeta.map(
-                          (item: any, index: number) => (
-                            <li
-                              key={index}
-                              className="flex items-start gap-2 rounded-md bg-gray-50 px-3 py-2 text-sm font-medium text-gray-900"
-                            >
-                              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
-                              <span className="leading-snug">{item}</span>
-                            </li>
-                          )
-                        )
-                      ) : (
-                        <li className="text-sm text-gray-400">-</li>
-                      )}
-                    </ul>
                   </div>
                 </div>
 
-                  {/* Company LinkedIn */}
-                  {/* {((company as any)?.companyLinkedInUrl || (contact as any).contactLinkedIn || contact.contactLinkedInUrl) && (
-                    <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                      <div className="mt-0.5">
-                        <Linkedin className="w-4 h-4 text-gray-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs text-gray-500 mb-0.5">Company_LinkedIn</div>
-                        <div className="text-sm font-medium text-blue-600">
-                          <a href={formatLinkedInUrl((company as any)?.companyLinkedInUrl || (contact as any).contactLinkedIn || contact.contactLinkedInUrl || '')} target="_blank" rel="noopener noreferrer" className="hover:underline break-all">
-                            {(company as any)?.companyLinkedInUrl || (contact as any).contactLinkedIn || contact.contactLinkedInUrl}
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  )} */}
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    What we can sell
+                  </div>
+
+                  <ul className="space-y-2 grid grid-cols-2 gap-2">
+                    {contact.linkedInData?.extractedProfileData?.person_details
+                      ?.personSalesStrategyReportDataMeta?.map?.length > 0 ? (
+                      contact.linkedInData.extractedProfileData.company_details.companySalesStrategyReportDataMeta.map(
+                        (item: any, index: number) => (
+                          <li
+                            key={index}
+                            className="flex items-start gap-2 rounded-md bg-gray-50 px-3 py-2 text-sm font-medium text-gray-900"
+                          >
+                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                            <span className="leading-snug">{item}</span>
+                          </li>
+                        )
+                      )
+                    ) : (
+                      <li className="text-sm text-gray-400">-</li>
+                    )}
+                  </ul>
                 </div>
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
