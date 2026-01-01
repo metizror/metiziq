@@ -10,11 +10,12 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Skeleton } from './ui/skeleton';
-import { Plus, Edit, Trash2, Search, Shield, Users } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Shield, Users, RefreshCw } from 'lucide-react';
 import { User } from '@/types/dashboard.types';
 import { toast } from 'sonner';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getAdminUsers, createAdminUser, updateAdminUser, deleteAdminUser } from '@/store/slices/adminUsers.slice';
+import { privateApiCall, privateApiPost } from '@/lib/api';
 
 interface UsersTableProps {
   users: User[];
@@ -37,6 +38,9 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
     role: 'admin' as 'superadmin' | 'admin',
     isActive: true as boolean
   });
+  const [syncLimits, setSyncLimits] = useState([] as any[]);
+  const [isLoadingLimits, setIsLoadingLimits] = useState(false);
+  const [editingLimit, setEditingLimit] = useState(null as { userId: string; userName: string; monthlyLimit: number } | null);
 
   // Fetch users on component mount only if no cached data exists
   useEffect(() => {
@@ -45,6 +49,43 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
       dispatch(getAdminUsers({ page: 1, limit: 25 }));
     }
   }, [dispatch, adminUsers.length]);
+
+  // Fetch sync limits
+  useEffect(() => {
+    const fetchSyncLimits = async () => {
+      try {
+        setIsLoadingLimits(true);
+        const response = await privateApiCall<{ limits: any[] }>('/admin/sync-limits');
+        setSyncLimits(response.limits || []);
+      } catch (error: any) {
+        console.error('Failed to fetch sync limits:', error);
+      } finally {
+        setIsLoadingLimits(false);
+      }
+    };
+    fetchSyncLimits();
+  }, []);
+
+  const getSyncLimitForUser = (userId: string) => {
+    return syncLimits.find((limit: any) => limit.userId === userId) || {
+      monthlyLimit: 0,
+      currentMonthCount: 0,
+      remainingSyncs: 0
+    };
+  };
+
+  const handleSetSyncLimit = async (userId: string, monthlyLimit: number) => {
+    try {
+      await privateApiPost('/admin/sync-limits', { userId, monthlyLimit });
+      toast.success('Sync limit updated successfully');
+      // Refresh sync limits
+      const response = await privateApiCall<{ limits: any[] }>('/admin/sync-limits');
+      setSyncLimits(response.limits || []);
+      setEditingLimit(null);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to update sync limit');
+    }
+  };
 
   // Update local users when Redux state changes
   useEffect(() => {
@@ -253,6 +294,9 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Sync Limit</TableHead>
+                    <TableHead>Sync Count</TableHead>
+                    <TableHead>Remaining</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -270,6 +314,15 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
                       </TableCell>
                       <TableCell>
                         <Skeleton className="h-6 w-20 rounded-full" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-12" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-12" />
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
@@ -291,19 +344,26 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Sync Limit</TableHead>
+                    <TableHead>Sync Count</TableHead>
+                    <TableHead>Remaining</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredUsers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                         No users found
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredUsers.map((user) => (
-                      <TableRow key={user.id}>
+                    filteredUsers.map((user) => {
+                      const syncLimit = getSyncLimitForUser(user.id);
+                      const remainingSyncs = Math.max(0, syncLimit.monthlyLimit - syncLimit.currentMonthCount);
+                      
+                      return (
+                        <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell>{user.email}</TableCell>
                         <TableCell>
@@ -329,6 +389,41 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
                           >
                             {(user as any).isActive === false ? 'Inactive' : 'Active'}
                           </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {user.role === 'superadmin' ? (
+                            <span className="text-gray-400">Unlimited</span>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span>{syncLimit.monthlyLimit || 0}</span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setEditingLimit({ userId: user.id, userName: user.name, monthlyLimit: syncLimit.monthlyLimit || 0 })}
+                                className="h-6 w-6 p-0"
+                              >
+                                <Edit className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {user.role === 'superadmin' ? (
+                            <span className="text-gray-400">-</span>
+                          ) : (
+                            <span className={syncLimit.currentMonthCount >= syncLimit.monthlyLimit ? 'text-red-600 font-medium' : ''}>
+                              {syncLimit.currentMonthCount || 0}
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {user.role === 'superadmin' ? (
+                            <span className="text-gray-400">-</span>
+                          ) : (
+                            <span className={remainingSyncs === 0 ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}>
+                              {remainingSyncs}
+                            </span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
@@ -424,12 +519,65 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))
+                      );
+                    })
                   )}
                 </TableBody>
               </Table>
             </div>
           )}
+
+          {/* Sync Limit Edit Dialog */}
+          <Dialog open={editingLimit !== null} onOpenChange={(open: boolean) => {
+            if (!open) setEditingLimit(null);
+          }}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Set Sync Limit</DialogTitle>
+                <DialogDescription>
+                  Set monthly LinkedIn sync limit for {editingLimit?.userName}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="sync-limit">Monthly Sync Limit</Label>
+                  <Input
+                    id="sync-limit"
+                    type="number"
+                    min="0"
+                    value={editingLimit?.monthlyLimit || 0}
+                    onChange={(e: any) => {
+                      if (editingLimit) {
+                        setEditingLimit({
+                          ...editingLimit,
+                          monthlyLimit: parseInt(e.target.value) || 0
+                        });
+                      }
+                    }}
+                    placeholder="Enter monthly limit (e.g., 10)"
+                  />
+                  <p className="text-xs text-gray-500">
+                    Set to 0 to disable syncing for this user
+                  </p>
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setEditingLimit(null)}>
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (editingLimit) {
+                        handleSetSyncLimit(editingLimit.userId, editingLimit.monthlyLimit);
+                      }
+                    }}
+                    style={{ backgroundColor: '#2563EB' }}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
 

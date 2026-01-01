@@ -88,6 +88,8 @@ export function ContactsTable({
   const [showExportAllDialog, setShowExportAllDialog] = useState(false);
   const [isExportingAll, setIsExportingAll] = useState(false);
   const [isSyncingLinkedIn, setIsSyncingLinkedIn] = useState(false);
+  const [syncLimit, setSyncLimit] = useState(null as { monthlyLimit: number; currentMonthCount: number; remainingSyncs: number } | null);
+  const { user: authUser } = useAppSelector((state) => state.auth);
 
   // Industry and Sub-Industry mapping
   const industrySubIndustryMap: Record<string, string[]> = {
@@ -1213,6 +1215,14 @@ export function ContactsTable({
         timeout: 120000, // 2 minutes (120 seconds)
       });
 
+      // Refresh sync limit after successful sync
+      if (authUser?.role !== 'superadmin') {
+        const limitResponse = await privateApiCall('/admin/sync-limits');
+        if (limitResponse.limit) {
+          setSyncLimit(limitResponse.limit);
+        }
+      }
+
       // Show results
       const skippedItems = response.results.filter(r => r.skipped);
       const successfulItems = response.results.filter(r => r.success && !r.skipped);
@@ -1257,7 +1267,25 @@ export function ContactsTable({
       // Clear selection
       setSelectedContacts([]);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to sync LinkedIn data');
+      setIsSyncingLinkedIn(false);
+      // Handle limit exceeded error
+      if (error.response?.data?.limitExceeded) {
+        toast.error(error.response.data.message || 'Sync limit exceeded');
+        // Refresh sync limit
+        if (authUser?.role !== 'superadmin') {
+          try {
+            const limitResponse = await privateApiCall('/admin/sync-limits');
+            if (limitResponse.limit) {
+              setSyncLimit(limitResponse.limit);
+            }
+          } catch (err) {
+            console.error('Failed to refresh sync limit:', err);
+          }
+        }
+        return;
+      } else {
+        toast.error(error.message || 'Failed to sync LinkedIn data');
+      }
     } finally {
       setIsSyncingLinkedIn(false);
     }
@@ -1842,15 +1870,22 @@ export function ContactsTable({
             Contacts ({totalCount})
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleSyncLinkedIn}
-              disabled={isSyncingLinkedIn || selectedContacts.length === 0}
-              className="flex items-center gap-2"
-            >
-              {isSyncingLinkedIn ? 'Syncing...' : 'Sync Data'}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleSyncLinkedIn}
+                disabled={isSyncingLinkedIn || selectedContacts.length === 0 || (syncLimit && syncLimit.remainingSyncs === 0 && authUser?.role !== 'superadmin')}
+                className="flex items-center gap-2"
+              >
+                {isSyncingLinkedIn ? 'Syncing...' : 'Sync Data'}
+              </Button>
+              {authUser?.role !== 'superadmin' && syncLimit && (
+                <span className="text-xs text-gray-600">
+                  {syncLimit.remainingSyncs === -1 ? 'Unlimited' : `${syncLimit.remainingSyncs} remaining`}
+                </span>
+              )}
+            </div>
             <Button
               size="sm"
               className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"

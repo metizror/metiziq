@@ -15,6 +15,7 @@ import {
   Shield,
   MessageCircle,
   CheckCircle2,
+  RefreshCw,
 } from "lucide-react";
 import { UserObject } from "@/types/auth.types";
 import Image from "next/image";
@@ -48,6 +49,7 @@ const iconMap = {
   Settings,
   MessageCircle,
   CheckCircle2,
+  RefreshCw,
 };
 
 export function DashboardSidebar({

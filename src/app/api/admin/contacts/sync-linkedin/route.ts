@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "../../../../../lib/db";
 import Contacts from "@/models/contacts.model";
 import companyModel from "@/models/companies.model";
+import UserSyncLimits from "@/models/user_sync_limits.model";
 import { verifyAdminToken } from "../../../../../services/jwt.service";
 import { createActivity } from "../../../../../services/activity.service";
 import axios from "axios";
@@ -32,6 +33,59 @@ export async function POST(request: NextRequest) {
         { message: "Invalid input: 'emails' must be a non-empty array" },
         { status: 400 }
       );
+    }
+
+    // Check sync limit for the user (only for non-superadmin users)
+    if (tokenVerification.admin?.role !== "superadmin") {
+      const userId = tokenVerification.admin?._id;
+      if (userId) {
+        let userLimit = await UserSyncLimits.findOne({ userId });
+        
+        if (!userLimit) {
+          // If no limit set, user cannot sync
+          return NextResponse.json(
+            { 
+              message: "Sync limit not set. Please contact owner to set your sync limit.",
+              limitExceeded: true
+            },
+            { status: 403 }
+          );
+        }
+
+        // Check and reset monthly count if needed
+        const wasReset = userLimit.checkAndResetMonthlyCount();
+        if (wasReset) {
+          await userLimit.save();
+        }
+        
+        // Check if user has reached their limit
+        if (userLimit.currentMonthCount >= userLimit.monthlyLimit) {
+          return NextResponse.json(
+            { 
+              message: `Monthly sync limit reached. You have used ${userLimit.currentMonthCount} of ${userLimit.monthlyLimit} syncs this month. Limit will reset next month.`,
+              limitExceeded: true,
+              currentCount: userLimit.currentMonthCount,
+              monthlyLimit: userLimit.monthlyLimit
+            },
+            { status: 403 }
+          );
+        }
+
+        // Check if trying to sync more than remaining limit
+        const remainingSyncs = userLimit.monthlyLimit - userLimit.currentMonthCount;
+        if (emails.length > remainingSyncs) {
+          return NextResponse.json(
+            { 
+              message: `You can only sync ${remainingSyncs} more contact(s) this month. You have ${remainingSyncs} of ${userLimit.monthlyLimit} syncs remaining.`,
+              limitExceeded: true,
+              currentCount: userLimit.currentMonthCount,
+              monthlyLimit: userLimit.monthlyLimit,
+              remainingSyncs: remainingSyncs
+            },
+            { status: 403 }
+          );
+        }
+      }
     }
 
     const results = [];
@@ -205,6 +259,25 @@ export async function POST(request: NextRequest) {
           email,
           error: error.message || "Unknown error occurred",
         });
+      }
+    }
+
+    // Increment sync count for non-superadmin users after successful syncs
+    if (tokenVerification.admin?.role !== "superadmin") {
+      const userId = tokenVerification.admin?._id;
+      if (userId && results.length > 0) {
+        // Count only successful syncs (not skipped ones)
+        const successfulSyncs = results.filter(r => r.success && !r.skipped).length;
+        if (successfulSyncs > 0) {
+          await UserSyncLimits.findOneAndUpdate(
+            { userId },
+            { 
+              $inc: { currentMonthCount: successfulSyncs },
+              $setOnInsert: { lastResetDate: new Date() }
+            },
+            { upsert: false }
+          );
+        }
       }
     }
 

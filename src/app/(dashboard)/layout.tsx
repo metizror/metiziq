@@ -202,6 +202,7 @@ export default function DashboardLayout({
     //   ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
     // },
     ...(role === 'superadmin' ? [{ id: 'users', label: 'Users', icon: 'UserCheck', path: '/users' }] : []),
+    ...(role === 'admin' ? [{ id: 'sync-limits', label: 'Sync Limits', icon: 'RefreshCw', path: '/sync-limits' }] : []),
     { id: 'import', label: 'Import Data', icon: 'Upload', path: '/import' },
     { id: 'activity', label: 'Activity Logs', icon: 'Activity', path: '/activity' },
     { id: 'settings', label: 'Settings', icon: 'Settings', path: '/settings' }
@@ -214,6 +215,7 @@ export default function DashboardLayout({
     if (pathname.startsWith('/companies')) return 'companies';
     if (pathname.startsWith('/customers')) return 'customers';
     if (pathname.startsWith('/users')) return 'users';
+    if (pathname.startsWith('/sync-limits')) return 'sync-limits';
     if (pathname.startsWith('/import')) return 'import';
     if (pathname.startsWith('/activity')) return 'activity';
     if (pathname.startsWith('/settings')) return 'settings';
