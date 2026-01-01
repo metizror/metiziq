@@ -458,50 +458,74 @@ export function ViewCompanyDetails({
 
       try {
         setIsLoadingContacts(true);
-        // Fetch contacts filtered by company name
-        const response = await privateApiCall<{
+        
+        // First, get the total count
+        const countResponse = await privateApiCall<{
           contacts: any[];
-          pagination: any;
+          pagination: {
+            totalCount: number;
+            totalPages: number;
+            currentPage: number;
+          };
         }>(
           `/admin/contacts?companyName=${encodeURIComponent(
             company.companyName
-          )}&limit=1000`
+          )}&limit=100&page=1`
         );
 
-        const mappedContacts: Contact[] = response.contacts.map(
-          (contact: any) => ({
-            id: contact._id?.toString() || contact.id,
-            firstName: contact.firstName || "",
-            lastName: contact.lastName || "",
-            email: contact.email || "",
-            phone: contact.phone || "",
-            // Add other required fields
-            jobTitle: contact.jobTitle || "",
-            jobLevel: contact.jobLevel || "",
-            jobRole: contact.jobRole || "",
-            directPhone: contact.directPhone || "",
-            address1: contact.address1 || "",
-            address2: contact.address2 || "",
-            city: contact.city || "",
-            state: contact.state || "",
-            zipCode: contact.zipCode || "",
-            country: contact.country || "",
-            website: contact.website || "",
-            industry: contact.industry || "",
-            contactLinkedInUrl:
-              contact.contactLinkedInUrl || contact.LinkedInUrl || "",
-            amfNotes: contact.amfNotes || "",
-            lastUpdateDate: contact.lastUpdateDate || "",
-            addedBy: contact.addedBy || undefined,
-            addedByRole: contact.addedByRole || undefined,
-            createdBy: contact.createdBy || undefined,
-            addedDate: contact.addedDate || "",
-            updatedDate: contact.updatedDate || "",
-          })
-        );
+        const totalCount = countResponse.pagination?.totalCount || 0;
+        setContactsCount(totalCount);
 
-        setContacts(mappedContacts);
-        setContactsCount(mappedContacts.length);
+        // Fetch all contacts in batches (API max limit is 100)
+        const allContacts: Contact[] = [];
+        const totalPages = countResponse.pagination?.totalPages || 1;
+        
+        for (let page = 1; page <= totalPages; page++) {
+          const response = await privateApiCall<{
+            contacts: any[];
+            pagination: any;
+          }>(
+            `/admin/contacts?companyName=${encodeURIComponent(
+              company.companyName
+            )}&limit=100&page=${page}`
+          );
+
+          const mappedContacts: Contact[] = response.contacts.map(
+            (contact: any) => ({
+              id: contact._id?.toString() || contact.id,
+              firstName: contact.firstName || "",
+              lastName: contact.lastName || "",
+              email: contact.email || "",
+              phone: contact.phone || "",
+              // Add other required fields
+              jobTitle: contact.jobTitle || "",
+              jobLevel: contact.jobLevel || "",
+              jobRole: contact.jobRole || "",
+              directPhone: contact.directPhone || "",
+              address1: contact.address1 || "",
+              address2: contact.address2 || "",
+              city: contact.city || "",
+              state: contact.state || "",
+              zipCode: contact.zipCode || "",
+              country: contact.country || "",
+              website: contact.website || "",
+              industry: contact.industry || "",
+              contactLinkedInUrl:
+                contact.contactLinkedInUrl || contact.LinkedInUrl || "",
+              amfNotes: contact.amfNotes || "",
+              lastUpdateDate: contact.lastUpdateDate || "",
+              addedBy: contact.addedBy || undefined,
+              addedByRole: contact.addedByRole || undefined,
+              createdBy: contact.createdBy || undefined,
+              addedDate: contact.addedDate || "",
+              updatedDate: contact.updatedDate || "",
+            })
+          );
+
+          allContacts.push(...mappedContacts);
+        }
+
+        setContacts(allContacts);
       } catch (error: any) {
         console.error("Failed to fetch contacts:", error);
         setContacts([]);
@@ -1043,6 +1067,93 @@ export function ViewCompanyDetails({
             {/* Thin orange gradient line at bottom edge (1-2px) - vibrant medium orange to deeper orange */}
             <div className="h-0.5 bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700"></div>
           </div>
+
+          {/* Company Contacts List Section */}
+          {contacts.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">
+                  All Company Contacts ({contactsCount})
+                </h3>
+                
+                {isLoadingContacts ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Name
+                          </th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Job Title
+                          </th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Email
+                          </th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Phone
+                          </th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {contacts.map((contact: Contact) => (
+                          <tr
+                            key={contact.id}
+                            className="hover:bg-gray-50 transition-colors"
+                          >
+                            <td className="py-4 px-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {contact.firstName} {contact.lastName}
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              <div className="text-sm text-gray-600">
+                                {contact.jobTitle || "-"}
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              <div className="text-sm text-gray-600">
+                                {contact.email || "-"}
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              <div className="text-sm text-gray-600">
+                                {contact.phone || "-"}
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => router.push(`/contacts/${contact.id}`)}
+                                className="text-xs"
+                              >
+                                View
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {contacts.length === 0 && !isLoadingContacts && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center">
+              <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No contacts found for this company.</p>
+            </div>
+          )}
         </div>
       </div>
 

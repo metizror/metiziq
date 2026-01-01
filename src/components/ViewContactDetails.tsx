@@ -60,6 +60,7 @@ import { useRouter } from "next/navigation";
 import { privateApiCall } from "@/lib/api";
 import blueLogo from "../assets/Twitter_Verified_Badge.svg.png";
 import grayLogo from "../assets/Twitter_Verified_Badge_Gray.svg.png";
+import banner from "../assets/banner.jpg";
 
 interface ViewContactDetailsProps {
   contact: Contact;
@@ -1501,7 +1502,7 @@ export function ViewContactDetails({
               }}
             /> */}
             <img
-              src={(contact as any).linkedInData?.person?.backgroundUrl}
+              src={(contact as any).linkedInData?.person?.backgroundUrl ?? banner.src}
               alt="image"
               className="w-full h-[180px] object-cover"
               style={{
@@ -2005,8 +2006,8 @@ export function ViewContactDetails({
                   {/* Company Name */}
                   {resolvedCompanyName && resolvedCompanyName !== "-" ? (
                     <div
-                      // onClick={handleCompanyNavigation}
-                      className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 text-left w-full transition-all hover:border-orange-400 hover:shadow-md focus:outline-none focus:ring-orange-300 group"
+                      onClick={handleCompanyNavigation}
+                      className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 text-left w-full transition-all hover:border-orange-400 hover:shadow-md focus:outline-none focus:ring-orange-300 group cursor-pointer"
                     >
                       <div className="mt-0.5">
                         <Building2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500 transition-colors" />
@@ -2015,7 +2016,7 @@ export function ViewContactDetails({
                         <div className="text-xs text-gray-500 mb-0.5">
                           Company Name
                         </div>
-                        <div className="text-sm font-medium text-black break-all transition-colors">
+                        <div className="text-sm font-medium text-black break-all transition-colors group-hover:text-orange-600">
                           {contact.linkedInData?.extractedProfileData
                             ?.company_details?.company_name || "-"}
                         </div>

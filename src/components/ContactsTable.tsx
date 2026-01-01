@@ -458,6 +458,85 @@ export function ContactsTable({
     return '';
   };
 
+  // Handle company navigation
+  const handleCompanyNavigation = async (contact: Contact) => {
+    const companyName = contact.linkedInData?.extractedProfileData?.company_details?.company_name || contact.companyName;
+    
+    if (!companyName || companyName === '-') {
+      return;
+    }
+
+    // First try to find in companies prop
+    const foundCompany = companies.find((c: Company) => {
+      const cName = c.companyName?.toLowerCase().trim();
+      const searchName = companyName.toLowerCase().trim();
+      return cName === searchName;
+    });
+
+    if (foundCompany) {
+      const companyId = foundCompany.id || (foundCompany as any)?._id;
+      if (companyId) {
+        router.push(`/companies/${companyId}`);
+        return;
+      }
+    }
+
+    // If not found, try to fetch from API
+    try {
+      toast.loading("Finding company...", { id: "company-search" });
+      
+      let page = 1;
+      const limit = 100;
+      let companyFound = false;
+
+      while (!companyFound && page <= 10) {
+        try {
+          const response = await privateApiCall<{
+            companies: any[];
+            pagination: any;
+          }>(
+            `/admin/companies?page=${page}&limit=${limit}&companyName=${encodeURIComponent(companyName)}`
+          );
+
+          const exactMatch = response.companies.find((c: any) => {
+            const cName = c.companyName?.toLowerCase().trim();
+            const searchName = companyName.toLowerCase().trim();
+            return cName === searchName;
+          });
+
+          if (exactMatch) {
+            const companyId = exactMatch._id?.toString() || exactMatch.id?.toString();
+            if (companyId) {
+              toast.dismiss("company-search");
+              router.push(`/companies/${companyId}`);
+              companyFound = true;
+              return;
+            }
+          }
+
+          if (page >= response.pagination.totalPages) {
+            break;
+          }
+
+          page++;
+        } catch (error) {
+          console.error("Error fetching companies:", error);
+          break;
+        }
+      }
+
+      toast.dismiss("company-search");
+
+      if (!companyFound) {
+        toast.error("Company not found. Please try navigating from the Companies page.");
+      }
+    } catch (error: any) {
+      toast.dismiss("company-search");
+      console.error("Error navigating to company:", error);
+      toast.error("Failed to find company. Please try navigating from the Companies page.");
+    }
+  };
+
   // Helper function to get initials from name
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
@@ -2106,7 +2185,21 @@ export function ContactsTable({
                         </div>
                       </TableCell>
                       {/* <TableCell>{getCompanyName(contact) || '-'}</TableCell> */}
-                      <TableCell>{contact.linkedInData?.extractedProfileData?.company_details?.company_name || '-'}</TableCell>
+                      <TableCell>
+                        {contact.linkedInData?.extractedProfileData?.company_details?.company_name ? (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCompanyNavigation(contact);
+                            }}
+                            className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                          >
+                            {contact.linkedInData.extractedProfileData.company_details.company_name}
+                          </span>
+                        ) : (
+                          '-'
+                        )}
+                      </TableCell>
                       <TableCell>
                         {(() => {
                           const date = (contact as any).createdAt || contact.addedDate;
