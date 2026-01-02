@@ -143,6 +143,7 @@ export function CompanyNameAutocomplete({
   return (
     <div className="relative w-full">
       <Input
+        style={{ backgroundColor: 'white', border:'2px solid #155dfc' }}
         ref={inputRef}
         id={id}
         name={name}

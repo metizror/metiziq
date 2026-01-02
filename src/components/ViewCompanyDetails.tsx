@@ -799,7 +799,7 @@ export function ViewCompanyDetails({
                 Company Information
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6">
                 {/* COMPANY DETAILS Column */}
                 <div className="space-y-4">
                   <h4 className="text-xs uppercase tracking-wider text-gray-600 font-semibold mb-4">
@@ -873,6 +873,7 @@ export function ViewCompanyDetails({
                   </div>
 
                   {/* Technology Stack - Light Yellow Card */}
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                   <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200 shadow-sm">
                     <div className="text-xs text-yellow-700 font-medium mb-1">
                       Business Model
@@ -890,6 +891,7 @@ export function ViewCompanyDetails({
                       {company.allDetails?.contact_email || "Not Available"}
                     </div>
                   </div>
+                  </div>
                 </div>
 
                 {/* LOCATION & ADDITIONAL INFO Column */}
@@ -899,6 +901,7 @@ export function ViewCompanyDetails({
                   </h4>
 
                   {/* Address - Light Mint Green/Teal Card */}
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                   <div
                     className="rounded-lg p-4 border border-emerald-200 shadow-sm"
                     style={{ backgroundColor: "#E0F7F2" }}
@@ -915,18 +918,6 @@ export function ViewCompanyDetails({
                       </div>
                     </div>
                   </div>
-
-                  {/* aMF Notes - Light Yellow Card */}
-                  {company.amfNotes && (
-                    <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200 shadow-sm">
-                      <div className="text-xs text-yellow-700 font-medium mb-2">
-                        aMF Notes
-                      </div>
-                      <div className="text-sm text-gray-900">
-                        {company.amfNotes}
-                      </div>
-                    </div>
-                  )}
 
                   {/* Added/Updated Info - White Card */}
                   <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 shadow-sm">
@@ -960,6 +951,7 @@ export function ViewCompanyDetails({
                     </div>
                   </div>
                 </div>
+                </div>
 
                 <div className="space-y-4">
                   <h4 className="text-xs uppercase tracking-wider text-gray-600 font-semibold mb-4">
@@ -978,6 +970,45 @@ export function ViewCompanyDetails({
                         </div>
                         <div className="text-sm text-gray-900 space-y-1">
                           {company.allDetails?.about || "-"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-xs uppercase tracking-wider text-gray-600 font-semibold mb-4">
+                    Sales Strategy
+                  </h4>
+
+                  {/* Address - Light Mint Green/Teal Card */}
+                  <div
+                    className="rounded-lg p-4 border border-emerald-200 shadow-sm"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1">
+                        <div className="text-xs text-emerald-700 font-medium mb-1">
+                          Cross Sell Content
+                        </div>
+                        <div className="text-sm text-gray-900 space-y-1">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: company.allDetails?.companySalesStrategyMailContent || "-",
+                            }}
+                            className="prose prose-sm max-w-none text-gray-700 
+                              [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mb-4 [&>h1]:mt-6 [&>h1]:text-gray-900
+                              [&>h2]:text-xl [&>h2]:font-semibold [&>h2]:mb-3 [&>h2]:mt-5 [&>h2]:text-gray-900
+                              [&>h3]:text-lg [&>h3]:font-semibold [&>h3]:mb-2 [&>h3]:mt-4 [&>h3]:text-gray-900
+                              [&>p]:mb-4 [&>p]:leading-relaxed [&>p]:text-gray-700
+                              [&>ul]:mb-4 [&>ul]:ml-6 [&>ul]:list-disc [&>ul]:space-y-2
+                              [&>ol]:mb-4 [&>ol]:ml-6 [&>ol]:list-decimal [&>ol]:space-y-2
+                              [&>li]:mb-1 [&>li]:leading-relaxed
+                              [&>blockquote]:border-l-4 [&>blockquote]:border-gray-300 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:my-4 [&>blockquote]:text-gray-600
+                              [&>strong]:font-semibold [&>strong]:text-gray-900
+                              [&>em]:italic
+                              [&>a]:text-blue-600 [&>a]:hover:text-blue-800 [&>a]:underline
+                              space-y-4"
+                          />
                         </div>
                       </div>
                     </div>

@@ -20,6 +20,7 @@ import {
   Users,
   BarChart,
   Star,
+  X,
 } from "lucide-react";
 import { Contact, User as UserType, Company } from "@/types/dashboard.types";
 import {
@@ -1502,7 +1503,10 @@ export function ViewContactDetails({
               }}
             /> */}
             <img
-              src={(contact as any).linkedInData?.person?.backgroundUrl ?? banner.src}
+              src={
+                (contact as any).linkedInData?.person?.backgroundUrl ??
+                banner.src
+              }
               alt="image"
               className="w-full h-[180px] object-cover"
               style={{
@@ -1845,19 +1849,19 @@ export function ViewContactDetails({
                 </div>
 
                 {/* <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"> */}
-                  {/* Icon */}
-                  {/* <div className="mt-1 flex h-7 w-7 items-center justify-center rounded-md bg-indigo-50"> */}
-                    {/* <Briefcase className="h-4 w-4 text-indigo-600" /> */}
-                  {/* </div> */}
+                {/* Icon */}
+                {/* <div className="mt-1 flex h-7 w-7 items-center justify-center rounded-md bg-indigo-50"> */}
+                {/* <Briefcase className="h-4 w-4 text-indigo-600" /> */}
+                {/* </div> */}
 
-                  {/* Content */}
-                  {/* <div className="flex-1 min-w-0"> */}
-                    {/* <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500"> */}
-                      {/* What we can sell */}
-                    {/* </div> */}
+                {/* Content */}
+                {/* <div className="flex-1 min-w-0"> */}
+                {/* <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500"> */}
+                {/* What we can sell */}
+                {/* </div> */}
 
-                    {/* <ul className="space-y-2"> */}
-                      {/* {contact.linkedInData?.extractedProfileData
+                {/* <ul className="space-y-2"> */}
+                {/* {contact.linkedInData?.extractedProfileData
                         ?.person_details?.personSalesStrategyReportDataMeta?.map
                         ?.length > 0 ? (
                         contact.linkedInData.extractedProfileData.person_details.personSalesStrategyReportDataMeta.map(
@@ -1961,41 +1965,43 @@ export function ViewContactDetails({
                 </div> */}
               </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    What we can sell to this contact
-                  </div>
-
-                  <ul className="space-y-2 grid grid-cols-2 gap-2">
-                    {contact.linkedInData?.extractedProfileData?.person_details
-                      ?.personSalesStrategyReportDataMeta?.map?.length > 0 ? (
-                      contact.linkedInData.extractedProfileData.person_details.personSalesStrategyReportDataMeta.map(
-                        (item: any, index: number) => (
-                          <li
-                            key={index}
-                            className="flex items-start gap-2 rounded-md bg-gray-50 px-3 py-2 text-sm font-medium text-gray-900"
-                          >
-                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
-                            <span className="leading-snug">{item}</span>
-                          </li>
-                        )
-                      )
-                    ) : (
-                      <li className="text-sm text-gray-400">-</li>
-                    )}
-                  </ul>
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  What we can sell to this contact
                 </div>
+
+                <ul className="space-y-2 grid grid-cols-2 gap-2">
+                  {contact.linkedInData?.extractedProfileData?.person_details
+                    ?.personSalesStrategyReportDataMeta?.map?.length > 0 ? (
+                    contact.linkedInData.extractedProfileData.person_details.personSalesStrategyReportDataMeta.map(
+                      (item: any, index: number) => (
+                        <li
+                          key={index}
+                          className="flex items-start gap-2 rounded-md bg-gray-50 px-3 py-2 text-sm font-medium text-gray-900"
+                        >
+                          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                          <span className="leading-snug">{item}</span>
+                        </li>
+                      )
+                    )
+                  ) : (
+                    <li className="text-sm text-gray-400">-</li>
+                  )}
+                </ul>
+              </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                   Metizsoft cross-sell to {contact.firstName} {contact.lastName}
-                  </h3>
-                  <div className="col-span-full">
-                    {contact.linkedInData?.extractedProfileData
-                      ?.person_details?.personSalesStrategyMailContent ? (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: contact.linkedInData.extractedProfileData.person_details.personSalesStrategyMailContent,
-                        }}
-                        className="prose prose-sm max-w-none text-gray-700 
+                <h3 className="flex text-lg font-semibold text-gray-900 mb-4">
+                  Metizsoft {<X />} {contact.firstName} {contact.lastName}
+                </h3>
+                <div className="col-span-full">
+                  {contact.linkedInData?.extractedProfileData?.person_details
+                    ?.personSalesStrategyMailContent ? (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          contact.linkedInData.extractedProfileData
+                            .person_details.personSalesStrategyMailContent,
+                      }}
+                      className="prose prose-sm max-w-none text-gray-700 
                           [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mb-4 [&>h1]:mt-6 [&>h1]:text-gray-900
                           [&>h2]:text-xl [&>h2]:font-semibold [&>h2]:mb-3 [&>h2]:mt-5 [&>h2]:text-gray-900
                           [&>h3]:text-lg [&>h3]:font-semibold [&>h3]:mb-2 [&>h3]:mt-4 [&>h3]:text-gray-900
@@ -2008,12 +2014,12 @@ export function ViewContactDetails({
                           [&>em]:italic
                           [&>a]:text-blue-600 [&>a]:hover:text-blue-800 [&>a]:underline
                           space-y-4"
-                      />
-                    ) : (
-                      <p className="text-gray-500 italic">-</p>
-                    )}
-                  </div>
+                    />
+                  ) : (
+                    <p className="text-gray-500 italic">-</p>
+                  )}
                 </div>
+              </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   About the Contact
@@ -2362,15 +2368,18 @@ export function ViewContactDetails({
                   </ul>
                 </div>
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Metizsoft cross-sell to {(companyName || company || contact.companyName) as string} 
+                  <h3 className="flex text-lg font-semibold text-gray-900 mb-4">
+                    Metizsoft {<X />}
+                    {(companyName || company || contact.companyName) as string}
                   </h3>
                   <div className="col-span-full">
-                    {contact.linkedInData?.extractedProfileData
-                      ?.company_details?.companySalesStrategyMailContent ? (
+                    {contact.linkedInData?.extractedProfileData?.company_details
+                      ?.companySalesStrategyMailContent ? (
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: contact.linkedInData.extractedProfileData.company_details.companySalesStrategyMailContent,
+                          __html:
+                            contact.linkedInData.extractedProfileData
+                              .company_details.companySalesStrategyMailContent,
                         }}
                         className="prose prose-sm max-w-none text-gray-700 
                           [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mb-4 [&>h1]:mt-6 [&>h1]:text-gray-900

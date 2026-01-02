@@ -507,6 +507,7 @@ export default function NewContactPage() {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       placeholder="John"
+                      style={{ backgroundColor: 'white', border:'2px solid #155dfc' }}
                       className={`h-11 ${formik.touched.firstName && formik.errors.firstName ? 'border-red-500' : ''}`}
                     />
                     {formik.touched.firstName && formik.errors.firstName && (
@@ -523,6 +524,7 @@ export default function NewContactPage() {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       placeholder="Doe"
+                      style={{ backgroundColor: 'white', border:'2px solid #155dfc' }}
                       className={`h-11 ${formik.touched.lastName && formik.errors.lastName ? 'border-red-500' : ''}`}
                     />
                     {formik.touched.lastName && formik.errors.lastName && (
@@ -616,6 +618,7 @@ export default function NewContactPage() {
                       value={formik.values.email || ''}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
+                      style={{ backgroundColor: 'white', border:'2px solid #155dfc' }}
                       placeholder="john.doe@example.com"
                       className={`h-11 ${formik.touched.email && formik.errors.email ? 'border-red-500' : ''}`}
                     />
@@ -691,6 +694,7 @@ export default function NewContactPage() {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       placeholder="New York"
+                      style={{ backgroundColor: 'white', border:'2px solid #155dfc' }}
                       className={`h-11 ${formik.touched.city && formik.errors.city ? 'border-red-500' : ''}`}
                     />
                     {formik.touched.city && formik.errors.city && (
