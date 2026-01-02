@@ -1986,7 +1986,7 @@ export function ViewContactDetails({
                 </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Content
+                   Metizsoft cross-sell to {contact.firstName} {contact.lastName}
                   </h3>
                   <div className="col-span-full">
                     {contact.linkedInData?.extractedProfileData
@@ -2363,7 +2363,7 @@ export function ViewContactDetails({
                 </div>
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Content
+                  Metizsoft cross-sell to {(companyName || company || contact.companyName) as string} 
                   </h3>
                   <div className="col-span-full">
                     {contact.linkedInData?.extractedProfileData
