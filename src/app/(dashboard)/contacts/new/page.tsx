@@ -608,7 +608,7 @@ export default function NewContactPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">Email *</Label>
                     <Input
                       id="email"
                       name="email"
@@ -683,7 +683,7 @@ export default function NewContactPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
+                    <Label htmlFor="city">City *</Label>
                     <Input
                       id="city"
                       name="city"
@@ -691,8 +691,11 @@ export default function NewContactPage() {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       placeholder="New York"
-                      className="h-11"
+                      className={`h-11 ${formik.touched.city && formik.errors.city ? 'border-red-500' : ''}`}
                     />
+                    {formik.touched.city && formik.errors.city && (
+                      <p className="text-xs text-red-600">{formik.errors.city}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">

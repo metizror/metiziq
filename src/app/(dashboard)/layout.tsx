@@ -38,6 +38,7 @@ export default function DashboardLayout({
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({});
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const hasSyncedUserData = useRef(false);
 
   // State for dashboard data (can be replaced with API calls later)
@@ -238,6 +239,8 @@ export default function DashboardLayout({
         user={sidebarUser!}
         onLogout={handleLogout}
         pendingRequestsCount={pendingRequestsCount}
+        isOpen={isSidebarOpen}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">

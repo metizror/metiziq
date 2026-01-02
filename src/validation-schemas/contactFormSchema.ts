@@ -45,6 +45,7 @@ export const contactFormSchema = yup.object().shape({
     .string()
     .trim()
     .email('Please enter a valid email address')
+    .required('Email is required')
     .nullable()
     .transform((value) => (value === '' ? null : value)),
   phone: yup
@@ -67,7 +68,7 @@ export const contactFormSchema = yup.object().shape({
     .transform((value) => (value === '' ? null : value)),
   address1: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
   address2: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
-  city: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
+  city: yup.string().trim().required('City is required').nullable().transform((value) => (value === '' ? null : value)),
   state: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
   zipCode: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
   country: yup.string().nullable().transform((value) => (value === '' ? null : value)),

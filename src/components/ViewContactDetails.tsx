@@ -1844,20 +1844,20 @@ export function ViewContactDetails({
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                {/* <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"> */}
                   {/* Icon */}
-                  <div className="mt-1 flex h-7 w-7 items-center justify-center rounded-md bg-indigo-50">
-                    <Briefcase className="h-4 w-4 text-indigo-600" />
-                  </div>
+                  {/* <div className="mt-1 flex h-7 w-7 items-center justify-center rounded-md bg-indigo-50"> */}
+                    {/* <Briefcase className="h-4 w-4 text-indigo-600" /> */}
+                  {/* </div> */}
 
                   {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                      What we can sell
-                    </div>
+                  {/* <div className="flex-1 min-w-0"> */}
+                    {/* <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500"> */}
+                      {/* What we can sell */}
+                    {/* </div> */}
 
-                    <ul className="space-y-2">
-                      {contact.linkedInData?.extractedProfileData
+                    {/* <ul className="space-y-2"> */}
+                      {/* {contact.linkedInData?.extractedProfileData
                         ?.person_details?.personSalesStrategyReportDataMeta?.map
                         ?.length > 0 ? (
                         contact.linkedInData.extractedProfileData.person_details.personSalesStrategyReportDataMeta.map(
@@ -1960,6 +1960,30 @@ export function ViewContactDetails({
                   </div>
                 </div> */}
               </div>
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    What we can sell to this contact
+                  </div>
+
+                  <ul className="space-y-2 grid grid-cols-2 gap-2">
+                    {contact.linkedInData?.extractedProfileData?.person_details
+                      ?.personSalesStrategyReportDataMeta?.map?.length > 0 ? (
+                      contact.linkedInData.extractedProfileData.person_details.personSalesStrategyReportDataMeta.map(
+                        (item: any, index: number) => (
+                          <li
+                            key={index}
+                            className="flex items-start gap-2 rounded-md bg-gray-50 px-3 py-2 text-sm font-medium text-gray-900"
+                          >
+                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                            <span className="leading-snug">{item}</span>
+                          </li>
+                        )
+                      )
+                    ) : (
+                      <li className="text-sm text-gray-400">-</li>
+                    )}
+                  </ul>
+                </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
                     Content
@@ -2294,7 +2318,7 @@ export function ViewContactDetails({
 
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                   <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    What we can sell
+                    What we can sell to this company
                   </div>
 
                   <ul className="space-y-2 grid grid-cols-2 gap-2">

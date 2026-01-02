@@ -41,20 +41,24 @@ export async function GET(request: NextRequest) {
     // }
 
     const escapeRegex = (string: string) => {
-      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     };
 
     if (employeeSize) {
       query.employeeSize = { $regex: escapeRegex(employeeSize), $options: "i" };
     }
     if (comapnyName) {
-      query['linkedInData.extractedProfileData.company_details.company_name'] = { $regex: escapeRegex(comapnyName), $options: "i" };
+      query["linkedInData.extractedProfileData.company_details.company_name"] =
+        { $regex: escapeRegex(comapnyName), $options: "i" };
     }
     if (revenue) {
       query.revenue = { $regex: escapeRegex(revenue), $options: "i" };
     }
     if (industry) {
-      query["linkedInData.extractedProfileData.company_details.industry"] = { $regex: escapeRegex(industry), $options: "i" };
+      query["linkedInData.extractedProfileData.company_details.industry"] = {
+        $regex: escapeRegex(industry),
+        $options: "i",
+      };
     }
     if (country) {
       query.country = { $regex: escapeRegex(country), $options: "i" };
@@ -85,7 +89,12 @@ export async function GET(request: NextRequest) {
               { email: { $regex: escapedTerm, $options: "i" } },
               { companyName: { $regex: escapedTerm, $options: "i" } },
               { jobTitle: { $regex: escapedTerm, $options: "i" } },
-              { "linkedInData.extractedProfileData.industry.value": { $regex: escapedTerm, $options: "i" } },
+              {
+                "linkedInData.extractedProfileData.industry.value": {
+                  $regex: escapedTerm,
+                  $options: "i",
+                },
+              },
             ],
           });
         });
@@ -134,6 +143,13 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { data } = body;
+
+    if (!data.email) {
+      return NextResponse.json(
+        { message: "Email is required" },
+        { status: 400 }
+      );
+    }
 
     let alreadyExists = await Contacts.findOne({ email: data.email });
     if (alreadyExists) {
