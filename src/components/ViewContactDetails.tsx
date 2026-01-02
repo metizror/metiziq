@@ -1990,7 +1990,28 @@ export function ViewContactDetails({
                   </h3>
                   <div className="col-span-full">
                     {contact.linkedInData?.extractedProfileData
-                      ?.person_details?.personSalesStrategyMailContent || "-"}
+                      ?.person_details?.personSalesStrategyMailContent ? (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: contact.linkedInData.extractedProfileData.person_details.personSalesStrategyMailContent,
+                        }}
+                        className="prose prose-sm max-w-none text-gray-700 
+                          [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mb-4 [&>h1]:mt-6 [&>h1]:text-gray-900
+                          [&>h2]:text-xl [&>h2]:font-semibold [&>h2]:mb-3 [&>h2]:mt-5 [&>h2]:text-gray-900
+                          [&>h3]:text-lg [&>h3]:font-semibold [&>h3]:mb-2 [&>h3]:mt-4 [&>h3]:text-gray-900
+                          [&>p]:mb-4 [&>p]:leading-relaxed [&>p]:text-gray-700
+                          [&>ul]:mb-4 [&>ul]:ml-6 [&>ul]:list-disc [&>ul]:space-y-2
+                          [&>ol]:mb-4 [&>ol]:ml-6 [&>ol]:list-decimal [&>ol]:space-y-2
+                          [&>li]:mb-1 [&>li]:leading-relaxed
+                          [&>blockquote]:border-l-4 [&>blockquote]:border-gray-300 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:my-4 [&>blockquote]:text-gray-600
+                          [&>strong]:font-semibold [&>strong]:text-gray-900
+                          [&>em]:italic
+                          [&>a]:text-blue-600 [&>a]:hover:text-blue-800 [&>a]:underline
+                          space-y-4"
+                      />
+                    ) : (
+                      <p className="text-gray-500 italic">-</p>
+                    )}
                   </div>
                 </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
@@ -2346,7 +2367,28 @@ export function ViewContactDetails({
                   </h3>
                   <div className="col-span-full">
                     {contact.linkedInData?.extractedProfileData
-                      ?.company_details?.companySalesStrategyMailContent || "-"}
+                      ?.company_details?.companySalesStrategyMailContent ? (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: contact.linkedInData.extractedProfileData.company_details.companySalesStrategyMailContent,
+                        }}
+                        className="prose prose-sm max-w-none text-gray-700 
+                          [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mb-4 [&>h1]:mt-6 [&>h1]:text-gray-900
+                          [&>h2]:text-xl [&>h2]:font-semibold [&>h2]:mb-3 [&>h2]:mt-5 [&>h2]:text-gray-900
+                          [&>h3]:text-lg [&>h3]:font-semibold [&>h3]:mb-2 [&>h3]:mt-4 [&>h3]:text-gray-900
+                          [&>p]:mb-4 [&>p]:leading-relaxed [&>p]:text-gray-700
+                          [&>ul]:mb-4 [&>ul]:ml-6 [&>ul]:list-disc [&>ul]:space-y-2
+                          [&>ol]:mb-4 [&>ol]:ml-6 [&>ol]:list-decimal [&>ol]:space-y-2
+                          [&>li]:mb-1 [&>li]:leading-relaxed
+                          [&>blockquote]:border-l-4 [&>blockquote]:border-gray-300 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:my-4 [&>blockquote]:text-gray-600
+                          [&>strong]:font-semibold [&>strong]:text-gray-900
+                          [&>em]:italic
+                          [&>a]:text-blue-600 [&>a]:hover:text-blue-800 [&>a]:underline
+                          space-y-4"
+                      />
+                    ) : (
+                      <p className="text-gray-500 italic">-</p>
+                    )}
                   </div>
                 </div>
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">

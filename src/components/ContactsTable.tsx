@@ -1284,7 +1284,7 @@ export function ContactsTable({
         }
         return;
       } else {
-        toast.error(error.message || 'Failed to sync LinkedIn data');
+      toast.error(error.message || 'Failed to sync LinkedIn data');
       }
     } finally {
       setIsSyncingLinkedIn(false);
@@ -1870,16 +1870,16 @@ export function ContactsTable({
             Contacts ({totalCount})
           </CardTitle>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleSyncLinkedIn}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleSyncLinkedIn}
                 disabled={isSyncingLinkedIn || selectedContacts.length === 0 || (syncLimit && syncLimit.remainingSyncs === 0 && authUser?.role !== 'superadmin')}
-                className="flex items-center gap-2"
-              >
-                {isSyncingLinkedIn ? 'Syncing...' : 'Sync Data'}
-              </Button>
+              className="flex items-center gap-2"
+            >
+              {isSyncingLinkedIn ? 'Syncing...' : 'Sync Data'}
+            </Button>
               {authUser?.role !== 'superadmin' && syncLimit && (
                 <span className="text-xs text-gray-600">
                   {syncLimit.remainingSyncs === -1 ? 'Unlimited' : `${syncLimit.remainingSyncs} remaining`}
@@ -1998,9 +1998,9 @@ export function ContactsTable({
               style={{ backgroundColor: user.role === 'superadmin' ? '#2563EB' : '#EB432F' }}
               onClick={() => router.push('/contacts/new')}
             >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Contact
-            </Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Contact
+                  </Button>
           </div>
         </div>
 
