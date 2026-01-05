@@ -169,9 +169,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Build fullName from firstName and lastName, or use contactLinkedIn if available
-    const firstName = data.firstName || null;
-    const lastName = data.lastName || null;
-    const fullName = `${firstName} ${lastName}`.trim() || null;
+    const firstName = data.firstName || "";
+    const lastName = data.lastName || "";
+    const fullName = `${firstName} ${lastName}`.trim();
 
     const contact = await Contacts.create({
       ...data,
