@@ -24,18 +24,26 @@ const validateWebsite = (website: string | undefined): boolean => {
 
 // Contact Form Validation Schema
 export const contactFormSchema = yup.object().shape({
-  // Required contact fields
+  contactLinkedInUrl: yup.string().trim().url('Please enter a valid URL').nullable().transform((value) => (value === '' ? null : value)),
+  
+  // Required contact fields - conditional based on LinkedIn URL
   firstName: yup
     .string()
-    .required('First name is required')
     .trim()
-    .min(1, 'First name is required'),
+    .when('contactLinkedInUrl', {
+      is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
+      then: (schema) => schema.notRequired().nullable().transform((value) => (value === '' ? null : value)),
+      otherwise: (schema) => schema.required('First name is required').min(1, 'First name is required'),
+    }),
 
   lastName: yup
     .string()
-    .required('Last name is required')
     .trim()
-    .min(1, 'Last name is required'),
+    .when('contactLinkedInUrl', {
+      is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
+      then: (schema) => schema.notRequired().nullable().transform((value) => (value === '' ? null : value)),
+      otherwise: (schema) => schema.required('Last name is required').min(1, 'Last name is required'),
+    }),
 
   // Optional contact fields
   jobTitle: yup.string().trim(),
@@ -44,10 +52,11 @@ export const contactFormSchema = yup.object().shape({
   email: yup
     .string()
     .trim()
-    .email('Please enter a valid email address')
-    .required('Email is required')
-    .nullable()
-    .transform((value) => (value === '' ? null : value)),
+    .when('contactLinkedInUrl', {
+      is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
+      then: (schema) => schema.notRequired().email('Please enter a valid email address').nullable().transform((value) => (value === '' ? null : value)),
+      otherwise: (schema) => schema.email('Please enter a valid email address').required('Email is required').nullable().transform((value) => (value === '' ? null : value)),
+    }),
   phone: yup
     .string()
     .trim()
@@ -68,15 +77,25 @@ export const contactFormSchema = yup.object().shape({
     .transform((value) => (value === '' ? null : value)),
   address1: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
   address2: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
-  city: yup.string().trim().required('City is required').nullable().transform((value) => (value === '' ? null : value)),
+  city: yup
+    .string()
+    .trim()
+    .when('contactLinkedInUrl', {
+      is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
+      then: (schema) => schema.notRequired().nullable().transform((value) => (value === '' ? null : value)),
+      otherwise: (schema) => schema.required('City is required').nullable().transform((value) => (value === '' ? null : value)),
+    }),
   state: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
   zipCode: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
   country: yup.string().nullable().transform((value) => (value === '' ? null : value)),
   otherCountry: yup
     .string()
     .trim()
-    .when('country', {
-      is: 'Other',
+    .when(['country', 'contactLinkedInUrl'], {
+      is: (country: string, linkedInUrl: string | null | undefined) => {
+        const isLinkedInFilled = !!(linkedInUrl && typeof linkedInUrl === 'string' && linkedInUrl.trim() !== '');
+        return country === 'Other' && !isLinkedInFilled;
+      },
       then: (schema) => schema.required('Please enter the country name'),
       otherwise: (schema) => schema.nullable().transform((value) => (value === '' ? null : value)),
     }),
@@ -93,18 +112,25 @@ export const contactFormSchema = yup.object().shape({
   otherIndustry: yup
     .string()
     .trim()
-    .when('industry', {
-      is: 'Other',
+    .when(['industry', 'contactLinkedInUrl'], {
+      is: (industry: string, linkedInUrl: string | null | undefined) => {
+        const isLinkedInFilled = !!(linkedInUrl && typeof linkedInUrl === 'string' && linkedInUrl.trim() !== '');
+        return industry === 'Other' && !isLinkedInFilled;
+      },
       then: (schema) => schema.required('Please enter the industry name'),
       otherwise: (schema) => schema.nullable().transform((value) => (value === '' ? null : value)),
     }),
   subIndustry: yup.string().nullable().transform((value) => (value === '' ? null : value)),
-  contactLinkedInUrl: yup.string().trim().url('Please enter a valid URL').nullable().transform((value) => (value === '' ? null : value)),
   lastUpdateDate: yup.string().nullable().transform((value) => (value === '' ? null : value)),
 
-  // Required company fields
+  // Required company fields - conditional based on LinkedIn URL
   companyName: yup
-    .string().required('Company name is required'),
+    .string()
+    .when('contactLinkedInUrl', {
+      is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
+      then: (schema) => schema.notRequired().nullable().transform((value) => (value === '' ? null : value)),
+      otherwise: (schema) => schema.required('Company name is required'),
+    }),
 
   employeeSize: yup
     .string(),

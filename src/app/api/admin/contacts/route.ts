@@ -144,12 +144,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { data } = body;
 
-    if (!data.email) {
-      return NextResponse.json(
-        { message: "Email is required" },
-        { status: 400 }
-      );
-    }
+    // if (!data.email) {
+    //   return NextResponse.json(
+    //     { message: "Email is required" },
+    //     { status: 400 }
+    //   );
+    // }
 
     let alreadyExists = await Contacts.findOne({ email: data.email });
     if (alreadyExists) {

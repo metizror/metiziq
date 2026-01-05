@@ -23,14 +23,7 @@ const contactsSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
       unique: true,
-      validate: {
-        validator: function (v: string) {
-          return v.length > 0;
-        },
-        message: "Email is required",
-      },
     },
     phone: {
       type: String,
