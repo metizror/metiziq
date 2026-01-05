@@ -13,7 +13,6 @@ const contactsSchema = new mongoose.Schema(
     },
     fullName: {
       type: String,
-      required: true,
     },
     jobLevel: {
       type: String,
@@ -23,7 +22,7 @@ const contactsSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      unique: true,
+      // unique: true,
     },
     phone: {
       type: String,

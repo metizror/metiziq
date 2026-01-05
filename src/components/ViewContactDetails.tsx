@@ -76,7 +76,7 @@ interface ViewContactDetailsProps {
 }
 
 // Helper function to format LinkedIn URL with protocol
-const formatLinkedInUrl = (url: string | undefined | null): string => {
+const formatLinkedInUrl = (url: string): string => {
   if (!url || !url.trim()) return "";
 
   const trimmedUrl = url.trim();
@@ -1822,18 +1822,18 @@ export function ViewContactDetails({
                     <div className="text-xs text-gray-500 mb-0.5">
                       LinkedIn URL
                     </div>
-                    {(contact as any).linkedInData?.person?.linkedInUrl ? (
+                    {(contact as any).linkedInData?.person?.linkedInUrl || contact.contactLinkedIn ? (
                       <div className="text-sm font-medium text-blue-600">
                         <a
                           href={formatLinkedInUrl(
-                            contact.contactLinkedIn ||
-                              (contact as any).linkedInData?.person?.linkedInUrl
+                            contact.contactLinkedIn || (contact as any).linkedInData?.person?.linkedInUrl
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:underline break-all"
                         >
-                          {(contact as any).linkedInData?.person?.linkedInUrl}
+                          {(contact as any).linkedInData?.person?.linkedInUrl ||
+                            contact.contactLinkedIn}
                         </a>
                       </div>
                     ) : (
@@ -1999,7 +1999,12 @@ export function ViewContactDetails({
               </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                 <h3 className="flex text-lg font-semibold text-gray-900 mb-4">
-                  Metizsoft {<X />} {contact.firstName || contact.linkedInData?.person?.firstName || contact.linkedInData?.extractedProfileData?.person_details?.personaName} {contact.lastName || contact.linkedInData?.person?.lastName}
+                  Metizsoft {<X />}{" "}
+                  {contact.firstName ||
+                    contact.linkedInData?.person?.firstName ||
+                    contact.linkedInData?.extractedProfileData?.person_details
+                      ?.personaName}{" "}
+                  {contact.lastName || contact.linkedInData?.person?.lastName}
                 </h3>
                 <div className="col-span-full">
                   {contact.linkedInData?.extractedProfileData?.person_details
@@ -2045,352 +2050,346 @@ export function ViewContactDetails({
 
           {/* Company Information Section */}
           {/* {(companyName || company || contact.companyName) && ( */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="w-full flex items-center justify-between p-6 bg-gradient-to-r from-orange-50 to-amber-50">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg">
-                    <Building2 className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      Company Information
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-0.5">
-                      Organization and business details
-                    </p>
-                  </div>
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="w-full flex items-center justify-between p-6 bg-gradient-to-r from-orange-50 to-amber-50">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg">
+                  <Building2 className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-left">
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Company Information
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-0.5">
+                    Organization and business details
+                  </p>
                 </div>
               </div>
-              <div className="p-6 bg-gray-50">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Company Name */}
-                  {resolvedCompanyName && resolvedCompanyName !== "-" ? (
-                    <div
-                      onClick={handleCompanyNavigation}
-                      className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 text-left w-full transition-all hover:border-orange-400 hover:shadow-md focus:outline-none focus:ring-orange-300 group cursor-pointer"
-                    >
-                      <div className="mt-0.5">
-                        <Building2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500 transition-colors" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs text-gray-500 mb-0.5">
-                          Company Name
-                        </div>
-                        <div className="text-sm font-medium text-black break-all transition-colors group-hover:text-orange-600">
-                          {contact.linkedInData?.extractedProfileData
-                            ?.company_details?.company_name || "-"}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                      <div className="mt-0.5">
-                        <Building2 className="w-4 h-4 text-gray-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs text-gray-500 mb-0.5">
-                          Company Name
-                        </div>
-                        <div className="text-sm font-medium text-gray-400">
-                          -
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Website */}
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+            </div>
+            <div className="p-6 bg-gray-50">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Company Name */}
+                {resolvedCompanyName && resolvedCompanyName !== "-" ? (
+                  <div
+                    onClick={handleCompanyNavigation}
+                    className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 text-left w-full transition-all hover:border-orange-400 hover:shadow-md focus:outline-none focus:ring-orange-300 group cursor-pointer"
+                  >
                     <div className="mt-0.5">
-                      <Globe className="w-4 h-4 text-gray-500" />
+                      <Building2 className="w-4 h-4 text-gray-500 group-hover:text-orange-500 transition-colors" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-gray-500 mb-0.5">
-                        Website
+                        Company Name
                       </div>
+                      <div className="text-sm font-medium text-black break-all transition-colors group-hover:text-orange-600">
+                        {contact.linkedInData?.extractedProfileData
+                          ?.company_details?.company_name || "-"}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="mt-0.5">
+                      <Building2 className="w-4 h-4 text-gray-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-gray-500 mb-0.5">
+                        Company Name
+                      </div>
+                      <div className="text-sm font-medium text-gray-400">-</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Website */}
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <Globe className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">Website</div>
+                    {contact?.linkedInData?.extractedProfileData
+                      ?.company_details?.website || contact.website ? (
+                      <a
+                        href={formatWebsiteUrl(
+                          contact?.linkedInData?.extractedProfileData
+                            ?.company_details?.website || contact.website
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium text-blue-600 hover:underline break-all"
+                      >
+                        {contact?.linkedInData?.extractedProfileData
+                          ?.company_details?.website || contact.website}
+                      </a>
+                    ) : (
+                      <div className="text-sm font-medium text-gray-400">-</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Industry */}
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <Briefcase className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">Industry</div>
+                    <div className="text-sm font-medium text-gray-900 leading-relaxed">
+                      {(() => {
+                        const industryText =
+                          contact?.linkedInData?.extractedProfileData
+                            ?.company_details?.industry || contact.industry;
+                        if (!industryText || industryText === "-") return "-";
+
+                        const industries = industryText
+                          .split(/,(?![^(]*\))/)
+                          .map((s: string) => s.trim())
+                          .filter((s: string) => s);
+
+                        return industries.map((ind: string, idx: number) => (
+                          <span key={idx}>
+                            <span
+                              onClick={() => {
+                                dispatch(setPendingFilters({ industry: ind }));
+                                router.push("/contacts");
+                              }}
+                              className="text-blue-600 hover:underline hover:text-blue-800 cursor-pointer"
+                            >
+                              {ind}
+                            </span>
+                            {idx < industries.length - 1 && (
+                              <span className="text-gray-900 mr-1">,</span>
+                            )}
+                          </span>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Employee Size */}
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <Users className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Employee Size
+                    </div>
+                    <div className="text-sm font-medium text-gray-900">
                       {contact?.linkedInData?.extractedProfileData
-                        ?.company_details?.website || contact.website ? (
-                        <a
-                          href={formatWebsiteUrl(
-                            contact?.linkedInData?.extractedProfileData
-                              ?.company_details?.website || contact.website
-                          )}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-medium text-blue-600 hover:underline break-all"
-                        >
-                          {contact?.linkedInData?.extractedProfileData
-                            ?.company_details?.website || contact.website}
-                        </a>
-                      ) : (
-                        <div className="text-sm font-medium text-gray-400">
-                          -
-                        </div>
+                        ?.company_details?.company_size || "-"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Revenue */}
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <DollarSign className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">Revenue</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {formatRevenue(
+                        contact?.linkedInData?.extractedProfileData
+                          ?.company_details?.annual_revenue_range || "-"
                       )}
                     </div>
                   </div>
+                </div>
 
-                  {/* Industry */}
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      <Briefcase className="w-4 h-4 text-gray-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        Industry
-                      </div>
-                      <div className="text-sm font-medium text-gray-900 leading-relaxed">
-                        {(() => {
-                          const industryText =
-                            contact?.linkedInData?.extractedProfileData
-                              ?.company_details?.industry || contact.industry;
-                          if (!industryText || industryText === "-") return "-";
-
-                          const industries = industryText
-                            .split(/,(?![^(]*\))/)
-                            .map((s: string) => s.trim())
-                            .filter((s: string) => s);
-
-                          return industries.map((ind: string, idx: number) => (
-                            <span key={idx}>
-                              <span
-                                onClick={() => {
-                                  dispatch(
-                                    setPendingFilters({ industry: ind })
-                                  );
-                                  router.push("/contacts");
-                                }}
-                                className="text-blue-600 hover:underline hover:text-blue-800 cursor-pointer"
-                              >
-                                {ind}
-                              </span>
-                              {idx < industries.length - 1 && (
-                                <span className="text-gray-900 mr-1">,</span>
-                              )}
-                            </span>
-                          ));
-                        })()}
-                      </div>
-                    </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    {/* <DollarSign className="w-4 h-4 text-gray-500" /> */}
                   </div>
-
-                  {/* Employee Size */}
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      <Users className="w-4 h-4 text-gray-500" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Business Model
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        Employee Size
-                      </div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {contact?.linkedInData?.extractedProfileData
-                          ?.company_details?.company_size || "-"}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Revenue */}
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      <DollarSign className="w-4 h-4 text-gray-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        Revenue
-                      </div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {formatRevenue(
-                          contact?.linkedInData?.extractedProfileData
-                            ?.company_details?.annual_revenue_range || "-"
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      {/* <DollarSign className="w-4 h-4 text-gray-500" /> */}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        Business Model
-                      </div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {contact?.linkedInData?.extractedProfileData
-                          ?.company_details?.business_model || "-"}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Address/Location */}
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      <MapPin className="w-4 h-4 text-gray-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        Address/Location
-                      </div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {contact.linkedInData?.extractedProfileData
-                          ?.company_details?.address || "-"}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Phone# */}
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      <Phone className="w-4 h-4 text-gray-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">Phone</div>
-                      <div className="text-sm font-medium text-gray-900 space-y-1">
-                        {contact.linkedInData?.extractedProfileData?.company_details?.contact_phone?.map(
-                          (phone: any, index: number) => (
-                            <div key={index}>{phone}</div>
-                          )
-                        ) || "-"}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      <Phone className="w-4 h-4 text-gray-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        Company Email
-                      </div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {contact.linkedInData?.extractedProfileData
-                          ?.company_details?.contact_email || "-"}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      <Star className="w-4 h-4 text-gray-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        Google Reviews
-                      </div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {contact.linkedInData?.extractedProfileData?.company_details?.google_reviews?.map(
-                          (review: any, index: number) => {
-                            const sitename =
-                              review.sitename ||
-                              review.Sitename ||
-                              review.site ||
-                              "";
-                            const rating = review.rating || review.Rating || "";
-                            const formattedText =
-                              sitename && rating
-                                ? `${sitename} - ${rating}`
-                                : Object.entries(review)
-                                    .map(
-                                      ([key, value]: [string, any]) =>
-                                        `${key}: ${value}`
-                                    )
-                                    .join(", ");
-                            return <div key={index}>{formattedText}</div>;
-                          }
-                        ) || "-"}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      <Star className="w-4 h-4 text-gray-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        Other Trusted Reviews
-                      </div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {contact.linkedInData?.extractedProfileData?.company_details?.other_trusted_reviews?.map(
-                          (review: any, index: number) => {
-                            const sitename =
-                              review.sitename ||
-                              review.Sitename ||
-                              review.site ||
-                              "";
-                            const rating = review.rating || review.Rating || "";
-                            const formattedText =
-                              sitename && rating
-                                ? `${sitename} - ${rating}`
-                                : Object.entries(review)
-                                    .map(
-                                      ([key, value]: [string, any]) =>
-                                        `${key}: ${value}`
-                                    )
-                                    .join(", ");
-                            return <div key={index}>{formattedText}</div>;
-                          }
-                        ) || "-"}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <div className="mt-0.5">
-                      <DollarSign className="w-4 h-4 text-gray-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-gray-500 mb-0.5">
-                        Last Year Revenue
-                      </div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {contact.linkedInData?.extractedProfileData
-                          ?.company_details?.last_year_turnover || "-"}
-                      </div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {contact?.linkedInData?.extractedProfileData
+                        ?.company_details?.business_model || "-"}
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    What we can sell to this company
+                {/* Address/Location */}
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <MapPin className="w-4 h-4 text-gray-500" />
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Address/Location
+                    </div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {contact.linkedInData?.extractedProfileData
+                        ?.company_details?.address || "-"}
+                    </div>
+                  </div>
+                </div>
 
-                  <ul className="space-y-2 grid grid-cols-2 gap-2">
-                    {contact.linkedInData?.extractedProfileData?.person_details
-                      ?.personSalesStrategyReportDataMeta?.map?.length > 0 ? (
-                      contact.linkedInData.extractedProfileData.company_details.companySalesStrategyReportDataMeta.map(
-                        (item: any, index: number) => (
-                          <li
-                            key={index}
-                            className="flex items-start gap-2 rounded-md bg-gray-50 px-3 py-2 text-sm font-medium text-gray-900"
-                          >
-                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
-                            <span className="leading-snug">{item}</span>
-                          </li>
+                {/* Phone# */}
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <Phone className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">Phone</div>
+                    <div className="text-sm font-medium text-gray-900 space-y-1">
+                      {contact.linkedInData?.extractedProfileData?.company_details?.contact_phone?.map(
+                        (phone: any, index: number) => (
+                          <div key={index}>{phone}</div>
                         )
-                      )
-                    ) : (
-                      <li className="text-sm text-gray-400">-</li>
-                    )}
-                  </ul>
+                      ) || "-"}
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
-                  <h3 className="flex text-lg font-semibold text-gray-900 mb-4">
-                    Metizsoft {<X />}
-                    {(companyName || company || contact.companyName || contact.linkedInData?.extractedProfileData?.company_details?.company_name) as string}
-                  </h3>
-                  <div className="col-span-full">
-                    {contact.linkedInData?.extractedProfileData?.company_details
-                      ?.companySalesStrategyMailContent ? (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html:
-                            contact.linkedInData.extractedProfileData
-                              .company_details.companySalesStrategyMailContent,
-                        }}
-                        className="prose prose-sm max-w-none text-gray-700 
+
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <Phone className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Company Email
+                    </div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {contact.linkedInData?.extractedProfileData
+                        ?.company_details?.contact_email || "-"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <Star className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Google Reviews
+                    </div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {contact.linkedInData?.extractedProfileData?.company_details?.google_reviews?.map(
+                        (review: any, index: number) => {
+                          const sitename =
+                            review.sitename ||
+                            review.Sitename ||
+                            review.site ||
+                            "";
+                          const rating = review.rating || review.Rating || "";
+                          const formattedText =
+                            sitename && rating
+                              ? `${sitename} - ${rating}`
+                              : Object.entries(review)
+                                  .map(
+                                    ([key, value]: [string, any]) =>
+                                      `${key}: ${value}`
+                                  )
+                                  .join(", ");
+                          return <div key={index}>{formattedText}</div>;
+                        }
+                      ) || "-"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <Star className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Other Trusted Reviews
+                    </div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {contact.linkedInData?.extractedProfileData?.company_details?.other_trusted_reviews?.map(
+                        (review: any, index: number) => {
+                          const sitename =
+                            review.sitename ||
+                            review.Sitename ||
+                            review.site ||
+                            "";
+                          const rating = review.rating || review.Rating || "";
+                          const formattedText =
+                            sitename && rating
+                              ? `${sitename} - ${rating}`
+                              : Object.entries(review)
+                                  .map(
+                                    ([key, value]: [string, any]) =>
+                                      `${key}: ${value}`
+                                  )
+                                  .join(", ");
+                          return <div key={index}>{formattedText}</div>;
+                        }
+                      ) || "-"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="mt-0.5">
+                    <DollarSign className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500 mb-0.5">
+                      Last Year Revenue
+                    </div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {contact.linkedInData?.extractedProfileData
+                        ?.company_details?.last_year_turnover || "-"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  What we can sell to this company
+                </div>
+
+                <ul className="space-y-2 grid grid-cols-2 gap-2">
+                  {contact.linkedInData?.extractedProfileData?.person_details
+                    ?.personSalesStrategyReportDataMeta?.map?.length > 0 ? (
+                    contact.linkedInData.extractedProfileData.company_details.companySalesStrategyReportDataMeta.map(
+                      (item: any, index: number) => (
+                        <li
+                          key={index}
+                          className="flex items-start gap-2 rounded-md bg-gray-50 px-3 py-2 text-sm font-medium text-gray-900"
+                        >
+                          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                          <span className="leading-snug">{item}</span>
+                        </li>
+                      )
+                    )
+                  ) : (
+                    <li className="text-sm text-gray-400">-</li>
+                  )}
+                </ul>
+              </div>
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
+                <h3 className="flex text-lg font-semibold text-gray-900 mb-4">
+                  Metizsoft {<X />}
+                  {
+                    (companyName ||
+                      company ||
+                      contact.companyName ||
+                      contact.linkedInData?.extractedProfileData
+                        ?.company_details?.company_name) as string
+                  }
+                </h3>
+                <div className="col-span-full">
+                  {contact.linkedInData?.extractedProfileData?.company_details
+                    ?.companySalesStrategyMailContent ? (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          contact.linkedInData.extractedProfileData
+                            .company_details.companySalesStrategyMailContent,
+                      }}
+                      className="prose prose-sm max-w-none text-gray-700 
                           [&>h1]:text-2xl [&>h1]:font-bold [&>h1]:mb-4 [&>h1]:mt-6 [&>h1]:text-gray-900
                           [&>h2]:text-xl [&>h2]:font-semibold [&>h2]:mb-3 [&>h2]:mt-5 [&>h2]:text-gray-900
                           [&>h3]:text-lg [&>h3]:font-semibold [&>h3]:mb-2 [&>h3]:mt-4 [&>h3]:text-gray-900
@@ -2403,25 +2402,25 @@ export function ViewContactDetails({
                           [&>em]:italic
                           [&>a]:text-blue-600 [&>a]:hover:text-blue-800 [&>a]:underline
                           space-y-4"
-                      />
-                    ) : (
-                      <p className="text-gray-500 italic">-</p>
-                    )}
-                  </div>
+                    />
+                  ) : (
+                    <p className="text-gray-500 italic">-</p>
+                  )}
                 </div>
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    About the Company
-                  </h3>
-                  <div className="col-span-full">
-                    {formatRecordInfo(
-                      contact.linkedInData?.extractedProfileData
-                        ?.company_details?.about
-                    ) || "-"}
-                  </div>
+              </div>
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  About the Company
+                </h3>
+                <div className="col-span-full">
+                  {formatRecordInfo(
+                    contact.linkedInData?.extractedProfileData?.company_details
+                      ?.about
+                  ) || "-"}
                 </div>
               </div>
             </div>
+          </div>
           {/* )} */}
 
           {/* Additional Notes Section */}

@@ -541,7 +541,7 @@ export function ContactsTable({
 
   // Helper function to get initials from name
   const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    return `${firstName?.charAt(0)}${lastName?.charAt(0)}`.toUpperCase();
   };
 
   // Handle search input change

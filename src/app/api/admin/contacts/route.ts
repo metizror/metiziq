@@ -144,19 +144,24 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { data } = body;
 
-    // if (!data.email) {
-    //   return NextResponse.json(
-    //     { message: "Email is required" },
-    //     { status: 400 }
-    //   );
-    // }
-
-    let alreadyExists = await Contacts.findOne({ email: data.email });
-    if (alreadyExists) {
-      return NextResponse.json(
-        { message: "Contact already exists" },
-        { status: 400 }
-      );
+    // Check for duplicate contact - check by email if provided, or by contactLinkedIn if email is not provided
+    if (data.email) {
+      const alreadyExists = await Contacts.findOne({ email: data.email });
+      if (alreadyExists) {
+        return NextResponse.json(
+          { message: "Contact with this email already exists" },
+          { status: 400 }
+        );
+      }
+    } else if (data.contactLinkedIn) {
+      // If no email, check by LinkedIn URL
+      const alreadyExists = await Contacts.findOne({ contactLinkedIn: data.contactLinkedIn });
+      if (alreadyExists) {
+        return NextResponse.json(
+          { message: "Contact with this LinkedIn URL already exists" },
+          { status: 400 }
+        );
+      }
     }
 
     if (data.country === "Other") {
@@ -164,11 +169,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Build fullName from firstName and lastName, or use contactLinkedIn if available
-    const firstName = data.firstName || '';
-    const lastName = data.lastName || '';
-    const fullName = firstName || lastName 
-      ? `${firstName} ${lastName}`.trim() 
-      : data.contactLinkedIn || 'Contact';
+    const firstName = data.firstName || null;
+    const lastName = data.lastName || null;
+    const fullName = `${firstName} ${lastName}`.trim() || null;
 
     const contact = await Contacts.create({
       ...data,
@@ -193,6 +196,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
+    console.log("Error creating contact:", error);
     return NextResponse.json(
       { message: "Error creating contact", error: error.message },
       { status: 500 }
