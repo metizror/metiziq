@@ -163,16 +163,27 @@ export async function POST(request: NextRequest) {
       await Country.create({ name: data.otherCountry, isActive: true });
     }
 
+    // Build fullName from firstName and lastName, or use contactLinkedIn if available
+    const firstName = data.firstName || '';
+    const lastName = data.lastName || '';
+    const fullName = firstName || lastName 
+      ? `${firstName} ${lastName}`.trim() 
+      : data.contactLinkedIn || 'Contact';
+
     const contact = await Contacts.create({
       ...data,
-      fullName: `${data.firstName} ${data.lastName}`,
+      fullName: fullName,
       createdBy: tokenVerification.admin?.name,
       uploaderId: tokenVerification.admin?._id,
     });
 
+    const contactName = firstName || lastName 
+      ? `${firstName} ${lastName}`.trim() 
+      : data.contactLinkedIn || 'Contact';
+
     await createActivity(
       "Contact created",
-      `Contact ${data.firstName} ${data.lastName} created by ${tokenVerification.admin?.name}`,
+      `Contact ${contactName} created by ${tokenVerification.admin?.name}`,
       tokenVerification.admin?._id || "",
       tokenVerification.admin?.name || ""
     );

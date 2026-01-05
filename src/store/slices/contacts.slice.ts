@@ -114,8 +114,8 @@ export const getContacts = createAsyncThunk<
 });
 
 export interface CreateContactPayload {
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   jobTitle?: string;
   jobLevel?: string;
   jobRole?: string;
@@ -434,7 +434,7 @@ const contactsSlice = createSlice({
           const mappedContact = {
             ...updatedContact,
             id: contactId,
-            contactLinkedInUrl: updatedContact.contactLinkedIn || updatedContact.contactLinkedInUrl || updatedContact.LinkedInUrl || state.contacts[contactIndex].contactLinkedInUrl || '',
+            contactLinkedInUrl: updatedContact.contactLinkedIn || updatedContact.contactLinkedInUrl || updatedContact.LinkedInUrl || state.contacts[contactIndex].contactLinkedIn || '',
           };
           state.contacts[contactIndex] = mappedContact;
         }
