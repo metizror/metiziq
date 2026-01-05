@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { createContact } from "@/store/slices/contacts.slice";
@@ -17,6 +17,7 @@ import { CountrySelect } from "@/components/CountrySelect";
 import { CompanyNameAutocomplete } from "@/components/CompanyNameAutocomplete";
 import type { User } from "@/types/dashboard.types";
 import { contactFormSchema, type ContactFormValues } from "@/validation-schemas/contactFormSchema";
+import { privateApiPost } from "@/lib/api";
 
 // Industry and Sub-Industry mapping (same as ContactsTable)
 const industrySubIndustryMap: Record<string, string[]> = {
@@ -387,6 +388,16 @@ export default function NewContactPage() {
     validationSchema: contactFormSchema,
     onSubmit: async (values) => {
     try {
+      // Check if only LinkedIn URL is filled
+      const isOnlyLinkedInFilled = 
+        values.contactLinkedIn && 
+        values.contactLinkedIn.trim() !== '' &&
+        (!values.firstName || values.firstName.trim() === '') &&
+        (!values.lastName || values.lastName.trim() === '') &&
+        (!values.email || values.email.trim() === '') &&
+        (!values.city || values.city.trim() === '') &&
+        (!values.companyName || values.companyName.trim() === '');
+
       // Prepare payload for API
       const payload = {
           firstName: values.firstName,
@@ -416,10 +427,79 @@ export default function NewContactPage() {
           amfNotes: values.amfNotes || undefined,
       };
 
-      await dispatch(createContact(payload)).unwrap();
-      
-      toast.success('Contact added successfully');
-      router.push('/contacts');
+      // If only LinkedIn URL is filled, create contact and then sync
+      if (isOnlyLinkedInFilled) {
+        // Create contact first
+        const createResponse = await dispatch(createContact(payload)).unwrap();
+        const createdContact = createResponse.contact;
+        
+        if (!createdContact) {
+          throw new Error('Failed to create contact. Contact not found in response.');
+        }
+        
+        const contactId = (createdContact as any)._id?.toString() || createdContact.id?.toString();
+        
+        if (!contactId) {
+          throw new Error('Failed to create contact. Contact ID not found.');
+        }
+
+        // Call sync API
+        toast.loading('Syncing LinkedIn data...', { id: 'sync-linkedin' });
+        
+        try {
+          const syncResponse = await privateApiPost<{
+            message: string;
+            results: Array<{ id: string; email: string; success: boolean; contact?: any; skipped?: boolean; message?: string }>;
+            errors: Array<{ id: string; email?: string; error: string }>;
+            summary: {
+              total: number;
+              successful: number;
+              failed: number;
+            };
+          }>('/admin/contacts/sync-linkedin', { ids: [contactId] }, {
+            timeout: 300000, // 5 minutes
+          });
+
+          toast.dismiss('sync-linkedin');
+
+          const successfulItems = syncResponse.results.filter(r => r.success && !r.skipped);
+          const skippedItems = syncResponse.results.filter(r => r.skipped);
+          const errors = syncResponse.errors;
+
+          if (successfulItems.length > 0) {
+            toast.success('LinkedIn data synced successfully');
+            router.push(`/contacts/${contactId}`);
+          } else if (skippedItems.length > 0) {
+            toast.warning(skippedItems[0].message || 'Sync skipped. Contact may have been synced recently.');
+            router.push(`/contacts/${contactId}`);
+          } else if (errors.length > 0) {
+            toast.error(errors[0].error || 'Failed to sync LinkedIn data');
+            router.push(`/contacts/${contactId}`);
+          } else {
+            toast.info('Sync completed with no results');
+            router.push(`/contacts/${contactId}`);
+          }
+        } catch (syncError: any) {
+          toast.dismiss('sync-linkedin');
+          const errorMessage = syncError.response?.data?.message || syncError.message || 'Failed to sync LinkedIn data';
+          
+          // Check if it's a limit exceeded error
+          if (syncError.response?.data?.limitExceeded) {
+            toast.error(errorMessage);
+          } else {
+            toast.error(errorMessage);
+          }
+          
+          // Still navigate to the contact page even if sync failed
+          router.push(`/contacts/${contactId}`);
+        }
+      } else {
+        // Normal save flow
+        await dispatch(createContact(payload)).unwrap();
+        
+        toast.success('Contact added successfully');
+        router.push('/contacts');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Failed to add contact');
     }
@@ -989,8 +1069,32 @@ export default function NewContactPage() {
                   className="bg-[#2563EB] hover:bg-[#2563EB]/90 text-white"
                   disabled={isCreating || formik.isSubmitting}
                 >
-                  <Save className="w-4 h-4 mr-2" />
-                  {isCreating || formik.isSubmitting ? 'Saving...' : 'Save Contact'}
+                  {(() => {
+                    // Check if only LinkedIn URL is filled
+                    const isOnlyLinkedInFilled = 
+                      formik.values.contactLinkedIn && 
+                      formik.values.contactLinkedIn.trim() !== '' &&
+                      (!formik.values.firstName || formik.values.firstName.trim() === '') &&
+                      (!formik.values.lastName || formik.values.lastName.trim() === '') &&
+                      (!formik.values.email || formik.values.email.trim() === '') &&
+                      (!formik.values.city || formik.values.city.trim() === '') &&
+                      (!formik.values.companyName || formik.values.companyName.trim() === '');
+
+                    if (isOnlyLinkedInFilled) {
+                      return (
+                        <>
+                          <RefreshCw className="w-4 h-4 mr-2" />
+                          {isCreating || formik.isSubmitting ? 'Syncing...' : 'Sync'}
+                        </>
+                      );
+                    }
+                    return (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        {isCreating || formik.isSubmitting ? 'Saving...' : 'Save Contact'}
+                      </>
+                    );
+                  })()}
                 </Button>
               </div>
             </form>
