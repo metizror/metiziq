@@ -1062,7 +1062,7 @@ export function ViewCompanyDetails({
                           >
                             <td className="py-4 px-4">
                               <div className="text-sm font-medium text-gray-900">
-                                {contact.firstName} {contact.lastName}
+                                {contact.firstName || contact.linkedInData?.person?.firstName || contact.linkedInData?.extractedProfileData?.person_details?.personaName} {contact.lastName || contact.linkedInData?.person?.lastName}
                               </div>
                             </td>
                             <td className="py-4 px-4">
@@ -1135,7 +1135,7 @@ export function ViewCompanyDetails({
                 </div>
 
                 {/* Filter Buttons - Rounded full with orange border */}
-                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                {/* <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                   <div className=" px-4 py-1.5 bg-white flex rounded-full shadow-sm border border-orange-100 mb-3 flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
                     <span className="text-sm font-medium text-gray-700">
@@ -1164,7 +1164,7 @@ export function ViewCompanyDetails({
                       Phone Contacts
                     </span>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Download Button - Horizontal gradient from orange-500 to orange-600 */}
                 {/* <div className="pt-4 w-full max-w-md">
