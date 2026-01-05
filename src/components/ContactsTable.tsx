@@ -89,7 +89,7 @@ export function ContactsTable({
   const [isExportingAll, setIsExportingAll] = useState(false);
   const [isSyncingLinkedIn, setIsSyncingLinkedIn] = useState(false);
   const [syncLimit, setSyncLimit] = useState(null as { monthlyLimit: number; currentMonthCount: number; remainingSyncs: number } | null);
-  const { user: authUser } = useAppSelector((state) => state.auth);
+  const { user: authUser } = useAppSelector((state: any) => state.auth);
 
   // Industry and Sub-Industry mapping
   const industrySubIndustryMap: Record<string, string[]> = {
@@ -1020,7 +1020,7 @@ export function ContactsTable({
         website: newContact.website || undefined,
         industry: newContact.industry || undefined,
         subIndustry: newContact.subIndustry || undefined,
-        contactLinkedIn: newContact.contactLinkedInUrl || undefined,
+        contactLinkedIn: newContact.contactLinkedIn || undefined,
         lastUpdateDate: newContact.lastUpdateDate || undefined,
         companyName: newContact.companyName || undefined,
         employeeSize: newContact.employeeSize || undefined,
@@ -1187,16 +1187,11 @@ export function ContactsTable({
     setIsSyncingLinkedIn(true);
 
     try {
-      // Get emails from selected contacts
-      const selectedContactsData = contacts.filter(c => {
-        const cId = c.id || (c as any)._id;
-        return selectedContacts.includes(cId);
-      });
+      // Get IDs from selected contacts (selectedContacts already contains IDs)
+      const ids = selectedContacts.filter(Boolean);
 
-      const emails = selectedContactsData.map(c => c.email).filter(Boolean);
-
-      if (emails.length === 0) {
-        toast.error('No valid emails found in selected contacts');
+      if (ids.length === 0) {
+        toast.error('No valid contact IDs found in selected contacts');
         setIsSyncingLinkedIn(false);
         return;
       }
@@ -1204,15 +1199,15 @@ export function ContactsTable({
       // Call the sync API with extended timeout (2 minutes)
       const response = await privateApiPost<{
         message: string;
-        results: Array<{ email: string; success: boolean; contact?: any; skipped?: boolean; message?: string }>;
-        errors: Array<{ email: string; error: string }>;
+        results: Array<{ id: string; email: string; success: boolean; contact?: any; skipped?: boolean; message?: string }>;
+        errors: Array<{ id: string; email?: string; error: string }>;
         summary: {
           total: number;
           successful: number;
           failed: number;
         };
-      }>('/admin/contacts/sync-linkedin', { emails }, {
-        timeout: 120000, // 2 minutes (120 seconds)
+      }>('/admin/contacts/sync-linkedin', { ids }, {
+        timeout: 300000, // 2 minutes (120 seconds)
       });
 
       // Refresh sync limit after successful sync
@@ -1234,7 +1229,7 @@ export function ContactsTable({
       if (skippedItems.length > 0) {
         // Show toast for skipped items (synced less than 1 day ago)
         const skippedMessages = skippedItems.map(item => {
-          return item.message || `Please sync tomorrow for ${item.email}`;
+          return item.message || `Please sync tomorrow for ${item.email || 'contact'}`;
         });
         
         if (skippedItems.length === 1) {
@@ -1246,7 +1241,7 @@ export function ContactsTable({
 
       if (response.errors.length > 0) {
         // Show first few errors
-        const errorMessages = response.errors.slice(0, 3).map(e => `${e.email}: ${e.error}`).join('\n');
+        const errorMessages = response.errors.slice(0, 3).map(e => `${e.email || e.id}: ${e.error}`).join('\n');
         toast.error(`Failed to sync ${response.errors.length} contacts:\n${errorMessages}`);
       }
 
@@ -1324,7 +1319,7 @@ export function ContactsTable({
       escapeCSV(contact.website || ''),
       escapeCSV(contact.industry || ''),
       escapeCSV(contactData.subIndustry || ''),
-      escapeCSV(contact.contactLinkedInUrl || contactData.LinkedInUrl || ''),
+      escapeCSV(contact.contactLinkedIn || contactData.contactLinkedIn || (contactData as any).contactLinkedIn || (contactData as any).LinkedInUrl || ''),
       escapeCSV(contact.companyName || ''),
       escapeCSV(contact.employeeSize || ''),
       escapeCSV(contact.revenue || ''),
@@ -1445,7 +1440,7 @@ export function ContactsTable({
         escapeCSV(contact.website || ''),
         escapeCSV(contact.industry || ''),
         escapeCSV(contactData.subIndustry || ''),
-        escapeCSV(contact.contactLinkedInUrl || contactData.LinkedInUrl || ''),
+        escapeCSV(contact.contactLinkedIn || contactData.contactLinkedIn || (contactData as any).contactLinkedIn || (contactData as any).LinkedInUrl || ''),
         escapeCSV(contact.companyName || ''),
         escapeCSV(contact.employeeSize || ''),
         escapeCSV(contact.revenue || ''),
@@ -2190,15 +2185,15 @@ export function ContactsTable({
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">
                             {contact.linkedInData?.person?.photoUrl && (
-                              <AvatarImage src={contact.linkedInData?.person?.photoUrl} alt={`${contact.firstName} ${contact.lastName}`} />
+                              <AvatarImage src={contact.linkedInData?.person?.photoUrl} alt={`${contact.firstName || contact.linkedInData?.person?.firstName || contact.linkedInData?.extractedProfileData?.person_details?.personaName} ${contact.lastName || contact.linkedInData?.person?.lastName}`} />
                             )}
                             <AvatarFallback className="bg-gray-200">
-                              {getInitials(contact.firstName, contact.lastName)}
+                              {getInitials(contact.firstName || contact.linkedInData?.person?.firstName || contact.linkedInData?.extractedProfileData?.person_details?.personaName, contact.lastName || contact.linkedInData?.person?.lastName)}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <div className="font-medium flex items-center gap-1">
-                              {contact.firstName} {contact.lastName}
+                              {contact.firstName || contact.linkedInData?.person?.firstName || contact.linkedInData?.extractedProfileData?.person_details?.personaName} {contact.lastName || contact.linkedInData?.person?.lastName}
                             </div>
                             <div className="text-sm text-gray-500">{contact.jobTitle}</div>
                           </div>

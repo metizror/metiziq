@@ -601,7 +601,7 @@ export function ViewCompanyDetails({
         escapeCSV(contact.country || ""),
         escapeCSV(contact.website || ""),
         escapeCSV(contact.industry || ""),
-        escapeCSV(contact.contactLinkedInUrl || ""),
+        escapeCSV(contact.contactLinkedIn || ""),
         escapeCSV(contact.amfNotes || ""),
         escapeCSV(contact.lastUpdateDate || ""),
       ].join(",")

@@ -26,11 +26,11 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { emails } = body;
+    const { ids } = body;
 
-    if (!Array.isArray(emails) || emails.length === 0) {
+    if (!Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json(
-        { message: "Invalid input: 'emails' must be a non-empty array" },
+        { message: "Invalid input: 'ids' must be a non-empty array" },
         { status: 400 }
       );
     }
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 
         // Check if trying to sync more than remaining limit
         const remainingSyncs = userLimit.monthlyLimit - userLimit.currentMonthCount;
-        if (emails.length > remainingSyncs) {
+        if (ids.length > remainingSyncs) {
           return NextResponse.json(
             { 
               message: `You can only sync ${remainingSyncs} more contact(s) this month. You have ${remainingSyncs} of ${userLimit.monthlyLimit} syncs remaining.`,
@@ -91,15 +91,16 @@ export async function POST(request: NextRequest) {
     const results = [];
     const errors = [];
 
-    // Process each email
-    for (const email of emails) {
+    // Process each contact ID
+    for (const id of ids) {
+      let contact: any = null;
       try {
-        // Find contact first to get details for the payload
-        const contact: any = await Contacts.findOne({ email });
+        // Find contact by ID
+        contact = await Contacts.findById(id);
 
         if (!contact) {
           errors.push({
-            email,
+            id,
             error: "Contact not found in database",
           });
           continue;
@@ -120,7 +121,8 @@ export async function POST(request: NextRequest) {
             const nextSyncDate = new Date(lastSyncDate.getTime() + oneDayInMs);
 
             results.push({
-              email,
+              id,
+              email: contact.email,
               success: false,
               message: `Please sync tomorrow. Last synced on ${lastSyncDate.toLocaleString()}. Next sync available after ${nextSyncDate.toLocaleString()}`,
               skipped: true,
@@ -137,6 +139,7 @@ export async function POST(request: NextRequest) {
           position: contact.jobTitle || "",
           company: contact.companyName || "",
           email: contact.email,
+          contactLinkedIn: contact.contactLinkedIn || "",
         };
 
         // Call LinkedIn API using axios
@@ -150,7 +153,8 @@ export async function POST(request: NextRequest) {
 
         if (!responseData || responseData.isEmailVerified === undefined) {
           errors.push({
-            email,
+            id,
+            email: contact.email,
             error: "Invalid response from LinkedIn API",
           });
           continue;
@@ -167,8 +171,8 @@ export async function POST(request: NextRequest) {
           updateData.linkedInData = responseData.data;
         }
 
-        const updatedContact = await Contacts.findOneAndUpdate(
-          { email },
+        const updatedContact = await Contacts.findByIdAndUpdate(
+          id,
           { $set: updateData },
           { new: true }
         );
@@ -230,7 +234,8 @@ export async function POST(request: NextRequest) {
         // If profile was not found but email is verified, still mark as partial success
         if (!responseData.success) {
           errors.push({
-            email,
+            id,
+            email: contact.email,
             error:
               responseData?.errorCode ||
               responseData?.message ||
@@ -239,7 +244,8 @@ export async function POST(request: NextRequest) {
         }
 
         results.push({
-          email,
+          id,
+          email: contact.email,
           success: responseData.success,
           contact: updatedContact,
         });
@@ -248,15 +254,16 @@ export async function POST(request: NextRequest) {
         await createActivity(
           responseData.success ? "LinkedIn data synced" : "Email verified",
           responseData.success
-            ? `LinkedIn data synced for contact ${email} by ${tokenVerification.admin?.name}`
-            : `Email verified for contact ${email} by ${tokenVerification.admin?.name}`,
+            ? `LinkedIn data synced for contact ${contact.email} (ID: ${id}) by ${tokenVerification.admin?.name}`
+            : `Email verified for contact ${contact.email} (ID: ${id}) by ${tokenVerification.admin?.name}`,
           tokenVerification.admin?._id || "",
           tokenVerification.admin?.name || ""
         );
       } catch (error: any) {
         console.log("error", error);
         errors.push({
-          email,
+          id,
+          email: contact?.email || "N/A",
           error: error.message || "Unknown error occurred",
         });
       }
@@ -284,11 +291,11 @@ export async function POST(request: NextRequest) {
     // Return combined results
     return NextResponse.json(
       {
-        message: `Processed ${emails.length} contacts`,
+        message: `Processed ${ids.length} contacts`,
         results,
         errors,
         summary: {
-          total: emails.length,
+          total: ids.length,
           successful: results.length,
           failed: errors.length,
         },

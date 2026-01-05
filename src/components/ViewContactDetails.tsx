@@ -1537,7 +1537,10 @@ export function ViewContactDetails({
                   <div className="flex items-start justify-between">
                     <div>
                       <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-                        {contact.firstName} {contact.lastName}
+                        {contact.firstName ||
+                          contact.linkedInData?.person?.firstName}{" "}
+                        {contact.lastName ||
+                          contact.linkedInData?.person?.lastName}
                       </h2>
                       <p className="text-lg text-gray-700 mb-3">
                         {contact.linkedInData?.person?.headline || "-"}
@@ -1672,7 +1675,12 @@ export function ViewContactDetails({
                       Contact Name
                     </div>
                     <div className="text-sm font-medium text-gray-900">
-                      {contact.firstName} {contact.lastName}
+                      {contact.firstName ||
+                        contact.linkedInData?.person?.firstName ||
+                        contact.linkedInData?.extractedProfileData
+                          ?.person_details?.personaName}{" "}
+                      {contact.lastName ||
+                        contact.linkedInData?.person?.lastName}
                     </div>
                   </div>
                 </div>
@@ -1818,7 +1826,8 @@ export function ViewContactDetails({
                       <div className="text-sm font-medium text-blue-600">
                         <a
                           href={formatLinkedInUrl(
-                            (contact as any).linkedInData?.person?.linkedInUrl
+                            contact.contactLinkedIn ||
+                              (contact as any).linkedInData?.person?.linkedInUrl
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -1990,7 +1999,7 @@ export function ViewContactDetails({
               </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                 <h3 className="flex text-lg font-semibold text-gray-900 mb-4">
-                  Metizsoft {<X />} {contact.firstName} {contact.lastName}
+                  Metizsoft {<X />} {contact.firstName || contact.linkedInData?.person?.firstName || contact.linkedInData?.extractedProfileData?.person_details?.personaName} {contact.lastName || contact.linkedInData?.person?.lastName}
                 </h3>
                 <div className="col-span-full">
                   {contact.linkedInData?.extractedProfileData?.person_details
@@ -2035,7 +2044,7 @@ export function ViewContactDetails({
           </div>
 
           {/* Company Information Section */}
-          {(companyName || company || contact.companyName) && (
+          {/* {(companyName || company || contact.companyName) && ( */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="w-full flex items-center justify-between p-6 bg-gradient-to-r from-orange-50 to-amber-50">
                 <div className="flex items-center gap-4">
@@ -2370,7 +2379,7 @@ export function ViewContactDetails({
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mt-4">
                   <h3 className="flex text-lg font-semibold text-gray-900 mb-4">
                     Metizsoft {<X />}
-                    {(companyName || company || contact.companyName) as string}
+                    {(companyName || company || contact.companyName || contact.linkedInData?.extractedProfileData?.company_details?.company_name) as string}
                   </h3>
                   <div className="col-span-full">
                     {contact.linkedInData?.extractedProfileData?.company_details
@@ -2413,7 +2422,7 @@ export function ViewContactDetails({
                 </div>
               </div>
             </div>
-          )}
+          {/* )} */}
 
           {/* Additional Notes Section */}
           {contact.amfNotes && (
