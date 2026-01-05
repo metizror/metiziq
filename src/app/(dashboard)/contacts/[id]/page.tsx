@@ -85,10 +85,10 @@ export default function ContactDetailPage() {
         }
 
         // Map the API response to Contact type
-        // Handle contactLinkedIn field from database (contactLinkedIn) and legacy fields (LinkedInUrl, contactLinkedInUrl)
+        // Handle contactLinkedIn field from database (contactLinkedIn) and legacy fields (LinkedInUrl, contactLinkedIn)
         const linkedInValue = (contactData as any).contactLinkedIn ||
           (contactData as any).LinkedInUrl ||
-          contactData.contactLinkedInUrl || '';
+          contactData.contactLinkedIn || '';
 
         const mappedContact: Contact = {
           id: contactData._id?.toString() || contactData.id,

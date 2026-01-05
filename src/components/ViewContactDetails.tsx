@@ -713,7 +713,7 @@ export function ViewContactDetails({
     website: "",
     industry: "",
     subIndustry: "",
-    contactLinkedInUrl: "",
+    contactLinkedIn: "",
     amfNotes: "",
     lastUpdateDate: "",
     companyName: "",
@@ -996,7 +996,7 @@ export function ViewContactDetails({
         website: editForm.website || undefined,
         industry: editForm.industry || undefined,
         subIndustry: editForm.subIndustry || undefined,
-        contactLinkedIn: editForm.contactLinkedInUrl || undefined,
+        contactLinkedIn: editForm.contactLinkedIn || undefined,
         lastUpdateDate: editForm.lastUpdateDate || undefined,
         companyName: editForm.companyName || undefined,
         employeeSize: editForm.employeeSize || undefined,
@@ -1294,12 +1294,12 @@ export function ViewContactDetails({
           </div>
         )}
         <div className="space-y-2">
-          <Label htmlFor="edit-contactLinkedInUrl">Contact LinkedIn URL</Label>
+          <Label htmlFor="edit-contactLinkedIn">Contact LinkedIn URL</Label>
           <Input
-            id="edit-contactLinkedInUrl"
-            value={editForm.contactLinkedInUrl}
+            id="edit-contactLinkedIn"
+            value={editForm.contactLinkedIn}
             onChange={(e: { target: { value: string } }) =>
-              setEditForm({ ...editForm, contactLinkedInUrl: e.target.value })
+              setEditForm({ ...editForm, contactLinkedIn: e.target.value })
             }
             placeholder="https://linkedin.com/in/username"
           />

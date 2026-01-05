@@ -504,7 +504,7 @@ export default function EditContactPage() {
     industry: '',
     otherIndustry: '',
     subIndustry: '',
-    contactLinkedInUrl: '',
+    contactLinkedIn: '',
     amfNotes: '',
     lastUpdateDate: new Date().toISOString().split('T')[0],
     companyName: '',
@@ -577,7 +577,7 @@ export default function EditContactPage() {
         // Handle LinkedIn URL - check multiple possible field names
         const linkedInValue = (contactData as any).contactLinkedIn || 
                               (contactData as any).LinkedInUrl || 
-                              (contactData as any).contactLinkedInUrl || '';
+                              (contactData as any).contactLinkedIn || '';
         
         // Handle otherCountry - check multiple possible field names
         const otherCountryValue = (contactData as any).otherCountry || '';
@@ -605,7 +605,7 @@ export default function EditContactPage() {
           industry: (normalizedIndustry && normalizedIndustry !== '') ? normalizedIndustry : String(contactData.industry || '').trim(),
           otherIndustry: String(otherIndustryValue).trim(),
           subIndustry: String((contactData.subIndustry || '').trim()),
-          contactLinkedInUrl: String(linkedInValue).trim(),
+          contactLinkedIn: String(linkedInValue).trim(),
           amfNotes: String(contactData.amfNotes || '').trim(),
           lastUpdateDate: contactData.lastUpdateDate || new Date().toISOString().split('T')[0],
           companyName: String(contactData.companyName || '').trim(),
@@ -649,7 +649,7 @@ export default function EditContactPage() {
         industry: formData.industry || undefined,
         otherIndustry: formData.otherIndustry || undefined,
         subIndustry: formData.subIndustry || undefined,
-        contactLinkedIn: formData.contactLinkedInUrl || undefined,
+        contactLinkedIn: formData.contactLinkedIn || undefined,
         lastUpdateDate: formData.lastUpdateDate || undefined,
         companyName: formData.companyName || undefined,
         employeeSize: formData.employeeSize || undefined,
@@ -1012,11 +1012,11 @@ export default function EditContactPage() {
                   )}
 
                   <div className="space-y-2">
-                    <Label htmlFor="contactLinkedInUrl">Contact LinkedIn URL</Label>
+                    <Label htmlFor="contactLinkedIn">Contact LinkedIn URL</Label>
                     <Input
-                      id="contactLinkedInUrl"
-                      value={formData.contactLinkedInUrl}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({...formData, contactLinkedInUrl: e.target.value})}
+                      id="contactLinkedIn"
+                      value={formData.contactLinkedIn}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({...formData, contactLinkedIn: e.target.value})}
                       placeholder="https://linkedin.com/in/username"
                       className="h-11"
                     />

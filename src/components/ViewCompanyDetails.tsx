@@ -512,8 +512,8 @@ export function ViewCompanyDetails({
               website: contact.website || "",
               industry: contact.industry || "",
               linkedInData: contact.linkedInData || null,
-              contactLinkedInUrl:
-                contact.contactLinkedInUrl || contact.LinkedInUrl || "",
+              contactLinkedIn:
+                contact.contactLinkedIn || contact.LinkedInUrl || "",
               amfNotes: contact.amfNotes || "",
               lastUpdateDate: contact.lastUpdateDate || "",
               addedBy: contact.addedBy || undefined,

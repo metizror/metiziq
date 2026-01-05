@@ -245,7 +245,7 @@ export function ContactsListView({ contacts, companies, onViewContact }: Contact
                           <InfoField
                             icon={Linkedin}
                             label="Contact_LinkedIn"
-                            value={contact.contactLinkedInUrl}
+                            value={contact.contactLinkedIn}
                           />
                         </div>
                       </CollapsibleContent>

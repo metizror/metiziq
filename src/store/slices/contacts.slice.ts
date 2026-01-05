@@ -362,13 +362,13 @@ const contactsSlice = createSlice({
       }
       // Map contacts to ensure they have 'id' field (convert _id to id)
       // Also map createdBy and companyId from API to the contact object
-      // Map contactLinkedIn to contactLinkedInUrl for consistency
+      // Map contactLinkedIn to contactLinkedIn for consistency
       state.contacts = action.payload.contacts.map((contact: any) => ({
         ...contact,
         id: contact._id || contact.id,
         createdBy: contact.createdBy || contact.addedBy || undefined,
         companyId: contact.companyId || contact._companyId || contact.company?._id?.toString() || contact.company?.id || undefined,
-        contactLinkedInUrl: contact.contactLinkedIn || contact.contactLinkedInUrl || contact.LinkedInUrl || '',
+        contactLinkedIn: contact.contactLinkedIn || contact.contactLinkedIn || contact.LinkedInUrl || '',
       }));
       state.pagination = action.payload.pagination;
       // Update cache tracking (exclude background flag from params)
@@ -430,11 +430,11 @@ const contactsSlice = createSlice({
           (c) => (c.id === contactId) || ((c as any)._id === contactId)
         );
         if (contactIndex !== -1) {
-          // Map contactLinkedIn to contactLinkedInUrl for consistency
+          // Map contactLinkedIn to contactLinkedIn for consistency
           const mappedContact = {
             ...updatedContact,
             id: contactId,
-            contactLinkedInUrl: updatedContact.contactLinkedIn || updatedContact.contactLinkedInUrl || updatedContact.LinkedInUrl || state.contacts[contactIndex].contactLinkedIn || '',
+            contactLinkedIn: updatedContact.contactLinkedIn || updatedContact.contactLinkedIn || updatedContact.LinkedInUrl || state.contacts[contactIndex].contactLinkedIn || '',
           };
           state.contacts[contactIndex] = mappedContact;
         }

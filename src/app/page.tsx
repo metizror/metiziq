@@ -39,7 +39,7 @@ export interface Contact {
   country: string;
   website: string;
   industry: string;
-  contactLinkedInUrl: string;
+  contactLinkedIn: string;
   amfNotes: string;
   lastUpdateDate: string;
   addedBy: string;

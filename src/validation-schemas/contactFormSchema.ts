@@ -24,13 +24,13 @@ const validateWebsite = (website: string | undefined): boolean => {
 
 // Contact Form Validation Schema
 export const contactFormSchema = yup.object().shape({
-  contactLinkedInUrl: yup.string().trim().url('Please enter a valid URL').nullable().transform((value) => (value === '' ? null : value)),
+  contactLinkedIn: yup.string().trim().url('Please enter a valid URL').nullable().transform((value) => (value === '' ? null : value)),
   
   // Required contact fields - conditional based on LinkedIn URL
   firstName: yup
     .string()
     .trim()
-    .when('contactLinkedInUrl', {
+    .when('contactLinkedIn', {
       is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
       then: (schema) => schema.notRequired().nullable().transform((value) => (value === '' ? null : value)),
       otherwise: (schema) => schema.required('First name is required').min(1, 'First name is required'),
@@ -39,7 +39,7 @@ export const contactFormSchema = yup.object().shape({
   lastName: yup
     .string()
     .trim()
-    .when('contactLinkedInUrl', {
+    .when('contactLinkedIn', {
       is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
       then: (schema) => schema.notRequired().nullable().transform((value) => (value === '' ? null : value)),
       otherwise: (schema) => schema.required('Last name is required').min(1, 'Last name is required'),
@@ -52,7 +52,7 @@ export const contactFormSchema = yup.object().shape({
   email: yup
     .string()
     .trim()
-    .when('contactLinkedInUrl', {
+    .when('contactLinkedIn', {
       is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
       then: (schema) => schema.notRequired().email('Please enter a valid email address').nullable().transform((value) => (value === '' ? null : value)),
       otherwise: (schema) => schema.email('Please enter a valid email address').required('Email is required').nullable().transform((value) => (value === '' ? null : value)),
@@ -80,7 +80,7 @@ export const contactFormSchema = yup.object().shape({
   city: yup
     .string()
     .trim()
-    .when('contactLinkedInUrl', {
+    .when('contactLinkedIn', {
       is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
       then: (schema) => schema.notRequired().nullable().transform((value) => (value === '' ? null : value)),
       otherwise: (schema) => schema.required('City is required').nullable().transform((value) => (value === '' ? null : value)),
@@ -91,7 +91,7 @@ export const contactFormSchema = yup.object().shape({
   otherCountry: yup
     .string()
     .trim()
-    .when(['country', 'contactLinkedInUrl'], {
+    .when(['country', 'contactLinkedIn'], {
       is: (country: string, linkedInUrl: string | null | undefined) => {
         const isLinkedInFilled = !!(linkedInUrl && typeof linkedInUrl === 'string' && linkedInUrl.trim() !== '');
         return country === 'Other' && !isLinkedInFilled;
@@ -112,7 +112,7 @@ export const contactFormSchema = yup.object().shape({
   otherIndustry: yup
     .string()
     .trim()
-    .when(['industry', 'contactLinkedInUrl'], {
+    .when(['industry', 'contactLinkedIn'], {
       is: (industry: string, linkedInUrl: string | null | undefined) => {
         const isLinkedInFilled = !!(linkedInUrl && typeof linkedInUrl === 'string' && linkedInUrl.trim() !== '');
         return industry === 'Other' && !isLinkedInFilled;
@@ -126,7 +126,7 @@ export const contactFormSchema = yup.object().shape({
   // Required company fields - conditional based on LinkedIn URL
   companyName: yup
     .string()
-    .when('contactLinkedInUrl', {
+    .when('contactLinkedIn', {
       is: (value: string | null | undefined) => !!(value && typeof value === 'string' && value.trim() !== ''),
       then: (schema) => schema.notRequired().nullable().transform((value) => (value === '' ? null : value)),
       otherwise: (schema) => schema.required('Company name is required'),

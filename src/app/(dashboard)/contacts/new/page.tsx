@@ -377,7 +377,7 @@ export default function NewContactPage() {
     industry: '',
     otherIndustry: '',
     subIndustry: '',
-    contactLinkedInUrl: '',
+    contactLinkedIn: '',
     amfNotes: '',
     lastUpdateDate: new Date().toISOString().split('T')[0],
     companyName: '',
@@ -408,7 +408,7 @@ export default function NewContactPage() {
           industry: values.industry || undefined,
           otherIndustry: values.industry === 'Other' ? values.otherIndustry || undefined : undefined,
           subIndustry: values.subIndustry || undefined,
-          contactLinkedIn: values.contactLinkedInUrl || undefined,
+          contactLinkedIn: values.contactLinkedIn || undefined,
           lastUpdateDate: values.lastUpdateDate || undefined,
           companyName: values.companyName || undefined,
           employeeSize: values.employeeSize || undefined,
@@ -848,18 +848,18 @@ export default function NewContactPage() {
                   )}
 
                   <div className="space-y-2">
-                    <Label htmlFor="contactLinkedInUrl">Contact LinkedIn URL</Label>
+                    <Label htmlFor="contactLinkedIn">Contact LinkedIn URL</Label>
                     <Input
-                      id="contactLinkedInUrl"
-                      name="contactLinkedInUrl"
-                      value={formik.values.contactLinkedInUrl || ''}
+                      id="contactLinkedIn"
+                      name="contactLinkedIn"
+                      value={formik.values.contactLinkedIn || ''}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       placeholder="https://linkedin.com/in/username"
-                      className={`h-11 ${formik.touched.contactLinkedInUrl && formik.errors.contactLinkedInUrl ? 'border-red-500' : ''}`}
+                      className={`h-11 ${formik.touched.contactLinkedIn && formik.errors.contactLinkedIn ? 'border-red-500' : ''}`}
                     />
-                    {formik.touched.contactLinkedInUrl && formik.errors.contactLinkedInUrl && (
-                      <p className="text-xs text-red-600">{formik.errors.contactLinkedInUrl}</p>
+                    {formik.touched.contactLinkedIn && formik.errors.contactLinkedIn && (
+                      <p className="text-xs text-red-600">{formik.errors.contactLinkedIn}</p>
                     )}
                   </div>
 

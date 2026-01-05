@@ -437,7 +437,7 @@ export function ContactsTable({
     website: '',
     industry: '',
     subIndustry: '',
-    contactLinkedInUrl: '',
+    contactLinkedIn: '',
     amfNotes: '',
     lastUpdateDate: new Date().toISOString().split('T')[0],
     // Required Company Fields
@@ -643,7 +643,7 @@ export function ContactsTable({
         website: newContact.website || undefined,
         industry: newContact.industry || undefined,
         subIndustry: newContact.subIndustry || undefined,
-        contactLinkedIn: newContact.contactLinkedInUrl || undefined,
+        contactLinkedIn: newContact.contactLinkedIn || undefined,
         lastUpdateDate: newContact.lastUpdateDate || undefined,
         companyName: newContact.companyName || undefined,
         employeeSize: newContact.employeeSize || undefined,
@@ -696,7 +696,7 @@ export function ContactsTable({
       website: '',
       industry: '',
       subIndustry: '',
-      contactLinkedInUrl: '',
+      contactLinkedIn: '',
       amfNotes: '',
       lastUpdateDate: new Date().toISOString().split('T')[0],
       companyName: '',
@@ -1704,11 +1704,11 @@ export function ContactsTable({
           </div>
         )}
         <div className="space-y-2">
-          <Label htmlFor={isEdit ? "edit-contactLinkedInUrl" : "contactLinkedInUrl"}>Contact LinkedIn URL</Label>
+          <Label htmlFor={isEdit ? "edit-contactLinkedIn" : "contactLinkedIn"}>Contact LinkedIn URL</Label>
           <Input
-            id={isEdit ? "edit-contactLinkedInUrl" : "contactLinkedInUrl"}
-            value={newContact.contactLinkedInUrl}
-            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, contactLinkedInUrl: e.target.value })}
+            id={isEdit ? "edit-contactLinkedIn" : "contactLinkedIn"}
+            value={newContact.contactLinkedIn}
+            onChange={(e: { target: { value: string } }) => setNewContact({ ...newContact, contactLinkedIn: e.target.value })}
             placeholder="https://linkedin.com/in/username"
           />
         </div>
@@ -1818,7 +1818,7 @@ export function ContactsTable({
         firstName: '', lastName: '', jobTitle: '', jobLevel: '', jobRole: '',
         email: '', phone: '', directPhone: '', address1: '', address2: '',
         city: '', state: '', zipCode: '', country: '', website: '',
-        industry: '', subIndustry: '', contactLinkedInUrl: '', amfNotes: '',
+        industry: '', subIndustry: '', contactLinkedIn: '', amfNotes: '',
         lastUpdateDate: '', companyName: '', employeeSize: '', revenue: ''
       });
     } catch (error: any) {
