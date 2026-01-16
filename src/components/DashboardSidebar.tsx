@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
@@ -18,6 +18,8 @@ import {
   RefreshCw,
   Menu,
   X,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { UserObject } from "@/types/auth.types";
 import Image from "next/image";
@@ -30,6 +32,7 @@ interface MenuItem {
   path: string;
   exclusive?: boolean;
   badge?: number;
+  subItems?: MenuItem[];
 }
 
 interface SidebarProps {
@@ -67,17 +70,42 @@ export function DashboardSidebar({
   onToggle,
 }: SidebarProps) {
   const pathname = usePathname();
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+
+  // Auto-expand relevant group on mount or path change
+  useEffect(() => {
+    menuItems.forEach((item) => {
+      if (item.subItems) {
+        const hasActiveChild = item.subItems.some(
+          (sub) => pathname === sub.path || pathname.startsWith(sub.path + '/')
+        );
+        if (hasActiveChild) {
+          setExpandedMenus((prev) =>
+            prev.includes(item.id) ? prev : [...prev, item.id]
+          );
+        }
+      }
+    });
+  }, [pathname, menuItems]);
+
+  const toggleMenu = (id: string) => {
+    // If sidebar is collapsed, expand it when opening a submenu
+    if (!isOpen && onToggle) {
+      onToggle();
+    }
+    setExpandedMenus((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
 
   return (
     <div
-      className={`bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out ${
-        isOpen ? 'w-64' : 'w-20'
-      }`}
+      className={`bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'w-64' : 'w-20'
+        }`}
     >
       {/* Header with Toggle Button */}
-      <div className={`p-4 border-b border-gray-200 transition-all duration-300 relative ${
-        isOpen ? 'px-6' : 'px-2'
-      }`}>
+      <div className={`p-4 border-b border-gray-200 transition-all duration-300 relative ${isOpen ? 'px-6' : 'px-2'
+        }`}>
         {/* Close Button - Top Right (when open) */}
         {isOpen && onToggle && (
           <button
@@ -88,10 +116,9 @@ export function DashboardSidebar({
             <X className="w-5 h-5 text-gray-700 transition-opacity duration-300" />
           </button>
         )}
-        
-        <div className={`flex items-center transition-all duration-300 ${
-          isOpen ? 'justify-center' : 'justify-center'
-        }`}>
+
+        <div className={`flex items-center transition-all duration-300 ${isOpen ? 'justify-center' : 'justify-center'
+          }`}>
           {/* Hamburger/Menu Button - Show when closed */}
           {!isOpen && onToggle && (
             <button
@@ -102,7 +129,7 @@ export function DashboardSidebar({
               <Menu className="w-5 h-5 text-gray-700 transition-opacity duration-300" />
             </button>
           )}
-          
+
           {/* Logo - Only show when open */}
           {isOpen && (
             <div className="flex items-center justify-center" style={{ minHeight: '60px' }}>
@@ -141,29 +168,94 @@ export function DashboardSidebar({
       </div>
 
       {/* Navigation Menu */}
-      <nav className={`flex-1 p-4 space-y-2 transition-all duration-300 ${
-        isOpen ? 'px-4' : 'px-2'
-      }`}>
+      <nav className={`flex-1 p-4 space-y-2 transition-all duration-300 ${isOpen ? 'px-4' : 'px-2'
+        }`}>
         {menuItems.map((item) => {
           const Icon = iconMap[item.icon as keyof typeof iconMap];
           const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
           const isExclusive = item.exclusive && user.role !== "superadmin";
+          const isExpanded = expandedMenus.includes(item.id);
+          // Check if any child is active to highlight parent group
+          const hasActiveChild = item.subItems?.some(
+            (sub) => pathname === sub.path || pathname.startsWith(sub.path + '/')
+          );
 
           if (isExclusive) return null;
+
+          if (item.subItems) {
+            return (
+              <div key={item.id} className="space-y-1">
+                <Button
+                  variant={hasActiveChild ? "default" : "ghost"}
+                  onClick={() => toggleMenu(item.id)}
+                  className={`w-full h-10 relative transition-all duration-300 ${isOpen
+                      ? 'justify-between px-4'
+                      : 'justify-center px-0'
+                    } ${hasActiveChild && isOpen
+                      ? "bg-blue-600 hover:bg-blue-700 text-white"
+                      : "hover:bg-gray-100 text-gray-600"
+                    }`}
+                  title={!isOpen ? item.label : ''}
+                >
+                  <div className={`flex items-center ${!isOpen ? 'justify-center w-full' : ''}`}>
+                    <Icon className={`${isOpen ? 'w-4 h-4 mr-3' : 'w-5 h-5'}`} />
+                    {isOpen && <span>{item.label}</span>}
+                  </div>
+
+                  {isOpen && (
+                    <div className="flex items-center">
+                      {item.badge && item.badge > 0 && (
+                        <Badge className="mr-2 bg-blue-600 text-white text-xs h-5 min-w-5 px-1.5 flex items-center justify-center">
+                          {item.badge}
+                        </Badge>
+                      )}
+                      {isExpanded ? (
+                        <ChevronDown className="w-4 h-4 opacity-70" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 opacity-70" />
+                      )}
+                    </div>
+                  )}
+                </Button>
+
+                {isOpen && isExpanded && (
+                  <div className="pl-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                    {item.subItems.map((subItem) => {
+                      const SubIcon = iconMap[subItem.icon as keyof typeof iconMap];
+                      const isSubActive = pathname === subItem.path || pathname.startsWith(subItem.path + '/');
+
+                      return (
+                        <Link key={subItem.id} href={subItem.path} title={subItem.label}>
+                          <Button
+                            variant={isSubActive ? "secondary" : "ghost"}
+                            className={`w-full h-9 justify-start text-sm ${isSubActive
+                                ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                              }`}
+                          >
+                            <SubIcon className="w-4 h-4 mr-3 opacity-70" />
+                            <span>{subItem.label}</span>
+                          </Button>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
 
           return (
             <Link key={item.id} href={item.path} title={!isOpen ? item.label : ''}>
               <Button
                 variant={isActive ? "default" : "ghost"}
-                className={`w-full h-10 relative transition-all duration-300 ${
-                  isOpen 
-                    ? 'justify-start' 
+                className={`w-full h-10 relative transition-all duration-300 ${isOpen
+                    ? 'justify-start'
                     : 'justify-center px-0'
-                } ${
-                  isActive
+                  } ${isActive
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
                     : "hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 <Icon className={`${isOpen ? 'w-4 h-4 mr-3' : 'w-5 h-5'}`} />
                 {isOpen && (
@@ -183,15 +275,13 @@ export function DashboardSidebar({
       </nav>
 
       {/* Support & Logout */}
-      <div className={`p-4 border-t border-gray-200 space-y-2 transition-all duration-300 ${
-        isOpen ? 'px-4' : 'px-2'
-      }`}>
+      <div className={`p-4 border-t border-gray-200 space-y-2 transition-all duration-300 ${isOpen ? 'px-4' : 'px-2'
+        }`}>
         {onSupportClick && (
           <Button
             variant="ghost"
-            className={`w-full h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 ${
-              isOpen ? 'justify-start' : 'justify-center px-0'
-            }`}
+            className={`w-full h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 ${isOpen ? 'justify-start' : 'justify-center px-0'
+              }`}
             onClick={onSupportClick}
             title={!isOpen ? 'Support' : ''}
           >
@@ -201,9 +291,8 @@ export function DashboardSidebar({
         )}
         <Button
           variant="ghost"
-          className={`w-full h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 ${
-            isOpen ? 'justify-start' : 'justify-center px-0'
-          }`}
+          className={`w-full h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 ${isOpen ? 'justify-start' : 'justify-center px-0'
+            }`}
           onClick={onLogout}
           title={!isOpen ? 'Sign Out' : ''}
         >

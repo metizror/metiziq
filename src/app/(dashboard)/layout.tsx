@@ -202,11 +202,19 @@ export default function DashboardLayout({
     //   path: '/customers',
     //   ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
     // },
-    ...(role === 'superadmin' ? [{ id: 'users', label: 'Users', icon: 'UserCheck', path: '/users' }] : []),
     ...(role === 'admin' ? [{ id: 'sync-limits', label: 'Sync Limits', icon: 'RefreshCw', path: '/sync-limits' }] : []),
-    { id: 'import', label: 'Import Data', icon: 'Upload', path: '/import' },
-    { id: 'activity', label: 'Activity Logs', icon: 'Activity', path: '/activity' },
-    { id: 'settings', label: 'Settings', icon: 'Settings', path: '/settings' }
+    {
+      id: 'settings-group',
+      label: 'Settings',
+      icon: 'Settings',
+      path: '/settings',
+      subItems: [
+        ...(role === 'superadmin' ? [{ id: 'users', label: 'Users', icon: 'UserCheck', path: '/users' }] : []),
+        { id: 'import', label: 'Import Data', icon: 'Upload', path: '/import' },
+        { id: 'activity', label: 'Activity Logs', icon: 'Activity', path: '/activity' },
+        { id: 'settings', label: 'Settings', icon: 'Settings', path: '/settings' }
+      ]
+    }
   ];
 
   // Get active view from pathname
