@@ -121,8 +121,8 @@ const invoiceSchema = new mongoose.Schema<IInvoice>(
       transactionId: String,
       paymentDate: Date,
     },
-  downloadToken: {
-    type: String,
+    downloadToken: {
+      type: String,
     },
     filePath: {
       type: String,
@@ -174,7 +174,7 @@ invoiceSchema.pre("save", async function (next) {
 // Index for efficient queries
 invoiceSchema.index({ customerId: 1, createdAt: -1 });
 invoiceSchema.index({ paymentStatus: 1, createdAt: -1 });
-invoiceSchema.index({ invoiceNumber: 1 });
+// invoiceSchema.index({ invoiceNumber: 1 });
 
 const Invoice =
   mongoose.models.Invoice || mongoose.model<IInvoice>("Invoice", invoiceSchema);

@@ -442,7 +442,7 @@ export function ViewCompanyDetails({
   const dispatch = useAppDispatch();
   const { isDeleting } = useAppSelector((state) => state.companies);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState<any[]>([]);
   console.log("contacts", contacts);
   const [contactsCount, setContactsCount] = useState(0);
   const [isLoadingContacts, setIsLoadingContacts] = useState(false);
@@ -874,23 +874,23 @@ export function ViewCompanyDetails({
 
                   {/* Technology Stack - Light Yellow Card */}
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
-                  <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200 shadow-sm">
-                    <div className="text-xs text-yellow-700 font-medium mb-1">
-                      Business Model
+                    <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200 shadow-sm">
+                      <div className="text-xs text-yellow-700 font-medium mb-1">
+                        Business Model
+                      </div>
+                      <div className="text-base font-medium capitalize text-gray-900">
+                        {company.allDetails?.business_model || "-"}
+                      </div>
                     </div>
-                    <div className="text-base font-medium capitalize text-gray-900">
-                      {company.allDetails?.business_model || "-"}
-                    </div>
-                  </div>
 
-                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 shadow-sm">
-                    <div className="text-xs text-gray-500 mb-1">
-                      Company Email
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 shadow-sm">
+                      <div className="text-xs text-gray-500 mb-1">
+                        Company Email
+                      </div>
+                      <div className="text-base font-medium capitalize text-gray-900">
+                        {company.allDetails?.contact_email || "Not Available"}
+                      </div>
                     </div>
-                    <div className="text-base font-medium capitalize text-gray-900">
-                      {company.allDetails?.contact_email || "Not Available"}
-                    </div>
-                  </div>
                   </div>
                 </div>
 
@@ -902,55 +902,55 @@ export function ViewCompanyDetails({
 
                   {/* Address - Light Mint Green/Teal Card */}
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
-                  <div
-                    className="rounded-lg p-4 border border-emerald-200 shadow-sm"
-                    style={{ backgroundColor: "#E0F7F2" }}
-                  >
-                    <div className="flex items-start gap-3">
-                      <MapPin className="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <div className="text-xs text-emerald-700 font-medium mb-1">
-                          Address
-                        </div>
-                        <div className="text-sm text-gray-900 space-y-1">
-                          {company.allDetails?.address || "-"}
+                    <div
+                      className="rounded-lg p-4 border border-emerald-200 shadow-sm"
+                      style={{ backgroundColor: "#E0F7F2" }}
+                    >
+                      <div className="flex items-start gap-3">
+                        <MapPin className="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <div className="text-xs text-emerald-700 font-medium mb-1">
+                            Address
+                          </div>
+                          <div className="text-sm text-gray-900 space-y-1">
+                            {company.allDetails?.address || "-"}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Added/Updated Info - White Card */}
-                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 shadow-sm">
-                    <div className="text-xs text-gray-500 space-y-1">
-                      <div>
-                        Added by:{" "}
-                        <span className="font-medium text-gray-900">
-                          {(company as any).createdBy ||
-                            company.addedBy ||
-                            "Unknown"}
-                        </span>
-                        {company.addedByRole && (
-                          <span className="text-gray-600">
-                            {" "}
-                            ({company.addedByRole})
+                    {/* Added/Updated Info - White Card */}
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 shadow-sm">
+                      <div className="text-xs text-gray-500 space-y-1">
+                        <div>
+                          Added by:{" "}
+                          <span className="font-medium text-gray-900">
+                            {(company as any).createdBy ||
+                              company.addedBy ||
+                              "Unknown"}
                           </span>
-                        )}
-                      </div>
-                      <div>
-                        Added on:{" "}
-                        <span className="font-medium text-gray-900">
-                          {formatDate(company.createdAt)}
-                        </span>
-                      </div>
-                      <div>
-                        Updated:{" "}
-                        <span className="font-medium text-gray-900">
-                          {formatDate(company.updatedAt)}
-                        </span>
+                          {company.addedByRole && (
+                            <span className="text-gray-600">
+                              {" "}
+                              ({company.addedByRole})
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          Added on:{" "}
+                          <span className="font-medium text-gray-900">
+                            {formatDate(company.createdAt)}
+                          </span>
+                        </div>
+                        <div>
+                          Updated:{" "}
+                          <span className="font-medium text-gray-900">
+                            {formatDate(company.updatedAt)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
                 </div>
 
                 <div className="space-y-4">

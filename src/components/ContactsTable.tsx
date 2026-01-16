@@ -463,7 +463,7 @@ export function ContactsTable({
   // Handle company navigation
   const handleCompanyNavigation = async (contact: Contact) => {
     const companyName = contact.linkedInData?.extractedProfileData?.company_details?.company_name || contact.companyName;
-    
+
     if (!companyName || companyName === '-') {
       return;
     }
@@ -486,7 +486,7 @@ export function ContactsTable({
     // If not found, try to fetch from API
     try {
       toast.loading("Finding company...", { id: "company-search" });
-      
+
       let page = 1;
       const limit = 100;
       let companyFound = false;
@@ -1029,11 +1029,11 @@ export function ContactsTable({
       };
 
       // Create optimistic updated contact
-      const updatedContact: Contact = {
+      const updatedContact = {
         ...editingContact,
         ...payload,
         id: contactId,
-      };
+      } as Contact;
 
       // Optimistically update UI immediately
       startTransition(() => {
@@ -1231,7 +1231,7 @@ export function ContactsTable({
         const skippedMessages = skippedItems.map(item => {
           return item.message || `Please sync tomorrow for ${item.email || 'contact'}`;
         });
-        
+
         if (skippedItems.length === 1) {
           toast.warning(skippedMessages[0], { duration: 5000 });
         } else {
@@ -1279,7 +1279,7 @@ export function ContactsTable({
         }
         return;
       } else {
-      toast.error(error.message || 'Failed to sync LinkedIn data');
+        toast.error(error.message || 'Failed to sync LinkedIn data');
       }
     } finally {
       setIsSyncingLinkedIn(false);
@@ -1865,16 +1865,16 @@ export function ContactsTable({
             Contacts ({totalCount})
           </CardTitle>
           <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleSyncLinkedIn}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleSyncLinkedIn}
                 disabled={isSyncingLinkedIn || selectedContacts.length === 0 || (syncLimit && syncLimit.remainingSyncs === 0 && authUser?.role !== 'superadmin')}
-              className="flex items-center gap-2"
-            >
-              {isSyncingLinkedIn ? 'Syncing...' : 'Sync Data'}
-            </Button>
+                className="flex items-center gap-2"
+              >
+                {isSyncingLinkedIn ? 'Syncing...' : 'Sync Data'}
+              </Button>
               {authUser?.role !== 'superadmin' && syncLimit && (
                 <span className="text-xs text-gray-600">
                   {syncLimit.remainingSyncs === -1 ? 'Unlimited' : `${syncLimit.remainingSyncs} remaining`}
@@ -1988,14 +1988,14 @@ export function ContactsTable({
               </AlertDialogContent>
             </AlertDialog>
 
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               style={{ backgroundColor: user.role === 'superadmin' ? '#2563EB' : '#EB432F' }}
               onClick={() => router.push('/contacts/new')}
             >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Contact
-                  </Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Contact
+            </Button>
           </div>
         </div>
 

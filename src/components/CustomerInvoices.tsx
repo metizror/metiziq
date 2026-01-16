@@ -162,7 +162,7 @@ export default function CustomerInvoices() {
   const [error, setError] = useState(null as string | null);
   const [downloadingId, setDownloadingId] = useState(null as string | null);
   const fetchInProgressRef = useRef(false);
-  const debounceTimeoutRef = useRef(null);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchInvoices = useCallback(async (search: string = "", status: string = "all") => {
     // Prevent concurrent API calls

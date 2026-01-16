@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { connectToDatabase } from "../../../../../lib/db";
 import Invoice from "../../../../../models/invoice.model";
 import { sendMail } from "../../../../../services/email.service";
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
     const isVercelCron = request.headers.get("x-vercel-cron");
-    
+
     if (cronSecret && !isVercelCron) {
       if (authHeader !== `Bearer ${cronSecret}`) {
         return NextResponse.json(
@@ -26,8 +27,8 @@ export async function POST(request: NextRequest) {
     const now = new Date();
     const twoDaysFromNow = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
 
-    const startOfTwoDaysWindow = new Date(twoDaysFromNow.getTime() - 12 * 60 * 60 * 1000); 
-    const endOfTwoDaysWindow = new Date(twoDaysFromNow.getTime() + 12 * 60 * 60 * 1000); 
+    const startOfTwoDaysWindow = new Date(twoDaysFromNow.getTime() - 12 * 60 * 60 * 1000);
+    const endOfTwoDaysWindow = new Date(twoDaysFromNow.getTime() + 12 * 60 * 60 * 1000);
 
     const invoicesToRemind = await Invoice.find({
       paymentStatus: "completed",

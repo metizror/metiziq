@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 import { connectToDatabase } from "../../../../../lib/db";
 import { requireCustomerAuth } from "../../../../../services/jwt.service";
 import CustomerAuth from "@/models/customer_auth.model";

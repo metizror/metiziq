@@ -6,7 +6,7 @@ import { requireAdminAuth } from "../../../../services/jwt.service";
 import { createActivity } from "../../../../services/activity.service";
 
 // Increase timeout for large imports
-export const maxDuration = 300;
+// export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 const MAX_IMPORT_LIMIT = 10000;

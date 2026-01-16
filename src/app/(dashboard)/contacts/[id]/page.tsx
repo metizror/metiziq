@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ViewContactDetails } from "@/components/ViewContactDetails";
+import ContactChatBot from "@/components/ContactChatBot";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { getContacts } from "@/store/slices/contacts.slice";
 import { privateApiCall, privateApiDelete } from "@/lib/api";
@@ -19,7 +20,7 @@ export default function ContactDetailPage() {
   const { contacts: reduxContacts } = useAppSelector((state) => state.contacts);
   const dispatch = useAppDispatch();
   const [contact, setContact] = useState(null as Contact | null);
-  const [company, setCompany] = useState(null as Company | null);
+  const [company, setCompany] = useState<Company | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null as string | null);
 
@@ -202,7 +203,7 @@ export default function ContactDetailPage() {
           createdBy: contactData.createdBy || contactData.addedBy || undefined,
           addedDate: contactData.addedDate || (contactData as any).createdAt || '',
           updatedDate: contactData.updatedDate || (contactData as any).updatedAt || '',
-          companyName: contactData.companyName || '', 
+          companyName: contactData.companyName || '',
           employeeSize: contactData.employeeSize || '',
           revenue: contactData.revenue || '',
           companyId: contactData.companyId || (contactData as any)?._companyId || (contactData as any)?.company?._id?.toString() || (contactData as any)?.company?.id || undefined,
@@ -346,17 +347,26 @@ export default function ContactDetailPage() {
   }
 
   return (
-    <ViewContactDetails
-      contact={contact}
-      user={dashboardUser}
-      onBack={handleBack}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-      onExport={handleExport}
-      companyName={contact.companyName}
-      company={company}
-      onContactUpdated={handleContactUpdated}
-    />
+    <>
+      <ViewContactDetails
+        contact={contact}
+        user={dashboardUser}
+        onBack={handleBack}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onExport={handleExport}
+        companyName={contact.companyName}
+        company={company}
+        onContactUpdated={handleContactUpdated}
+      />
+      <ContactChatBot
+        key={contact.id}
+        contactId={contact.id}
+        userId={dashboardUser.id}
+        userName={dashboardUser.name}
+        userEmail={dashboardUser.email}
+      />
+    </>
   );
 }
 

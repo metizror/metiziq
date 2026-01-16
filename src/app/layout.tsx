@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Contact Management System',
-  description: 'aMFAccess - Contact Management System',
+  description: 'MetizIQ - Contact Management System',
 };
 
 import '../styles/globals.css';

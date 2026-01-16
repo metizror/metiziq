@@ -74,7 +74,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
     limitFilter: '',
     excludeEmailsFile: null as string | null, // base64 string
   });
-  const [excludeEmailsFileName, setExcludeEmailsFileName] = useState(null);
+  const [excludeEmailsFileName, setExcludeEmailsFileName] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(10);
   const [showFilters, setShowFilters] = useState(true);
@@ -268,7 +268,7 @@ export default function CustomerSearchCompanies({ isPaid, setActiveTab }: Custom
     // Convert file to base64 if a new file was selected
     let excludeEmailsFileBase64: string | null = appliedFilters.excludeEmailsFile;
 
-    if (filters.excludeEmailsFile && filters.excludeEmailsFile !== appliedFilters.excludeEmailsFile) {
+    if (filters.excludeEmailsFile && !appliedFilters.excludeEmailsFile) {
       // New file selected, convert to base64
       const reader = new FileReader();
       reader.onload = (e) => {

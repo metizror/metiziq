@@ -3,6 +3,8 @@ import { connectToDatabase } from "@/lib/db";
 import customerAuthModel from "@/models/customer_auth.model";
 import { sendMail } from "@/services/email.service";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();
@@ -167,21 +169,18 @@ export async function GET(request: NextRequest) {
                       <table role="presentation" style="width:100%;border-collapse:collapse;">
                         <tr>
                           <td style="padding:10px 0;font-size:15px;color:#374151;width:160px;font-weight:600;">Name</td>
-                          <td style="padding:10px 0;font-size:15px;color:#111827;">${
-                            customer.firstName
-                          } ${customer.lastName}</td>
+                          <td style="padding:10px 0;font-size:15px;color:#111827;">${customer.firstName
+      } ${customer.lastName}</td>
                         </tr>
                         <tr>
                           <td style="padding:10px 0;font-size:15px;color:#374151;width:160px;font-weight:600;">Email</td>
-                          <td style="padding:10px 0;font-size:15px;color:#111827;">${
-                            customer.email
-                          }</td>
+                          <td style="padding:10px 0;font-size:15px;color:#111827;">${customer.email
+      }</td>
                         </tr>
                         <tr>
                           <td style="padding:10px 0;font-size:15px;color:#374151;width:160px;font-weight:600;">Company</td>
-                          <td style="padding:10px 0;font-size:15px;color:#111827;">${
-                            customer.companyName || "—"
-                          }</td>
+                          <td style="padding:10px 0;font-size:15px;color:#111827;">${customer.companyName || "—"
+      }</td>
                         </tr>
                         <tr>
                           <td style="padding:10px 0;font-size:15px;color:#374151;width:160px;font-weight:600;">Signup Time</td>

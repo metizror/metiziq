@@ -69,7 +69,7 @@ export default function CustomerDownloads() {
   const [deletingId, setDeletingId] = useState(null as string | null);
   const [downloadingId, setDownloadingId] = useState(null as string | null);
   const fetchInProgressRef = useRef(false);
-  const debounceTimeoutRef = useRef(null);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchDownloads = useCallback(async (search: string = '') => {
     // Prevent concurrent API calls

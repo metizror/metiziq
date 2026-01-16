@@ -3,6 +3,8 @@ import { requireAdminAuth } from "../../../../services/jwt.service";
 import { connectToDatabase } from "../../../../lib/db";
 import Activity from "../../../../models/activity.model";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const auth = await requireAdminAuth(request);
   if (auth.error) return auth.error;

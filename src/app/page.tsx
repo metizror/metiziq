@@ -42,8 +42,8 @@ export interface Contact {
   contactLinkedIn: string;
   amfNotes: string;
   lastUpdateDate: string;
-  addedBy: string;
-  addedByRole: string;
+  addedBy?: string;
+  addedByRole?: string;
   addedDate: string;
   updatedDate: string;
   // Required Company Fields
@@ -70,8 +70,8 @@ export interface Company {
   companyLinkedInUrl?: string;
   amfNotes: string;
   lastUpdateDate: string;
-  addedBy: string;
-  addedByRole: string;
+  addedBy?: string;
+  addedByRole?: string;
   addedDate: string;
   updatedDate: string;
 }
@@ -79,9 +79,9 @@ export interface Company {
 export interface ActivityLog {
   id: string;
   action: string;
-  details: string;
-  user: string;
-  role: string;
+  details?: string;
+  user?: string;
+  role?: string;
   timestamp: string;
 }
 
@@ -165,8 +165,8 @@ export default function Page() {
   if (!isAuthenticated) {
     return (
       <>
-        <LoginPage 
-          onLogin={handleLogin} 
+        <LoginPage
+          onLogin={handleLogin}
           onCreateApprovalRequest={(request) => {
             const approvalRequest: ApprovalRequest = {
               id: Date.now().toString(),
@@ -184,7 +184,7 @@ export default function Page() {
       </>
     );
   }
-  
+
   // Legacy code path - should only be reached if currentUser is set but Redux auth is not
   // This is kept for backward compatibility but authenticated users should be redirected above
   if (!currentUser) {

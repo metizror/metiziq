@@ -162,7 +162,7 @@ export default function DashboardPage() {
       }
     } else {
       // Not navigating, use cached data if valid
-      if (cacheValid && hasFetchedDashboard.current) {
+      if (cacheValid && hasFetchedDashboard.current && dashboardDataCache.current) {
         setContactsCount(dashboardDataCache.current.contactsCount);
         setCompaniesCount(dashboardDataCache.current.companiesCount);
         setAdminUsersCount(dashboardDataCache.current.adminUsersCount);

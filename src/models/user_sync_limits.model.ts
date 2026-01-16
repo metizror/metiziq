@@ -38,13 +38,13 @@ const userSyncLimitsSchema = new mongoose.Schema(
 );
 
 // Index for faster lookups
-userSyncLimitsSchema.index({ userId: 1 });
+// userSyncLimitsSchema.index({ userId: 1 });
 
 // Method to reset monthly count if it's a new month
 userSyncLimitsSchema.methods.checkAndResetMonthlyCount = function () {
   const now = new Date();
   const lastReset = new Date(this.lastResetDate);
-  
+
   // Check if it's a new month
   if (
     now.getFullYear() > lastReset.getFullYear() ||

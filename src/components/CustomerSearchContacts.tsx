@@ -119,7 +119,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
     limitFilter: '',
     excludeEmailsFile: null as string | null, // base64 string
   });
-  const [excludeEmailsFileName, setExcludeEmailsFileName] = useState(null);
+  const [excludeEmailsFileName, setExcludeEmailsFileName] = useState<string | null>(null);
 
   // Filter options
   const employeeSizes = [
@@ -366,7 +366,7 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
     // Convert file to base64 if a new file was selected
     let excludeEmailsFileBase64: string | null = appliedFilters.excludeEmailsFile;
 
-    if (filters.excludeEmailsFile && filters.excludeEmailsFile !== appliedFilters.excludeEmailsFile) {
+    if (filters.excludeEmailsFile && !appliedFilters.excludeEmailsFile) {
       // New file selected, convert to base64
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -466,6 +466,8 @@ export default function CustomerSearchContacts({ isPaid, setActiveTab }: Custome
     jobRole: '',
     jobLevel: '',
     employeeSize: '',
+    revenue: '',
+    technology: '',
   }));
 
   // Memoize visible contacts to prevent unnecessary recalculations

@@ -13,7 +13,7 @@ const countrySchema = new mongoose.Schema<ICountry>(
       required: [true, "Country name is required"],
       unique: true,
       trim: true,
-      index: true,
+
     },
     isActive: {
       type: Boolean,
@@ -26,7 +26,7 @@ const countrySchema = new mongoose.Schema<ICountry>(
 );
 
 // Create index for faster queries
-countrySchema.index({ name: 1 });
+// countrySchema.index({ name: 1 });
 countrySchema.index({ isActive: 1 });
 
 const Country =

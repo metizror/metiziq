@@ -147,6 +147,7 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
     setNewUser({
       email: user.email,
       name: user.name,
+      password: '', // Password is not editable, set to empty string
       role: 'admin', // Always set to admin, cannot be changed
       isActive: (user as any).isActive !== undefined ? (user as any).isActive : true
     });
@@ -361,164 +362,164 @@ export function UsersTable({ users, setUsers }: UsersTableProps) {
                     filteredUsers.map((user) => {
                       const syncLimit = getSyncLimitForUser(user.id);
                       const remainingSyncs = Math.max(0, syncLimit.monthlyLimit - syncLimit.currentMonthCount);
-                      
+
                       return (
                         <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.name}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={user.role === 'superadmin' ? 'default' : 'secondary'}
-                            className="flex items-center space-x-1 w-fit"
-                          >
+                          <TableCell className="font-medium">{user.name}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={user.role === 'superadmin' ? 'default' : 'secondary'}
+                              className="flex items-center space-x-1 w-fit"
+                            >
+                              {user.role === 'superadmin' ? (
+                                <Shield className="w-3 h-3" />
+                              ) : (
+                                <Users className="w-3 h-3" />
+                              )}
+                              <span>{user.role === 'superadmin' ? 'Owner' : 'Admin'}</span>
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className={(user as any).isActive === false
+                                ? "text-red-600 border-red-200"
+                                : "text-green-600 border-green-200"
+                              }
+                            >
+                              {(user as any).isActive === false ? 'Inactive' : 'Active'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
                             {user.role === 'superadmin' ? (
-                              <Shield className="w-3 h-3" />
+                              <span className="text-gray-400">Unlimited</span>
                             ) : (
-                              <Users className="w-3 h-3" />
+                              <div className="flex items-center gap-2">
+                                <span>{syncLimit.monthlyLimit || 0}</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setEditingLimit({ userId: user.id, userName: user.name, monthlyLimit: syncLimit.monthlyLimit || 0 })}
+                                  className="h-6 w-6 p-0"
+                                >
+                                  <Edit className="w-3 h-3" />
+                                </Button>
+                              </div>
                             )}
-                            <span>{user.role === 'superadmin' ? 'Owner' : 'Admin'}</span>
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={(user as any).isActive === false
-                              ? "text-red-600 border-red-200"
-                              : "text-green-600 border-green-200"
-                            }
-                          >
-                            {(user as any).isActive === false ? 'Inactive' : 'Active'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {user.role === 'superadmin' ? (
-                            <span className="text-gray-400">Unlimited</span>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span>{syncLimit.monthlyLimit || 0}</span>
+                          </TableCell>
+                          <TableCell>
+                            {user.role === 'superadmin' ? (
+                              <span className="text-gray-400">-</span>
+                            ) : (
+                              <span className={syncLimit.currentMonthCount >= syncLimit.monthlyLimit ? 'text-red-600 font-medium' : ''}>
+                                {syncLimit.currentMonthCount || 0}
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {user.role === 'superadmin' ? (
+                              <span className="text-gray-400">-</span>
+                            ) : (
+                              <span className={remainingSyncs === 0 ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}>
+                                {remainingSyncs}
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
                               <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="sm"
-                                onClick={() => setEditingLimit({ userId: user.id, userName: user.name, monthlyLimit: syncLimit.monthlyLimit || 0 })}
-                                className="h-6 w-6 p-0"
+                                onClick={() => handleEditUser(user)}
                               >
                                 <Edit className="w-3 h-3" />
                               </Button>
+                              <Dialog open={editingUser?.id === user.id} onOpenChange={(open: boolean) => {
+                                if (!open) {
+                                  setEditingUser(null);
+                                  setNewUser({
+                                    email: '',
+                                    name: '',
+                                    password: '',
+                                    role: 'admin',
+                                    isActive: true
+                                  });
+                                }
+                              }}>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Edit User</DialogTitle>
+                                    <DialogDescription>Update the user information below.</DialogDescription>
+                                  </DialogHeader>
+                                  <div className="space-y-4">
+                                    <div className="space-y-2">
+                                      <Label htmlFor="edit-email">Email</Label>
+                                      <Input
+                                        id="edit-email"
+                                        type="email"
+                                        value={newUser.email}
+                                        disabled
+                                        className="bg-gray-100 cursor-not-allowed"
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor="edit-name">Name *</Label>
+                                      <Input
+                                        id="edit-name"
+                                        value={newUser.name}
+                                        onChange={(e: any) => setNewUser({ ...newUser, name: e.target.value })}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Role</Label>
+                                      <Select value="admin" disabled>
+                                        <SelectTrigger>
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="admin">Admin</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Status</Label>
+                                      <Select
+                                        value={newUser.isActive ? 'true' : 'false'}
+                                        onValueChange={(value: string) => setNewUser({ ...newUser, isActive: value === 'true' })}
+                                      >
+                                        <SelectTrigger>
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="true">Active</SelectItem>
+                                          <SelectItem value="false">Inactive</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-end space-x-2 mt-6">
+                                    <Button variant="outline" onClick={() => setEditingUser(null)} disabled={isUpdating}>
+                                      Cancel
+                                    </Button>
+                                    <Button onClick={handleUpdateUser} style={{ backgroundColor: '#2563EB' }} disabled={isUpdating}>
+                                      {isUpdating ? 'Updating...' : 'Update User'}
+                                    </Button>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDeleteClick(user)}
+                                className="text-red-600 hover:text-red-700"
+                                disabled={isDeleting}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
                             </div>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {user.role === 'superadmin' ? (
-                            <span className="text-gray-400">-</span>
-                          ) : (
-                            <span className={syncLimit.currentMonthCount >= syncLimit.monthlyLimit ? 'text-red-600 font-medium' : ''}>
-                              {syncLimit.currentMonthCount || 0}
-                            </span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {user.role === 'superadmin' ? (
-                            <span className="text-gray-400">-</span>
-                          ) : (
-                            <span className={remainingSyncs === 0 ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}>
-                              {remainingSyncs}
-                            </span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEditUser(user)}
-                            >
-                              <Edit className="w-3 h-3" />
-                            </Button>
-                            <Dialog open={editingUser?.id === user.id} onOpenChange={(open: boolean) => {
-                              if (!open) {
-                                setEditingUser(null);
-                                setNewUser({
-                                  email: '',
-                                  name: '',
-                                  password: '',
-                                  role: 'admin',
-                                  isActive: true
-                                });
-                              }
-                            }}>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Edit User</DialogTitle>
-                                  <DialogDescription>Update the user information below.</DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                  <div className="space-y-2">
-                                    <Label htmlFor="edit-email">Email</Label>
-                                    <Input
-                                      id="edit-email"
-                                      type="email"
-                                      value={newUser.email}
-                                      disabled
-                                      className="bg-gray-100 cursor-not-allowed"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor="edit-name">Name *</Label>
-                                    <Input
-                                      id="edit-name"
-                                      value={newUser.name}
-                                      onChange={(e: any) => setNewUser({ ...newUser, name: e.target.value })}
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Role</Label>
-                                    <Select value="admin" disabled>
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="admin">Admin</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label>Status</Label>
-                                    <Select
-                                      value={newUser.isActive ? 'true' : 'false'}
-                                      onValueChange={(value: string) => setNewUser({ ...newUser, isActive: value === 'true' })}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="true">Active</SelectItem>
-                                        <SelectItem value="false">Inactive</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                </div>
-                                <div className="flex justify-end space-x-2 mt-6">
-                                  <Button variant="outline" onClick={() => setEditingUser(null)} disabled={isUpdating}>
-                                    Cancel
-                                  </Button>
-                                  <Button onClick={handleUpdateUser} style={{ backgroundColor: '#2563EB' }} disabled={isUpdating}>
-                                    {isUpdating ? 'Updating...' : 'Update User'}
-                                  </Button>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDeleteClick(user)}
-                              className="text-red-600 hover:text-red-700"
-                              disabled={isDeleting}
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
+                          </TableCell>
+                        </TableRow>
                       );
                     })
                   )}
