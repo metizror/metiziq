@@ -362,6 +362,7 @@ export default function ContactDetailPage() {
       <ContactChatBot
         key={contact.id}
         contactId={contact.id}
+        contactName={contact.firstName + ' ' + contact.lastName}
         userId={dashboardUser.id}
         userName={dashboardUser.name}
         userEmail={dashboardUser.email}

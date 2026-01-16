@@ -1,11 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import "@n8n/chat/style.css";
 import { createChat } from "@n8n/chat";
 
-export const ContactChatBot = ({ contactId, userId, userName, userEmail }: { contactId: string; userId: string; userName: string; userEmail: string }) => {
+export const ContactChatBot = ({ contactId, contactName, userId, userName, userEmail }: { contactId: string; contactName: string; userId: string; userName: string; userEmail: string }) => {
     const chatContainerRef = useRef<HTMLDivElement>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         if (!chatContainerRef.current) return;
@@ -70,11 +76,16 @@ export const ContactChatBot = ({ contactId, userId, userName, userEmail }: { con
             mode: 'window',
             enableStreaming: true,
             chatSessionKey: 'sessionId',
-            loadPreviousSession: false, // Disable to prevent session conflicts
+            loadPreviousSession: true, // Disable to prevent session conflicts
+            showWelcomeScreen: true,
+            initialMessages: [
+                'Hi ' + userName + '! 👋',
+                'My name is MetizIQ. How can I assist you today?'
+            ],
             i18n: {
                 en: {
                     title: 'MetizIQ Assistant',
-                    subtitle: 'How can I help you with this contact?',
+                    subtitle: 'How can I help you with ' + contactName + ' contact?',
                     getStarted: 'Start Chat',
                     inputPlaceholder: 'Type your message...',
                     footer: '',
@@ -108,7 +119,12 @@ export const ContactChatBot = ({ contactId, userId, userName, userEmail }: { con
             }
             .n8n-chat-widget {
                 font-family: 'Poppins', sans-serif !important;
+                position: fixed !important;
+                bottom: 24px !important;
+                right: 24px !important;
+                z-index: 99999 !important;
             }
+
         `;
         document.head.appendChild(style);
 
@@ -172,9 +188,14 @@ export const ContactChatBot = ({ contactId, userId, userName, userEmail }: { con
             }
             observer.disconnect();
         };
-    }, [contactId, userId, userName, userEmail]);
+    }, [contactId, userId, userName, userEmail, mounted]);
 
-    return <div ref={chatContainerRef} className="n8n-chat-container" />;
+    if (!mounted) return null;
+
+    return createPortal(
+        <div ref={chatContainerRef} className="n8n-chat-container" style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 99999 }} />,
+        document.body
+    );
 };
 
 export default ContactChatBot;
