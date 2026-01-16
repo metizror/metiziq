@@ -202,13 +202,14 @@ export default function DashboardLayout({
     //   path: '/customers',
     //   ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
     // },
-    ...(role === 'admin' ? [{ id: 'sync-limits', label: 'Sync Limits', icon: 'RefreshCw', path: '/sync-limits' }] : []),
+
     {
       id: 'settings-group',
       label: 'Settings',
       icon: 'Settings',
       path: '/settings',
       subItems: [
+        ...(role === 'admin' ? [{ id: 'sync-limits', label: 'Sync Limits', icon: 'RefreshCw', path: '/sync-limits' }] : []),
         ...(role === 'superadmin' ? [{ id: 'users', label: 'Users', icon: 'UserCheck', path: '/users' }] : []),
         { id: 'import', label: 'Import Data', icon: 'Upload', path: '/import' },
         { id: 'activity', label: 'Activity Logs', icon: 'Activity', path: '/activity' },
