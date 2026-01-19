@@ -164,7 +164,7 @@ export default function LinkedInJobsPage() {
                                 <Label htmlFor="limit">Limit</Label>
                                 <Select
                                     value={formData.limit}
-                                    onValueChange={(val) => handleSelectChange("limit", val)}
+                                    onValueChange={(val: string) => handleSelectChange("limit", val)}
                                 >
                                     <SelectTrigger id="limit">
                                         <SelectValue placeholder="Select limit" />
@@ -197,7 +197,7 @@ export default function LinkedInJobsPage() {
                                 <Label htmlFor="order">Order</Label>
                                 <Select
                                     value={formData.order}
-                                    onValueChange={(val) => handleSelectChange("order", val)}
+                                    onValueChange={(val: string) => handleSelectChange("order", val)}
                                 >
                                     <SelectTrigger id="order">
                                         <SelectValue placeholder="Select order" />
