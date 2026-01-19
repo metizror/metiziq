@@ -202,6 +202,7 @@ export default function DashboardLayout({
     //   path: '/customers',
     //   ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
     // },
+    { id: 'linkedin-jobs', label: 'LinkedIn Jobs', icon: 'Briefcase', path: '/linkedin-jobs' },
 
     {
       id: 'settings-group',
@@ -228,17 +229,19 @@ export default function DashboardLayout({
     if (pathname.startsWith('/sync-limits')) return 'sync-limits';
     if (pathname.startsWith('/import')) return 'import';
     if (pathname.startsWith('/activity')) return 'activity';
+    if (pathname.startsWith('/linkedin-jobs')) return 'linkedin-jobs';
     if (pathname.startsWith('/settings')) return 'settings';
     return 'dashboard';
   };
-
   const activeView = getActiveView();
   const showFilterButton = activeView === 'contacts' || activeView === 'companies';
   const pageTitle = pathname === '/dashboard'
     ? (role === 'superadmin' ? 'Owner Dashboard' : role === 'admin' ? 'Admin Dashboard' : 'Customer Dashboard')
     : activeView === 'customers'
       ? 'Customers'
-      : activeView.charAt(0).toUpperCase() + activeView.slice(1).replace('-', ' ');
+      : activeView === 'linkedin-jobs'
+        ? 'LinkedIn Jobs'
+        : activeView.charAt(0).toUpperCase() + activeView.slice(1).replace('-', ' ');
 
   return (
     <div className="flex h-screen bg-background">

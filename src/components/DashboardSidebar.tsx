@@ -20,6 +20,7 @@ import {
   X,
   ChevronDown,
   ChevronRight,
+  Briefcase,
 } from "lucide-react";
 import { UserObject } from "@/types/auth.types";
 import Image from "next/image";
@@ -57,6 +58,7 @@ const iconMap = {
   MessageCircle,
   CheckCircle2,
   RefreshCw,
+  Briefcase,
 };
 
 export function DashboardSidebar({
@@ -189,8 +191,8 @@ export function DashboardSidebar({
                   variant={hasActiveChild ? "default" : "ghost"}
                   onClick={() => toggleMenu(item.id)}
                   className={`w-full h-10 relative transition-all duration-300 ${isOpen
-                      ? 'justify-between px-4'
-                      : 'justify-center px-0'
+                    ? 'justify-between px-4'
+                    : 'justify-center px-0'
                     } ${hasActiveChild && isOpen
                       ? "bg-blue-600 hover:bg-blue-700 text-white"
                       : "hover:bg-gray-100 text-gray-600"
@@ -229,8 +231,8 @@ export function DashboardSidebar({
                           <Button
                             variant={isSubActive ? "secondary" : "ghost"}
                             className={`w-full h-9 justify-start text-sm ${isSubActive
-                                ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
-                                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                              ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                               }`}
                           >
                             <SubIcon className="w-4 h-4 mr-3 opacity-70" />
@@ -250,8 +252,8 @@ export function DashboardSidebar({
               <Button
                 variant={isActive ? "default" : "ghost"}
                 className={`w-full h-10 relative transition-all duration-300 ${isOpen
-                    ? 'justify-start'
-                    : 'justify-center px-0'
+                  ? 'justify-start'
+                  : 'justify-center px-0'
                   } ${isActive
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
                     : "hover:bg-gray-100"
