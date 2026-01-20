@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,8 +14,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
-import { Loader2, Send, ChevronDown, X } from "lucide-react";
+import { Loader2, Send, ChevronDown, X, Check, ChevronsUpDown, Info } from "lucide-react";
 
 export default function LinkedInJobsPage() {
     const [loading, setLoading] = useState(false);
@@ -23,7 +25,7 @@ export default function LinkedInJobsPage() {
         limit: "10",
         offset: 0,
         title_filter: "",
-        location_filter: "",
+        location_filter: [] as string[],
         description_filter: "",
         organization_description_filter: "",
         organization_specialties_filter: "",
@@ -54,6 +56,12 @@ export default function LinkedInJobsPage() {
         organization_filter: "",
         description_type: "text",
     });
+
+    const [otherLocationText, setOtherLocationText] = useState("");
+
+    const isOtherLocationSelected = useMemo(() => {
+        return (formData.location_filter as string[]).includes("Other");
+    }, [formData.location_filter]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value, type } = e.target;
@@ -89,6 +97,28 @@ export default function LinkedInJobsPage() {
         });
     };
 
+    const handleLocationFilterChange = (value: string, checked: boolean) => {
+        setFormData((prev) => {
+            const currentLocations = prev.location_filter as string[];
+            if (checked) {
+                // Prevent duplicates
+                if (!currentLocations.includes(value)) {
+                    return { ...prev, location_filter: [...currentLocations, value] };
+                }
+                return prev;
+            } else {
+                return { ...prev, location_filter: currentLocations.filter((l) => l !== value) };
+            }
+        });
+    };
+
+    const removeLocationFilter = (value: string) => {
+        setFormData((prev) => {
+            const currentLocations = prev.location_filter as string[];
+            return { ...prev, location_filter: currentLocations.filter((l) => l !== value) };
+        });
+    };
+
     const handleSwitchChange = (checked: boolean) => {
         setFormData((prev) => ({ ...prev, include_ai: checked }));
     };
@@ -109,6 +139,19 @@ export default function LinkedInJobsPage() {
                     // If empty, default to FULL_TIME
                     const typesToSend = value.length > 0 ? value : ["FULL_TIME"];
                     payload.append(key, typesToSend.join(","));
+                } else if (key === "location_filter" && Array.isArray(value)) {
+                    // Convert array to OR-separated string for location filter
+                    const selected = value as string[];
+                    const cleanedSelected = selected.filter((v) => v !== "Other");
+
+                    const cleanedOther = otherLocationText
+                        .split(/\s+OR\s+/i)
+                        .map((s) => s.trim())
+                        .filter(Boolean);
+
+                    const merged = [...cleanedSelected, ...cleanedOther];
+
+                    payload.append(key, merged.length > 0 ? merged.join(" OR ") : "");
                 } else if (value === "") {
                     payload.append(key, "");
                 } else if (value === null || value === undefined) {
@@ -176,9 +219,9 @@ export default function LinkedInJobsPage() {
 
     return (
 
-        <div className="flex gap-6 p-6 h-screen overflow-hidden">
-            {/* Left Section - 40% */}
-            <div className="w-[40%] overflow-y-auto flex-shrink-0">
+        <div className="flex gap-6 p-6 h-screen w-full min-w-0 overflow-hidden">
+            {/* Left Section - 40% (locked) */}
+            <div className="flex-[0_0_40%] max-w-[40%] min-w-0 overflow-y-auto">
                 <Card className="shadow-lg border-2 border-gray-200 rounded-lg w-full">
                     <CardHeader>
                         <CardTitle>LinkedIn Job Search</CardTitle>
@@ -200,16 +243,157 @@ export default function LinkedInJobsPage() {
                                     />
                                 </div>
 
-                                {/* Location Filter */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="location_filter">Location Filter</Label>
-                                    <Input
-                                        id="location_filter"
-                                        placeholder="e.g. United States OR Dubai"
-                                        value={formData.location_filter}
-                                        onChange={handleInputChange}
-                                    />
-                                    <span className="text-xs text-gray-500">Please do not search on abbreviations like US, UK, NYC</span>
+                                {/* Location Filter - Searchable Multi Select */}
+                                <div className="space-y-2 w-full min-w-0">
+                                    <div className="flex items-center gap-2">
+                                        <Label htmlFor="location_filter">Location Filter</Label>
+                                    </div>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                className="w-full justify-between h-9 min-w-0"
+                                                id="location_filter"
+                                            >
+                                                <span className="truncate text-left flex-1 min-w-0 mr-2">
+                                                    {(() => {
+                                                        const selectedLocations = formData.location_filter as string[];
+                                                        if (selectedLocations.length === 0) {
+                                                            return "Select locations";
+                                                        } else if (selectedLocations.length === 1) {
+                                                            return selectedLocations[0];
+                                                        } else if (selectedLocations.length === 2) {
+                                                            return selectedLocations.join(", ");
+                                                        } else {
+                                                            return `${selectedLocations.length} locations selected`;
+                                                        }
+                                                    })()}
+                                                </span>
+                                                <ChevronDown className="h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                                            <Command className="max-h-[320px]">
+                                                <CommandInput placeholder="Search locations..." />
+                                                <CommandList className="h-[200px] overflow-y-auto" style={{ maxHeight: '200px' }}>
+                                                    <CommandEmpty>No location found.</CommandEmpty>
+                                                    <CommandGroup>
+                                                        {[
+                                                            "Other",
+                                                            "United States",
+                                                            "India",
+                                                            "China",
+                                                            "United Kingdom",
+                                                            "Germany",
+                                                            "Canada",
+                                                            "Japan",
+                                                            "South Korea",
+                                                            "Australia",
+                                                            "France",
+                                                            "Netherlands",
+                                                            "Sweden",
+                                                            "Switzerland",
+                                                            "Ireland",
+                                                            "Singapore",
+                                                            "Israel",
+                                                            "Brazil",
+                                                            "Mexico",
+                                                            "Spain",
+                                                            "Italy",
+                                                            "Poland",
+                                                            "Ukraine",
+                                                            "Romania",
+                                                            "Czech Republic",
+                                                            "Estonia",
+                                                            "Finland",
+                                                            "Denmark",
+                                                            "Norway",
+                                                            "Belgium",
+                                                            "Austria",
+                                                            "Portugal",
+                                                            "Hungary",
+                                                            "Turkey",
+                                                            "United Arab Emirates",
+                                                            "Saudi Arabia",
+                                                            "Qatar",
+                                                            "South Africa",
+                                                            "Nigeria",
+                                                            "Kenya",
+                                                            "Egypt",
+                                                            "Indonesia",
+                                                            "Malaysia",
+                                                            "Thailand",
+                                                            "Vietnam",
+                                                            "Philippines",
+                                                            "Taiwan",
+                                                            "New Zealand",
+                                                            "Argentina",
+                                                        ].map((location) => {
+                                                            const isChecked = (formData.location_filter as string[]).includes(location);
+                                                            return (
+                                                                <CommandItem
+                                                                    key={location}
+                                                                    onSelect={() => handleLocationFilterChange(location, !isChecked)}
+                                                                    className="cursor-pointer"
+                                                                >
+                                                                    <Checkbox
+                                                                        checked={isChecked}
+                                                                        onCheckedChange={(checked: boolean) =>
+                                                                            handleLocationFilterChange(location, checked)
+                                                                        }
+                                                                        className="mr-2"
+                                                                    />
+                                                                    <span>{location}</span>
+                                                                    {isChecked && (
+                                                                        <Check className="ml-auto h-4 w-4 text-primary" />
+                                                                    )}
+                                                                </CommandItem>
+                                                            );
+                                                        })}
+                                                    </CommandGroup>
+                                                </CommandList>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
+
+                                    {isOtherLocationSelected && (
+                                        <div className="space-y-1">
+                                            <Input
+                                                id="other_location_filter"
+                                                placeholder="e.g. Dubai OR Netherlands OR Belgium"
+                                                value={otherLocationText}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOtherLocationText(e.target.value)}
+                                            />
+                                            <p className="text-xs text-muted-foreground">
+                                                Use full names (avoid US/UK/NYC). Multiple locations supported with{" "}
+                                                <span className="font-mono font-semibold">OR</span>.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* Selected locations chips */}
+                                    {(formData.location_filter as string[]).length > 0 && (
+                                        <div className="mt-2 flex flex-wrap gap-2 max-h-[80px] overflow-y-auto">
+                                            {Array.from(new Set(formData.location_filter as string[])).map((loc, index) => (
+                                                <span
+                                                    key={`${loc}-${index}`}
+                                                    className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-md border border-primary/20 hover:bg-primary/20 transition-colors "
+                                                    title={loc}
+                                                >
+                                                    <span className="max-w-[120px] truncate">{loc}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeLocationFilter(loc)}
+                                                        className="hover:text-destructive transition-colors flex-shrink-0 hover:scale-110"
+                                                        aria-label={`Remove ${loc}`}
+                                                    >
+                                                        <X className="h-3 w-3" />
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Type Filter - Multi Select */}
@@ -289,7 +473,7 @@ export default function LinkedInJobsPage() {
                                     </Popover>
                                     {/* Display selected types as chips - Show below when 3+ selected */}
                                     {(formData.type_filter as string[]).length >= 3 && (
-                                        <div className="w-full grid grid-cols-3 gap-2 mt-2 auto-rows-min">
+                                        <div className="flex flex-wrap gap-2 mt-2">
                                             {Array.from(new Set(formData.type_filter as string[])).map((val, index) => {
                                                 const labels: Record<string, string> = {
                                                     FULL_TIME: "Full Time",
@@ -303,13 +487,14 @@ export default function LinkedInJobsPage() {
                                                 return (
                                                     <span
                                                         key={`${val}-${index}`}
-                                                        className="inline-flex items-center justify-between gap-1 px-2 py-1 text-xs bg-accent text-accent-foreground rounded-md border border-border whitespace-nowrap w-full"
+                                                        className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium bg-secondary/80 text-secondary-foreground rounded-md border border-border hover:bg-secondary transition-colors"
+                                                        title={labels[val] || val}
                                                     >
-                                                        <span className="truncate">{labels[val] || val}</span>
+                                                        <span className="whitespace-nowrap">{labels[val] || val}</span>
                                                         <button
                                                             type="button"
                                                             onClick={() => removeTypeFilter(val)}
-                                                            className="hover:text-destructive transition-colors flex-shrink-0"
+                                                            className="hover:text-destructive transition-colors flex-shrink-0 hover:scale-110"
                                                             aria-label={`Remove ${labels[val] || val}`}
                                                         >
                                                             <X className="h-3 w-3" />
@@ -354,6 +539,59 @@ export default function LinkedInJobsPage() {
                                         </SelectContent>
                                     </Select>
                                 </div>
+
+                                {/* Limit */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="limit">Limit</Label>
+                                    <Input
+                                        id="limit"
+                                        type="number"
+                                        placeholder="10"
+                                        value={formData.limit}
+                                        min={10}
+                                        max={100}
+                                        step={5}
+                                        inputMode="numeric"
+                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                            // Block negative, decimals, exponent
+                                            if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
+                                                e.preventDefault();
+                                            }
+                                            // Optional: block more than 3 digits
+                                            if (/^\d$/.test(e.key)) {
+                                                const el = e.currentTarget;
+                                                const next = `${el.value}${e.key}`;
+                                                if (next.length > 3) {
+                                                    e.preventDefault();
+                                                }
+                                            }
+                                        }}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                            const raw = e.target.value;
+                                            const parsed = Number(raw);
+
+                                            // Allow typing freely so user can enter 20/30 etc.
+                                            // Hard-block > 100 while typing.
+                                            if (!raw) {
+                                                setFormData((prev) => ({ ...prev, limit: "" as any }));
+                                                return;
+                                            }
+
+                                            if (Number.isNaN(parsed)) return;
+                                            if (parsed > 100) return;
+
+                                            setFormData((prev) => ({ ...prev, limit: raw }));
+                                        }}
+                                        onBlur={() => {
+                                            const parsed = Number(formData.limit);
+                                            const safe = Number.isNaN(parsed) ? 10 : Math.min(100, Math.max(10, parsed));
+                                            setFormData((prev) => ({ ...prev, limit: String(Math.trunc(safe)) }));
+                                        }}
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        Minimum 10 and maximum 100.
+                                    </p>
+                                </div>
                             </div>
 
                             <div className="flex justify-end pt-4">
@@ -376,78 +614,91 @@ export default function LinkedInJobsPage() {
                 </Card>
             </div>
 
-            {/* Right Section - 60% */}
-            <div className="w-[60%] overflow-y-auto w-full">
-                <div className="space-y-4">
-                    <h2 className="text-xl font-semibold">Search Results ({jobs.length})</h2>
-                    <div className="grid grid-cols-1 gap-4">
+            {/* Right Section - 60% (locked) */}
+            <div className="flex-[0_0_60%] max-w-[60%] min-w-0 overflow-y-auto w-full">
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-2xl font-bold text-foreground">Search Results</h2>
+                        <span className="text-sm font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full">
+                            {jobs.length} {jobs.length === 1 ? 'job' : 'jobs'} found
+                        </span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-6">
                         {jobs.map((job) => (
-                            <Card key={job.job_id || job._id} className="overflow-hidden">
+                            <Card key={job.job_id || job._id} className="overflow-hidden hover:shadow-lg transition-shadow border-l-4 border-l-primary/20">
                                 <CardContent className="p-6">
-                                    <div className="flex flex-col md:flex-row gap-4 items-start justify-between">
-                                        <div className="space-y-2 flex-1">
-                                            <h3 className="text-lg font-bold text-blue-600">
-                                                {job.title || "No Title"}
-                                            </h3>
-                                            <div className="text-sm text-gray-600 font-medium">
-                                                {job.organization || ""} {job.location && <>&bull; {job.location}</>}
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="flex-1 space-y-3">
+                                                <h3 className="text-xl font-bold text-primary hover:underline cursor-pointer">
+                                                    {job.title || "No Title"}
+                                                </h3>
+                                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                    <span className="font-semibold text-foreground">{job.organization || "Unknown Company"}</span>
+                                                    {job.location && (
+                                                        <>
+                                                            <span className="text-muted-foreground/60">&bull;</span>
+                                                            <span>{job.location}</span>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
-
-                                            <div className="flex flex-wrap gap-2 text-xs mt-2">
-                                                {Array.isArray(job.employment_type) && job.employment_type.length > 0 && (
-                                                    <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-                                                        {job.employment_type.join(", ")}
-                                                    </span>
-                                                )}
-
-                                                {job.remote_derived !== undefined && (
-                                                    <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
-                                                        {job.remote_derived ? "Remote" : "On-site"}
-                                                    </span>
-                                                )}
-
-                                                {job.linkedin_org_size && (
-                                                    <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
-                                                        {job.linkedin_org_size}
-                                                    </span>
-                                                )}
-
-                                                {job.linkedin_org_type && (
-                                                    <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-                                                        {job.linkedin_org_type}
-                                                    </span>
-                                                )}
-
-                                                {job.linkedin_org_industry && (
-                                                    <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded-full">
-                                                        {job.linkedin_org_industry}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            {job.description && (
-                                                <p className="text-sm text-gray-500 mt-3 line-clamp-3">
-                                                    {job.description}
-                                                </p>
-                                            )}
-                                        </div>
-                                        <div className="flex flex-col gap-2 min-w-[120px]">
-                                            <a
-                                                href={job.linkedin_org_url || job.organization_url || `https://www.linkedin.com/jobs/view/${job.job_id}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="w-full"
-                                            >
-                                                <Button variant="outline" size="sm" className="w-full">
-                                                    View on LinkedIn
-                                                </Button>
-                                            </a>
-                                            {job.external_apply_url && (
-                                                <a href={job.external_apply_url} target="_blank" rel="noopener noreferrer" className="w-full">
-                                                    <Button size="sm" className="w-full">Apply Now</Button>
+                                            <div className="flex flex-col gap-2 min-w-[140px]">
+                                                <a
+                                                    href={job.linkedin_org_url || job.organization_url || `https://www.linkedin.com/jobs/view/${job.job_id}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full"
+                                                >
+                                                    <Button variant="outline" size="sm" className="w-full hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300">
+                                                        View on LinkedIn
+                                                    </Button>
                                                 </a>
+                                                {job.external_apply_url && (
+                                                    <a href={job.external_apply_url} target="_blank" rel="noopener noreferrer" className="w-full">
+                                                        <Button size="sm" className="w-full bg-primary hover:bg-primary/90">Apply Now</Button>
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2">
+                                            {Array.isArray(job.employment_type) && job.employment_type.length > 0 && (
+                                                <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full border border-blue-200">
+                                                    {job.employment_type.join(", ")}
+                                                </span>
+                                            )}
+
+                                            {job.remote_derived !== undefined && (
+                                                <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full border border-purple-200">
+                                                    {job.remote_derived ? "Remote" : "On-site"}
+                                                </span>
+                                            )}
+
+                                            {job.linkedin_org_size && (
+                                                <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full border border-gray-200">
+                                                    {job.linkedin_org_size}
+                                                </span>
+                                            )}
+
+                                            {job.linkedin_org_type && (
+                                                <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full border border-green-200">
+                                                    {job.linkedin_org_type}
+                                                </span>
+                                            )}
+
+                                            {job.linkedin_org_industry && (
+                                                <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full border border-red-200">
+                                                    {job.linkedin_org_industry}
+                                                </span>
                                             )}
                                         </div>
+
+                                        {job.description && (
+                                            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                                                {job.description}
+                                            </p>
+                                        )}
                                     </div>
 
                                     {(job.insights || job.skills) && (
