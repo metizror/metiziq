@@ -202,8 +202,12 @@ export default function DashboardLayout({
     //   path: '/customers',
     //   ...(pendingRequestsCount > 0 && { badge: pendingRequestsCount })
     // },
-    { id: 'linkedin-jobs', label: 'LinkedIn Jobs', icon: 'Briefcase', path: '/linkedin-jobs' },
-
+    {
+      id: 'linkedin-jobs-group', label: 'LinkedIn Job Search', icon: 'Search', subItems: [
+        { id: 'linkedin-jobs', label: 'LinkedIn Jobs Search', icon: 'Search', path: '/linkedin-jobs' },
+        { id: 'linkedin-jobs-list', label: 'LinkedIn Jobs List', icon: 'Briefcase', path: '/linkedin-jobs-list' },
+      ]
+    },
     {
       id: 'settings-group',
       label: 'Settings',
@@ -229,6 +233,7 @@ export default function DashboardLayout({
     if (pathname.startsWith('/sync-limits')) return 'sync-limits';
     if (pathname.startsWith('/import')) return 'import';
     if (pathname.startsWith('/activity')) return 'activity';
+    if (pathname.startsWith('/linkedin-jobs-list')) return 'linkedin-jobs-list';
     if (pathname.startsWith('/linkedin-jobs')) return 'linkedin-jobs';
     if (pathname.startsWith('/settings')) return 'settings';
     return 'dashboard';
@@ -240,8 +245,10 @@ export default function DashboardLayout({
     : activeView === 'customers'
       ? 'Customers'
       : activeView === 'linkedin-jobs'
-        ? 'LinkedIn Jobs'
-        : activeView.charAt(0).toUpperCase() + activeView.slice(1).replace('-', ' ');
+        ? 'LinkedIn Job Search'
+        : activeView === 'linkedin-jobs-list'
+          ? 'LinkedIn Jobs List'
+          : activeView.charAt(0).toUpperCase() + activeView.slice(1).replace('-', ' ');
 
   return (
     <div className="flex h-screen bg-background">

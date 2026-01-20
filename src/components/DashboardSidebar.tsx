@@ -21,6 +21,7 @@ import {
   ChevronDown,
   ChevronRight,
   Briefcase,
+  Search,
 } from "lucide-react";
 import { UserObject } from "@/types/auth.types";
 import Image from "next/image";
@@ -30,7 +31,7 @@ interface MenuItem {
   id: string;
   label: string;
   icon: string;
-  path: string;
+  path?: string; // Optional when subItems exists
   exclusive?: boolean;
   badge?: number;
   subItems?: MenuItem[];
@@ -59,6 +60,7 @@ const iconMap = {
   CheckCircle2,
   RefreshCw,
   Briefcase,
+  Search,
 };
 
 export function DashboardSidebar({
@@ -174,12 +176,12 @@ export function DashboardSidebar({
         }`}>
         {menuItems.map((item) => {
           const Icon = iconMap[item.icon as keyof typeof iconMap];
-          const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
+          const isActive = item.path ? (pathname === item.path || pathname.startsWith(item.path + '/')) : false;
           const isExclusive = item.exclusive && user.role !== "superadmin";
           const isExpanded = expandedMenus.includes(item.id);
           // Check if any child is active to highlight parent group
           const hasActiveChild = item.subItems?.some(
-            (sub) => pathname === sub.path || pathname.startsWith(sub.path + '/')
+            (sub) => sub.path && (pathname === sub.path || pathname.startsWith(sub.path + '/'))
           );
 
           if (isExclusive) return null;
@@ -222,30 +224,35 @@ export function DashboardSidebar({
 
                 {isOpen && isExpanded && (
                   <div className="pl-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                    {item.subItems.map((subItem) => {
-                      const SubIcon = iconMap[subItem.icon as keyof typeof iconMap];
-                      const isSubActive = pathname === subItem.path || pathname.startsWith(subItem.path + '/');
+                    {item.subItems
+                      .filter((subItem) => subItem.path) // Filter out subItems without paths
+                      .map((subItem) => {
+                        const SubIcon = iconMap[subItem.icon as keyof typeof iconMap];
+                        const isSubActive = subItem.path ? (pathname === subItem.path || pathname.startsWith(subItem.path + '/')) : false;
 
-                      return (
-                        <Link key={subItem.id} href={subItem.path} title={subItem.label}>
-                          <Button
-                            variant={isSubActive ? "secondary" : "ghost"}
-                            className={`w-full h-9 justify-start text-sm ${isSubActive
-                              ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
-                              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                              }`}
-                          >
-                            <SubIcon className="w-4 h-4 mr-3 opacity-70" />
-                            <span>{subItem.label}</span>
-                          </Button>
-                        </Link>
-                      );
-                    })}
+                        return (
+                          <Link key={subItem.id} href={subItem.path!} title={subItem.label}>
+                            <Button
+                              variant={isSubActive ? "secondary" : "ghost"}
+                              className={`w-full h-9 justify-start text-sm ${isSubActive
+                                ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                                }`}
+                            >
+                              <SubIcon className="w-4 h-4 mr-3 opacity-70" />
+                              <span>{subItem.label}</span>
+                            </Button>
+                          </Link>
+                        );
+                      })}
                   </div>
                 )}
               </div>
             );
           }
+
+          // Only render Link if path exists (items without subItems should have path)
+          if (!item.path) return null;
 
           return (
             <Link key={item.id} href={item.path} title={!isOpen ? item.label : ''}>
