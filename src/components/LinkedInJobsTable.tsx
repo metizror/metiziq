@@ -7,9 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Checkbox } from "./ui/checkbox";
 import { Skeleton } from "./ui/skeleton";
 import { Badge } from "./ui/badge";
-import { Search, ChevronLeft, ChevronRight, Eye, ExternalLink, Building2, MapPin, Briefcase, Calendar, X } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Eye, ExternalLink, Building2, MapPin, Briefcase, Calendar, X, Filter } from "lucide-react";
 import type { User } from "@/types/dashboard.types";
 
 interface LinkedInJob {
@@ -41,6 +43,8 @@ interface LinkedInJobsTableProps {
         limit: number;
         dateFrom?: string;
         dateTo?: string;
+        typeFilters?: string[];
+        remote?: "all" | "true" | "false";
     };
     searchQuery?: string;
     pagination?: {
@@ -57,8 +61,20 @@ interface LinkedInJobsTableProps {
     onPageChange?: (page: number) => void;
     onLimitChange?: (limit: number) => void;
     onDateFilterChange?: (dateFrom?: string, dateTo?: string) => void;
+    onTypeFilterChange?: (types: string[]) => void;
+    onRemoteFilterChange?: (remote: "all" | "true" | "false") => void;
     onViewJob?: (job: LinkedInJob) => void;
 }
+
+const EMPLOYMENT_TYPE_OPTIONS: string[] = [
+    "FULL_TIME",
+    "PART_TIME",
+    "CONTRACTOR",
+    "TEMPORARY",
+    "INTERN",
+    "VOLUNTEER",
+    "OTHER",
+];
 
 export function LinkedInJobsTable({
     jobs,
@@ -72,6 +88,8 @@ export function LinkedInJobsTable({
     onPageChange,
     onLimitChange,
     onDateFilterChange,
+    onTypeFilterChange,
+    onRemoteFilterChange,
     onViewJob,
 }: LinkedInJobsTableProps) {
     const [dateFilterType, setDateFilterType] = useState<string>("all");
@@ -208,95 +226,216 @@ export function LinkedInJobsTable({
         }
     };
 
+    const selectedTypes = Array.isArray(filters.typeFilters) ? filters.typeFilters : [];
+    const remoteValue: "all" | "true" | "false" = filters.remote || "all";
+
+    const toggleType = (type: string, isChecked: boolean) => {
+        const next = isChecked
+            ? Array.from(new Set([...selectedTypes, type]))
+            : selectedTypes.filter((t) => t !== type);
+        onTypeFilterChange?.(next);
+    };
+
     return (
-        <Card className="flex flex-col h-full shadow-lg">
+        <Card className="flex flex-col h-full shadow-lg border border-border/60">
             <CardHeader className="flex-shrink-0 pb-4">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <CardTitle className="text-2xl font-bold">LinkedIn Jobs</CardTitle>
+                        <CardTitle className="text-2xl font-bold tracking-tight">LinkedIn Jobs</CardTitle>
                         <p className="text-sm text-muted-foreground mt-1">Browse all available positions</p>
                     </div>
-                    <Badge variant="secondary" className="text-sm px-3 py-1.5 font-medium">Total {totalCount} {totalCount === 1 ? 'Job' : 'Jobs'}
-                    </Badge>
+                    {/* <Badge variant="secondary" className="text-sm px-3 py-1.5 font-medium">
+                        Total {totalCount} {totalCount === 1 ? "Job" : "Jobs"}
+                    </Badge> */}
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                    <div className="relative flex-1 max-w-md">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" style={{ marginTop: "10px" }} />
-                        <Input
-                            placeholder="Search by title, company, location..."
-                            value={searchQuery}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchInputChange(e.target.value)}
-                            className="pl-9 h-9"
-                        />
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <Select value={dateFilterType} onValueChange={handleDateFilterTypeChange}>
-                                <SelectTrigger className="w-[140px] h-9">
-                                    <SelectValue placeholder="Date filter" />
+                <div className="mt-4 rounded-lg border bg-card/40 p-3">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="relative flex-1 min-w-[240px] max-w-xl">
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Input
+                                placeholder="Search by title, company, location..."
+                                value={searchQuery}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchInputChange(e.target.value)}
+                                className="pl-9 h-10 bg-background"
+                            />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                            {/* Type (multi-select) */}
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className="h-10 gap-2 bg-background"
+                                        title="Filter by employment type"
+                                    >
+                                        <Filter className="h-4 w-4 text-muted-foreground" />
+                                        <span className="text-sm font-medium">
+                                            {selectedTypes.length === 0
+                                                ? "Type"
+                                                : selectedTypes.length === 1
+                                                    ? selectedTypes[0].replaceAll("_", " ")
+                                                    : `${selectedTypes.length} Types`}
+                                        </span>
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-72 p-3" align="start">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="text-sm font-medium">Employment Type</div>
+                                        {selectedTypes.length > 0 && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 px-2 text-xs"
+                                                onClick={() => onTypeFilterChange?.([])}
+                                            >
+                                                Clear
+                                            </Button>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        {EMPLOYMENT_TYPE_OPTIONS.map((type) => {
+                                            const isChecked = selectedTypes.includes(type);
+                                            return (
+                                                <label
+                                                    key={type}
+                                                    className="flex items-center gap-2 text-sm cursor-pointer select-none rounded-md px-2 py-1 hover:bg-accent"
+                                                >
+                                                    <Checkbox
+                                                        checked={isChecked}
+                                                        onCheckedChange={(checked: boolean) => toggleType(type, checked)}
+                                                    />
+                                                    <span className="font-medium">{type.replaceAll("_", " ")}</span>
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+
+                            {/* Remote filter */}
+                            <Select value={remoteValue} onValueChange={(val: string) => onRemoteFilterChange?.(val as any)}>
+                                <SelectTrigger className="w-[150px] h-10 bg-background">
+                                    <SelectValue placeholder="Remote" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">All time</SelectItem>
-                                    <SelectItem value="last7">Last 7 days</SelectItem>
-                                    <SelectItem value="last30">Last 30 days</SelectItem>
-                                    <SelectItem value="last90">Last 90 days</SelectItem>
-                                    <SelectItem value="custom">Custom range</SelectItem>
+                                    <SelectItem value="all">Remote: All</SelectItem>
+                                    <SelectItem value="true">Remote: Yes</SelectItem>
+                                    <SelectItem value="false">Remote: No</SelectItem>
                                 </SelectContent>
                             </Select>
-                        </div>
-                        {dateFilterType === "custom" && (
+
                             <div className="flex items-center gap-2">
-                                <Input
-                                    type="date"
-                                    placeholder="From"
-                                    value={customDateFrom}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                        const newValue = e.target.value;
-                                        setCustomDateFrom(newValue);
-                                        if (newValue && customDateTo) {
-                                            if (onDateFilterChange) {
-                                                onDateFilterChange(newValue, customDateTo);
-                                            }
-                                        } else if (!newValue && onDateFilterChange) {
-                                            // Clear filter if from date is removed
-                                            onDateFilterChange(undefined, undefined);
-                                        }
-                                    }}
-                                    className="h-9 w-[140px]"
-                                />
-                                <span className="text-muted-foreground text-sm">to</span>
-                                <Input
-                                    type="date"
-                                    placeholder="To"
-                                    value={customDateTo}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                        const newValue = e.target.value;
-                                        setCustomDateTo(newValue);
-                                        if (customDateFrom && newValue) {
-                                            if (onDateFilterChange) {
-                                                onDateFilterChange(customDateFrom, newValue);
-                                            }
-                                        } else if (!newValue && onDateFilterChange) {
-                                            // Clear filter if to date is removed
-                                            onDateFilterChange(undefined, undefined);
-                                        }
-                                    }}
-                                    className="h-9 w-[140px]"
-                                    min={customDateFrom || undefined}
-                                />
+                                <div className="flex items-center gap-2">
+                                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                                    <Select value={dateFilterType} onValueChange={handleDateFilterTypeChange}>
+                                        <SelectTrigger className="w-[160px] h-10 bg-background">
+                                            <SelectValue placeholder="Date filter" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All time</SelectItem>
+                                            <SelectItem value="last7">Last 7 days</SelectItem>
+                                            <SelectItem value="last30">Last 30 days</SelectItem>
+                                            <SelectItem value="last90">Last 90 days</SelectItem>
+                                            <SelectItem value="custom">Custom range</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                {(selectedTypes.length > 0 || remoteValue !== "all" || filters.dateFrom || filters.dateTo) && (
+                                    <div className="hidden xl:flex flex-wrap items-center gap-2 pl-2">
+                                        <span className="text-xs text-muted-foreground">Active:</span>
+                                        {selectedTypes.slice(0, 3).map((t) => (
+                                            <button
+                                                key={`type-chip-${t}`}
+                                                type="button"
+                                                onClick={() => toggleType(t, false)}
+                                                className="inline-flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-xs font-medium hover:bg-accent"
+                                                title="Remove type filter"
+                                            >
+                                                {t.replaceAll("_", " ")}
+                                                <X className="h-3 w-3 text-muted-foreground" />
+                                            </button>
+                                        ))}
+                                        {selectedTypes.length > 3 && (
+                                            <span className="text-xs text-muted-foreground">+{selectedTypes.length - 3} more</span>
+                                        )}
+                                        {remoteValue !== "all" && (
+                                            <button
+                                                type="button"
+                                                onClick={() => onRemoteFilterChange?.("all")}
+                                                className="inline-flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-xs font-medium hover:bg-accent"
+                                                title="Clear remote filter"
+                                            >
+                                                Remote: {remoteValue === "true" ? "Yes" : "No"}
+                                                <X className="h-3 w-3 text-muted-foreground" />
+                                            </button>
+                                        )}
+                                        {(filters.dateFrom || filters.dateTo) && (
+                                            <button
+                                                type="button"
+                                                onClick={clearDateFilter}
+                                                className="inline-flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-xs font-medium hover:bg-accent"
+                                                title="Clear date filter"
+                                            >
+                                                Date
+                                                <X className="h-3 w-3 text-muted-foreground" />
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                                {dateFilterType === "custom" && (
+                                    <div className="flex items-center gap-2">
+                                        <Input
+                                            type="date"
+                                            placeholder="From"
+                                            value={customDateFrom}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                const newValue = e.target.value;
+                                                setCustomDateFrom(newValue);
+                                                if (newValue && customDateTo) {
+                                                    if (onDateFilterChange) {
+                                                        onDateFilterChange(newValue, customDateTo);
+                                                    }
+                                                } else if (!newValue && onDateFilterChange) {
+                                                    // Clear filter if from date is removed
+                                                    onDateFilterChange(undefined, undefined);
+                                                }
+                                            }}
+                                            className="h-10 w-[160px] bg-background"
+                                        />
+                                        <span className="text-muted-foreground text-sm">to</span>
+                                        <Input
+                                            type="date"
+                                            placeholder="To"
+                                            value={customDateTo}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                const newValue = e.target.value;
+                                                setCustomDateTo(newValue);
+                                                if (customDateFrom && newValue) {
+                                                    if (onDateFilterChange) {
+                                                        onDateFilterChange(customDateFrom, newValue);
+                                                    }
+                                                } else if (!newValue && onDateFilterChange) {
+                                                    // Clear filter if to date is removed
+                                                    onDateFilterChange(undefined, undefined);
+                                                }
+                                            }}
+                                            className="h-10 w-[160px] bg-background"
+                                            min={customDateFrom || undefined}
+                                        />
+                                    </div>
+                                )}
+                                {(filters.dateFrom || filters.dateTo) && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={clearDateFilter}
+                                        className="h-9 px-2"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </Button>
+                                )}
                             </div>
-                        )}
-                        {(filters.dateFrom || filters.dateTo) && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={clearDateFilter}
-                                className="h-9 px-2"
-                            >
-                                <X className="h-4 w-4" />
-                            </Button>
-                        )}
+                        </div>
                     </div>
                 </div>
             </CardHeader>
@@ -312,7 +451,7 @@ export function LinkedInJobsTable({
                     }}
                 >
                     <Table>
-                        <TableHeader className="sticky top-0 bg-background z-10 border-b">
+                        <TableHeader className="sticky top-0 bg-background z-10 border-b shadow-sm">
                             <TableRow className="hover:bg-transparent">
                                 <TableHead className="font-semibold py-3 px-4">
                                     <div className="flex items-center">Job Title</div>
@@ -330,7 +469,7 @@ export function LinkedInJobsTable({
                                     <div className="flex items-center">Remote</div>
                                 </TableHead>
                                 <TableHead className="font-semibold py-3 px-4">
-                                    <div className="flex items-center">Posted</div>
+                                    <div className="flex items-center">Posted On</div>
                                 </TableHead>
                                 <TableHead className="font-semibold py-3 px-4 text-center">
                                     <div className="flex items-center justify-center">Actions</div>

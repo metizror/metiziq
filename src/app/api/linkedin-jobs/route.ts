@@ -3,6 +3,9 @@ import { connectToDatabase } from "@/lib/db";
 import LinkedinJob from "@/models/linkedinJob.model";
 import { verifyAdminToken } from "@/services/jwt.service";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: NextRequest) {
   await connectToDatabase();
   const tokenVerification = await verifyAdminToken(request);
@@ -20,6 +23,8 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || "";
     const dateFrom = searchParams.get("date_from") || "";
     const dateTo = searchParams.get("date_to") || "";
+    const type = searchParams.get("type") || "";
+    const remote = searchParams.get("remote") || "";
 
     const pageNumber = Math.max(1, page);
     const limitNumber = Math.min(Math.max(1, limit), 100);
@@ -51,6 +56,24 @@ export async function GET(request: NextRequest) {
         // Format: "YYYY-MM-DD" - string comparison works because format is lexicographically sortable
         query.date_posted.$lte = dateTo;
       }
+    }
+
+    // Employment type filter (employment_type: string[])
+    if (type) {
+      const types = type
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+      if (types.length > 0) {
+        query.employment_type = { $in: types };
+      }
+    }
+
+    // Remote filter (remote_derived: boolean)
+    if (remote === "true") {
+      query.remote_derived = true;
+    } else if (remote === "false") {
+      query.remote_derived = false;
     }
 
     // Get total count

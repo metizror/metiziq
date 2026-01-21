@@ -204,7 +204,7 @@ export default function DashboardLayout({
     // },
     {
       id: 'linkedin-jobs-group', label: 'LinkedIn Job Search', icon: 'Search', subItems: [
-        { id: 'linkedin-jobs', label: 'LinkedIn Jobs Search', icon: 'Search', path: '/linkedin-jobs' },
+        { id: 'linkedin-jobs', label: 'LinkedIn Jobs Search', icon: 'Link2', path: '/linkedin-jobs' },
         { id: 'linkedin-jobs-list', label: 'LinkedIn Jobs List', icon: 'Briefcase', path: '/linkedin-jobs-list' },
       ]
     },

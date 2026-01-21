@@ -46,6 +46,8 @@ export default function LinkedInJobsListPage() {
     limit: 10,
     dateFrom: undefined as string | undefined,
     dateTo: undefined as string | undefined,
+    typeFilters: [] as string[],
+    remote: "all" as "all" | "true" | "false",
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -103,6 +105,14 @@ export default function LinkedInJobsListPage() {
           params.append("date_to", filters.dateTo);
         }
 
+        if (filters.typeFilters.length > 0) {
+          params.append("type", filters.typeFilters.join(","));
+        }
+
+        if (filters.remote !== "all") {
+          params.append("remote", filters.remote);
+        }
+
         const response = await privateApiCall<{
           success: boolean;
           jobs: LinkedInJob[];
@@ -129,7 +139,16 @@ export default function LinkedInJobsListPage() {
       fetchJobs();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.page, filters.limit, filters.dateFrom, filters.dateTo, debouncedSearchQuery]);
+  }, [
+    filters.page,
+    filters.limit,
+    filters.dateFrom,
+    filters.dateTo,
+    filters.remote,
+    // re-fetch when type filters change (array reference changes on update)
+    filters.typeFilters,
+    debouncedSearchQuery,
+  ]);
 
   const handlePageChange = (page: number) => {
     if (filters.page !== page) {
@@ -151,6 +170,22 @@ export default function LinkedInJobsListPage() {
       dateFrom,
       dateTo,
       page: 1, // Reset to first page when date filter changes
+    }));
+  };
+
+  const handleTypeFilterChange = (typeFilters: string[]) => {
+    setFilters((prev) => ({
+      ...prev,
+      typeFilters,
+      page: 1,
+    }));
+  };
+
+  const handleRemoteFilterChange = (remote: "all" | "true" | "false") => {
+    setFilters((prev) => ({
+      ...prev,
+      remote,
+      page: 1,
     }));
   };
 
@@ -183,6 +218,8 @@ export default function LinkedInJobsListPage() {
           onPageChange={handlePageChange}
           onLimitChange={handleLimitChange}
           onDateFilterChange={handleDateFilterChange}
+          onTypeFilterChange={handleTypeFilterChange}
+          onRemoteFilterChange={handleRemoteFilterChange}
           onViewJob={handleViewJob}
         />
       </div>
