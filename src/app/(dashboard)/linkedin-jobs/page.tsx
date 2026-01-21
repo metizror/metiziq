@@ -174,7 +174,15 @@ export default function LinkedInJobsPage() {
             );
 
             if (response.ok) {
-                const data = await response.json();
+                const rawData = await response.json();
+                const data = Array.isArray(rawData) ? rawData[0] : rawData;
+
+                // Handle error response shape like:
+                // [{ success: false, ids: [], error: "Monthly quota exceeded" }]
+                if (data?.success === false) {
+                    toast.error(data?.error || "Failed to submit search request.");
+                    return;
+                }
 
                 if (data.ids && Array.isArray(data.ids) && data.ids.length > 0) {
                     // 2. Fetch Details from local DB
