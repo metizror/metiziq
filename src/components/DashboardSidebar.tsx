@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Briefcase,
   Search,
+  Link2,
 } from "lucide-react";
 import { UserObject } from "@/types/auth.types";
 import Image from "next/image";
@@ -61,6 +62,7 @@ const iconMap = {
   RefreshCw,
   Briefcase,
   Search,
+  Link2,
 };
 
 export function DashboardSidebar({
